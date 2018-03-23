@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 "72eb2aa" = {file = "https://github.com/Rapptz/discord.py/archive/rewrite.zip"}
 aiodns = "*"
+aiohttp = "<2.3.0,>=2.0.0"
+websockets = ">=4.0,<5.0"
 
 [dev-packages]
 "flake8" = "*"
