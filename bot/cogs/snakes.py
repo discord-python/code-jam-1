@@ -41,6 +41,8 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
 
+        print("SNEKS")
+
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
 
