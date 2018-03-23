@@ -1,0 +1,17 @@
+{
+	"cobra": 
+	{
+		"info": "Cobras are large and diverse group of snakes. There are 270 different types of cobras",
+		"location": "Africa, Asia and Australia, usually in forests and areas near river",
+		"venomous": "Yes",
+		"image": "https://i.imgur.com/WSnvhC0.jpg"
+	},
+	
+	"anaconda":
+	{
+		"info": "Anacondas are the largest and heaviest known snakes. There are 4 types of anacondas",
+		"location": "Tropical rainforests, lakes and swamps of South America",
+		"venomous": "No",
+		"image": "https://i.imgur.com/MNIY8zX.jpg"
+	}
+}

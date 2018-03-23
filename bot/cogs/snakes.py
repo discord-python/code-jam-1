@@ -1,6 +1,8 @@
 # coding=utf-8
 import logging
 from typing import Any, Dict
+import json
+import random
 
 from discord.ext.commands import AutoShardedBot, Context, command
 
@@ -28,6 +30,17 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
+        with open('snakes.json', 'r') as file:
+                snakes_dict = json.load(file)
+
+        if name == None:
+            snake_name, snake_info = random.choice(list(snakes_dict.items()))
+        
+        elif name == "Python":
+            print("stuff about python lang")
+            
+        return snake_name, snake_info
+
 
     @command()
     async def get(self, ctx: Context, name: str = None):
