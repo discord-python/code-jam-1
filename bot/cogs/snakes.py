@@ -6,7 +6,7 @@ from typing import Any, Dict
 from discord import Embed
 from discord.ext.commands import AutoShardedBot, Context, command
 
-from .snakegame import SnakeGame
+from bot.snakegame import SnakeGame
 
 log = logging.getLogger(__name__)
 
@@ -16,14 +16,14 @@ class Snakes:
     Snake-related commands
     """
 
-    def __init__(self, bot: AutoShardedBot, game: SnakeGame, wait_time: int):
+    def __init__(self, bot: AutoShardedBot):
         self.bot = bot
-        self.game = game
+        self.game = SnakeGame((5, 5))
         self.debug = True
         self.mods = ["kr4n3x#5014", "(PC) Refisio#9732"]
         self.last_movement = time()
         self.movement_command = {"left": 0, "right": 0, "up": 0, "down": 0}
-        self.wait_time = wait_time
+        self.wait_time = 2
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -54,6 +54,15 @@ class Snakes:
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
     @command()
     async def play(self, ctx: Context, order):
+        """
+        DiscordPlaysSnek
+
+        Move the snek around the field and collect food.
+
+        Valid use: `bot.play {direction}`
+
+        With 'left', 'right', 'up' and 'down' as valid directions.
+        """
         if order in self.movement_command.keys():
             self.movement_command[order] += 1
 
@@ -63,7 +72,7 @@ class Snakes:
                 move_status = self.game.move(direction)
 
                 if move_status == "lost":
-                    await ctx.send("We made the snake cry! :snake: :cry:")
+                    await ctx.send("We made the snek cry! :snake: :cry:")
 
                 self.last_movement = time()
                 self.movement_command = {"left": 0,
@@ -71,7 +80,8 @@ class Snakes:
 
                 embed = Embed()
                 embed.add_field(name="Score", value=self.game.score)
-                embed.add_field(name="Winner movement", value="We moved " + direction)
+                embed.add_field(name="Winner movement",
+                                value="We moved " + direction)
                 embed.add_field(name="Board", value="```" +
                                 str(self.game) + "```", inline=False)
                 if self.debug:
@@ -82,5 +92,5 @@ class Snakes:
 
 
 def setup(bot):
-    bot.add_cog(Snakes(bot, SnakeGame((5, 5)), 2))
+    bot.add_cog(Snakes(bot))
     log.info("Cog loaded: Snakes")
