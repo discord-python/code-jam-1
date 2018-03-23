@@ -58,7 +58,7 @@ class Snakes:
         return json_response['results'][rand]['urls']['small']
 
     @command()
-    async def get(self, ctx: Context, name: str = None):
+    async def get(self, ctx: Context, name: str = "python"):
         """
         Go online and fetch information about a snake
 
@@ -68,7 +68,7 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
-        url = await self.get_snek_image("python")   # TODO: accept user input for the snake type
+        url = await self.get_snek_image(name)   # not limited to snakes - user can search anything they like
         await ctx.channel.send(
             content=ctx.message.author.mention + " Here's your snek!",
             embed=discord.Embed().set_image(url=url)
