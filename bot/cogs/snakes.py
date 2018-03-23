@@ -1,5 +1,7 @@
 # coding=utf-8
 import logging
+import aiohttp
+from bs4 import BeautifulSoup
 from typing import Any, Dict
 from discord.ext.commands import AutoShardedBot, Context, command
 
@@ -27,6 +29,8 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
+        
+
 
     @command()
     async def get(self, ctx: Context, name: str = None):
@@ -39,8 +43,10 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
-        await ctx.send("hello")
-
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://en.wikipedia.org/wiki/List_of_snakes_by_common_name') as resp:
+                text = await resp.read()
+        await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
 
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
