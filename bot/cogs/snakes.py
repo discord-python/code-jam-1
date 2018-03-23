@@ -1,9 +1,7 @@
 # coding=utf-8
 import logging
 from typing import Any, Dict
-import wikipedia
 from discord.ext.commands import AutoShardedBot, Context, command
-
 
 log = logging.getLogger(__name__)
 
@@ -29,11 +27,6 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        snake_summary = wikipedia.sumamry(self.name)
-
-
-
-
 
     @command()
     async def get(self, ctx: Context, name: str = None):
@@ -49,7 +42,7 @@ class Snakes:
         await ctx.send("hello")
 
 
-    # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+        # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
 
 def setup(bot):
