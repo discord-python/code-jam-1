@@ -1,10 +1,18 @@
 # coding=utf-8
 import logging
-from typing import Any, Dict
+import re
 
-from discord.ext.commands import AutoShardedBot, Context, command
+import aiohttp
+import bs4
+import discord
+import html2text
+from discord.ext import commands
 
 log = logging.getLogger(__name__)
+API = 'http://en.wikipedia.org/w/api.php?format=json&redirects=1&action='
+
+rSENTENCE = re.compile(r'^.+?\.')
+rBRACK = re.compile(r'[[(].+?[\])]')
 
 
 class Snakes:
@@ -12,10 +20,16 @@ class Snakes:
     Snake-related commands
     """
 
-    def __init__(self, bot: AutoShardedBot):
+    def __init__(self, bot):
         self.bot = bot
+        self.aexec = bot.loop.run_in_executor
+        self.session = aiohttp.ClientSession(loop=bot.loop)
+        self.h2md = html2text.HTML2Text()  # TODO: use
+        self.base_query = API + 'parse&prop=text&page={}'
+        self.secs_query = API + 'parse&prop=sections&page={}'
+        self.img_query = API + 'query&titles={}&prop=pageimages&pithumbsize=300'
 
-    async def get_snek(self, name: str = None) -> Dict[str, Any]:
+    async def get_snek(self, name=None):
         """
         Go online and fetch information about a snake
 
@@ -28,9 +42,32 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
+        # TODO: Random will be done by fetching from Special:RandomInCategory/Venomous_snakes, or something
+        async with self.session.get(self.base_query.format(name)) as pg_resp, \
+                   self.session.get(self.secs_query.format(name)) as sc_resp, \
+                   self.session.get(self.img_query.format(name)) as img_resp:
+            data = await pg_resp.json()
+            secs = await sc_resp.json()
+            img = await img_resp.json()
+        tidbits = []
+        soup = bs4.BeautifulSoup(data['parse']['text']['*'])
+        for section in secs['parse']['sections']:
+            for tag in await self.aexec(None, soup.find(id=section['anchor']).find_all_next):  # FIXME: inefficient...?
+                if tag.name == 'p':
+                    try:
+                        tidbits.append(rBRACK.sub('', rSENTENCE.match(tag.text)[0]))
+                    except TypeError:
+                        pass
+                    break
+        try:
+            pgid = str(data['parse']['pageid'])
+            imglink = img['query']['pages'][pgid]['thumbnail']['source']
+        except KeyError:
+            imglink = ''
+        return {'image': imglink, 'tidbits': tidbits}
 
-    @command()
-    async def get(self, ctx: Context, name: str = None):
+    @commands.command()
+    async def get(self, ctx, name: str.title = None):
         """
         Go online and fetch information about a snake
 
@@ -40,8 +77,10 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
-
-    # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+        d = await self.get_snek(name)
+        embed = discord.Embed(description='\n\n • '.join(d['tidbits']))
+        embed.set_thumbnail(url=d['image'])
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
