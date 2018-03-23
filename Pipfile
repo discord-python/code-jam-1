@@ -8,6 +8,7 @@ name = "pypi"
 aiodns = "*"
 aiohttp = "*"
 websockets = ">=4.0,<5.0"
+google-api-python-client = "*"
 
 [dev-packages]
 "flake8" = "*"

@@ -2,6 +2,7 @@
 import logging
 from typing import Any, Dict
 
+from googleapiclient.discovery import build
 from discord.ext.commands import AutoShardedBot, Context, command
 from discord import Embed
 
@@ -9,11 +10,12 @@ import aiohttp
 import json
 import async_timeout
 import random
+import difflib
 
 log = logging.getLogger(__name__)
 
 # Probably should move these somewhere
-BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=%{}&redirect=1"
+BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles={}&redirect=1"
 PYTHON = {
     "name": "Python",
     "info": """Python is a species of programming language, \
@@ -21,7 +23,8 @@ commonly used by coding beginners and experts alike. It was first discovered \
 in 1989 by Guido van Rossum in the Netherlands, and was released to the wild \
 two years later. Its use of dynamic typing is one of many distinct features, \
 alongside significant whitespace, heavy emphasis on readability, and, above all, \
-absolutely pain-free software distribution... *sigh*"""
+absolutely pain-free software distribution... *sigh*""",
+    "image": "https://www.python.org/static/community_logos/python-logo-master-v3-TM-flattened.png"
 }
 with open("bot/snakes.txt") as file:
     SNAKES = file.readlines()
@@ -36,26 +39,54 @@ class Snakes:
         self.bot = bot
 
     @staticmethod
+    def merge_dic(*args, all_iter=True):
+        final = {}
+        
+        for dic in args:
+            for k, v in dic.items():
+                
+                if k in final.keys():
+                    if isinstance(final[k], list):
+                        final[k].append(v)
+                    else:
+                        final[k] = [final[k], v]
+                        
+                elif k not in final.keys() and all_iter:
+                    final[k] = [v]
+                else:
+                    final[k] = v
+                    
+        return final
+
+    def image(self, name):
+        service = build("customsearch", "v1", developerKey="API")
+        res = service.cse().list(
+            q=name,
+            cx='ENGINE',
+            searchType='image',
+            num=10,
+            safe='off'
+        ).execute()
+        
+        return random.choice(self.merge_dic(*res['items'])['link'])
+
+    @staticmethod
     def snake_url(name) -> str:
         """Get the URL of a snake"""
-        
+
         def encode_url(text):
             """Encode a string to URL-friendly format"""
-            return BASEURL.format("%".join("{:02x}".format(ord(c)) for c in text))
+            return BASEURL.format(text.replace(' ', '%20').replace("'", '%27'))
 
         # Check if the snake name is known
         if name.upper() + '\n' in list(map(lambda n: n.upper(), SNAKES)):
             return encode_url(name)
 
-        # Get a list of similar names if a match wasn't found 
-        suggestions = []
-        for line in SNAKES:
-            if len(set(name) & set(line)) > 0.5 * len(name):
-                suggestions.append(line.strip('\n'))
+        # Get a list of similar names if a match wasn't found
+        return encode_url(difflib.get_close_matches(name, [x.strip('\n') for x in SNAKES], n=1)[0])
 
-        return encode_url(random.choice(suggestions))
-
-    async def fetch(self, session, url):
+    @staticmethod
+    async def fetch(session, url):
         """Fetch the contents of a URL as text"""
         async with async_timeout.timeout(10):
             async with session.get(url) as response:
@@ -72,15 +103,15 @@ class Snakes:
         # Get snake information
         async with aiohttp.ClientSession() as session:
             url = self.snake_url(name)
-            query = await self.fetch(session, url)
-            page = query["query"]["pages"]
+            response = await self.fetch(session, url)
+            page = response["query"]["pages"]
             content = next(iter(page.values()))
-            print(content)
 
             # WHY WOULD YOU USE DICTIONARY LITERAL IN A RETURN STATEMENT but okay lol
             return {
                 "name": content["title"],
-                "info": content["extract"] or "I don't know much about this snake, sorry!"
+                "info": str(content["extract"]) + '\n' + str(response['query'] + url),
+                "image": self.image(name)
             }
 
     @command()
@@ -90,6 +121,7 @@ class Snakes:
         em = Embed()
         em.title = content["name"]
         em.description = content["info"]
+        em.set_image(url=content["image"])
 
         await ctx.send(embed=em)
 
