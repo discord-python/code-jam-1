@@ -74,6 +74,7 @@ class Snakes:
                 if not any(s in item['title'] for s in ambiguous):
                     snake_list.append(item['title'])
 
+        snake_list.append("trouser snake")
         return snake_list
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
