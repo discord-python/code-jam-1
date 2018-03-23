@@ -28,6 +28,25 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
+        return name
+
+    async def get_danger(self, level: str = None) -> str:
+        return {
+            '???': 'Danger unknown',
+            '---': 'Nonvenomous',
+            '??🐍': 'Constrictor, danger unknown',
+            '🐍': 'Constrictor, considered harmless',
+            '🐍🐍': 'Constrictor, harmful',
+            '🐍🐍🐍': 'Constrictor, dangerous',
+            '🐍🐍🐍🐍': 'Constrictor, very dangerous',
+            '🐍🐍🐍🐍🐍': 'Constrictor, extremely damgerous',
+            '??💀': 'Venomous, danger unknown',
+            '💀': 'Venomous, considered harmless',
+            '💀💀': 'Venomous, harmful',
+            '💀💀💀': 'Venomous, dangerous',
+            '💀💀💀💀': 'Venomous, very dangerous',
+            '💀💀💀💀💀': 'Venomous, extremely dangerous.'
+        }.get(level, 'Unknown')
 
     @command()
     async def get(self, ctx: Context, name: str = None):
