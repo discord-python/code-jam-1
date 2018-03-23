@@ -28,6 +28,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
+        pass
 
     @command()
     async def get(self, ctx: Context, name: str = None):
@@ -40,6 +41,7 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
+        pass
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
