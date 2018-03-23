@@ -144,19 +144,3 @@ class Snake:
         Makes the snake grow one square.
         """
         self.positions.append(self.deletedTail)
-
-
-if __name__ == "__main__":
-    game = SnakeGame((5, 5))
-    print(game)
-    game.move("right")
-    print(game)
-    game.move("right")
-    print(game)
-    game.move("right")
-    print(game)
-    game.move("right")
-    print(game)
-    game.move("right")
-    print(game)
-    game.move("right")
