@@ -38,7 +38,7 @@ def check_word(word, wordset, threshold=0.8):
                     count += 1
 
         avg = count / len(shorter)
-        avg = 1.0  - avg
+        avg = 1.0 - avg
         if avg >= threshold:
             yield avg, w
         else:
