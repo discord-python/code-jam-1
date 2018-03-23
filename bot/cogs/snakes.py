@@ -4,6 +4,8 @@ from typing import Any, Dict
 
 from discord.ext.commands import AutoShardedBot, Context, command
 
+from .snakegame import SnakeGame
+
 log = logging.getLogger(__name__)
 
 
@@ -12,8 +14,9 @@ class Snakes:
     Snake-related commands
     """
 
-    def __init__(self, bot: AutoShardedBot):
+    def __init__(self, bot: AutoShardedBot, game: SnakeGame):
         self.bot = bot
+        self.game = game
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -42,8 +45,12 @@ class Snakes:
         """
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+    @command()
+    async def play(self, ctx: Context, order):
+        if order == "left":
+            await ctx.send(self.game)
 
 
 def setup(bot):
-    bot.add_cog(Snakes(bot))
+    bot.add_cog(Snakes(bot, SnakeGame((5, 5))))
     log.info("Cog loaded: Snakes")
