@@ -19,6 +19,12 @@ class Snakes:
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
 
+    async def get_wiki_json(self, params):
+        async with aiohttp.ClientSession(headers={'User-Agent': 'DevBot v.10'}) as cs:
+            async with async_timeout.timeout(20):
+                async with cs.get("https://en.wikipedia.org/w/api.php", params=params) as r:
+                    return await r.json()
+
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
         Go online and fetch information about a snake
@@ -61,12 +67,8 @@ class Snakes:
                              'imlimit': '1',
                              'format': 'json'}
 
-        async with aiohttp.ClientSession(headers={'User-Agent': 'DevBot v.10'}) as cs:
-            async with async_timeout.timeout(20):
-                async with cs.get("https://en.wikipedia.org/w/api.php", params=text_params) as r:
-                    text_json = await r.json()
-                async with cs.get("https://en.wikipedia.org/w/api.php", params=image_name_params) as r:
-                    image_name_json = await r.json()
+        text_json = await self.get_wiki_json(text_params)
+        image_name_json = await self.get_wiki_json(image_name_params)
 
         # snake_image = "https://pbs.twimg.com/profile_images/662615956670144512/dqsVK6Nw_400x400.jpg"
 
@@ -79,10 +81,7 @@ class Snakes:
                             'iiprop': 'url',
                             'format': 'json'}
 
-        async with aiohttp.ClientSession(headers={'User-Agent': 'DevBot v.10'}) as cs:
-            async with async_timeout.timeout(20):
-                async with cs.get("https://en.wikipedia.org/w/api.php", params=image_url_params) as r:
-                    image_url_json = await r.json()
+        image_url_json = await self.get_wiki_json(image_url_params)
 
         snake_image_id = list(image_url_json['query']['pages'].keys())[0]
         snake_image = image_url_json['query']['pages'][snake_image_id]['imageinfo'][0]['url']
