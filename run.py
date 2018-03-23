@@ -9,6 +9,7 @@ from discord.ext.commands import AutoShardedBot, when_mentioned_or
 from bot.formatter import Formatter
 from bot.utils import CaseInsensitiveDict
 
+"""something sharp """
 bot = AutoShardedBot(
     command_prefix=when_mentioned_or(
         ">>> self.", ">> self.", "> self.", "self.",
