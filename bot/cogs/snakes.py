@@ -1,7 +1,9 @@
 # coding=utf-8
 import logging
-import wikipedia
 from typing import Any, Dict
+import aiohttp
+import async_timeout
+import pprint
 
 from discord.ext.commands import AutoShardedBot, Context, command
 from discord import Embed
@@ -16,6 +18,12 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
+
+    async def get_wiki_json(self, params):
+        async with aiohttp.ClientSession(headers={'User-Agent': 'DevBot v.10'}) as cs:
+            async with async_timeout.timeout(20):
+                async with cs.get("https://en.wikipedia.org/w/api.php", params=params) as r:
+                    return await r.json()
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -41,16 +49,47 @@ class Snakes:
 
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
+        https://en.wikipedia.org/w/api.php?action=query&titles=Vipera_berus&prop=extracts&exsentences=2&explaintext=1&format=json
         """
-        snakeembed = Embed(color=ctx.me.color, title="SNAKE")
+        snake_embed = Embed(color=ctx.me.color, title="SNAKE")
+        name = name.replace(" ", "_")
 
-        snake_data = wikipedia.summary(name, sentences=1)
-        snake_image = wikipedia.WikipediaPage(name)
+        text_params = {'action': 'query',
+                       'titles': name,
+                       'prop': 'extracts',
+                       'exsentences': '2',
+                       'explaintext': '1',
+                       'format': 'json'}
 
-        snakeembed.add_field(name=name, value=snake_data)
-        snakeembed.set_thumbnail(url=snake_image.images[0])
+        image_name_params = {'action': 'query',
+                             'titles': name,
+                             'prop': 'images',
+                             'imlimit': '1',
+                             'format': 'json'}
 
-        await ctx.send(embed=snakeembed)
+        text_json = await self.get_wiki_json(text_params)
+        image_name_json = await self.get_wiki_json(image_name_params)
+
+        # snake_image = "https://pbs.twimg.com/profile_images/662615956670144512/dqsVK6Nw_400x400.jpg"
+
+        page_id = list(text_json['query']['pages'].keys())[0]
+        image_id = image_name_json['query']['pages'][page_id]['images'][0]['title']
+
+        image_url_params = {'action': 'query',
+                            'titles': image_id,
+                            'prop': 'imageinfo',
+                            'iiprop': 'url',
+                            'format': 'json'}
+
+        image_url_json = await self.get_wiki_json(image_url_params)
+
+        snake_image_id = list(image_url_json['query']['pages'].keys())[0]
+        snake_image = image_url_json['query']['pages'][snake_image_id]['imageinfo'][0]['url']
+
+        snake_embed.add_field(name=name, value=text_json['query']['pages'][page_id]['extract'])
+        snake_embed.set_thumbnail(url=snake_image)
+
+        await ctx.send(embed=snake_embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
