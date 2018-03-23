@@ -1,11 +1,12 @@
 # coding=utf-8
-import os
+import json
 import logging
+import os
+import random
 from typing import Any, Dict
 
 import aiohttp
-import json
-import random
+
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
@@ -41,7 +42,7 @@ class Snakes:
         :return: the full JSON from the search API
         """
         url = "https://api.unsplash.com/search/photos?client_id" \
-              "={}&query={}".format(os.environ.get("UNSPLASH_CLIENT_ID"), snake_name)
+              "={0}&query={1}".format(os.environ.get("UNSPLASH_CLIENT_ID"), snake_name)
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 response = await response.read()
