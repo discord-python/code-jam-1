@@ -3,6 +3,7 @@ import logging
 from typing import Any, Dict
 import discord
 import random
+import time
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
@@ -51,23 +52,26 @@ class Snakes:
 
 
     @command(name="snakerandom")
-    async def SnakeRandom(self, ctx: Context):
+    async def SnakeRandom(self, ctx: Context , name: str= None):
         #snakes=['Cobra','Python','Anaconda','Black Mamba','Rattle Snake']
         randsnake=random.choice(['cobra','python','black mamba'])
         print(randsnake)
         embed = discord.Embed(
-            title="print_stuff",
-            description="You get a "+randsnake,
+            title="Snake Random !",
+            description="lets see what snake you got !",
             color=0x00ff00,
         )
 
+        embed.add_field(name="Result", value="You got yourself a "+randsnake, inline=False)
+        embed.add_field(name="Expectation", value=f"@{ctx.author} expected {name}", inline=False)
+
         if randsnake=="python":
 
-            return await ctx.send("Your a lucky dude !", embed=embed)
+            return await ctx.send("Your a lucky dude !",embed=embed)
         elif randsnake=="cobra":
-            return await ctx.send("Good old cobra !", embed=embed)
+            return await ctx.send("Good old cobra !",embed=embed)
         elif randsnake.startswith("blac"):
-            return await ctx.send("Shiny liitle fella !", embed=embed)
+            return await ctx.send("Shiny liitle fella !",embed=embed)
 
 
 
