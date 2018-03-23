@@ -30,7 +30,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        with open('snakes.json', 'r') as file:
+        with open('bot/db/snakes.json', 'r') as file:
                 snakes_dict = json.load(file)
 
         if name == None:
@@ -38,7 +38,7 @@ class Snakes:
         
         elif name == "Python":
             print("stuff about python lang")
-            
+
         return snake_name, snake_info
 
 
