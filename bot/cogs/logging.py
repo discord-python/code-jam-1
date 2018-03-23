@@ -15,6 +15,13 @@ class Logging:
         self.bot = bot
 
     async def on_ready(self):
+        log.info('Signed in as:')
+        log.info('--------------')
+        log.info(f'Username: {self.bot.user.name}')
+        log.info(f'User ID: {self.bot.user.id}')
+        log.info('--------------')
+        log.info('Serving Team 17 in Code Jam 1!')
+        log.info('--------------')
         log.info("Bot connected!")
 
 

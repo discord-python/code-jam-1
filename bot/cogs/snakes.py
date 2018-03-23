@@ -1,7 +1,7 @@
 # coding=utf-8
 import logging
 from typing import Any, Dict
-
+from bs4 import BeautifulSoup
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
@@ -14,6 +14,7 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
+        self.base_url = 'http://www.softschools.com/facts/animals/'
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
