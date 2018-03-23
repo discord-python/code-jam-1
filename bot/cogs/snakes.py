@@ -38,20 +38,6 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-
-    @command()
-    async def get(self, ctx: Context, name: str = "Vipera berus"):
-        """
-        Go online and fetch information about a snake
-
-        This should make use of your `get_snek` method, using it to get information about a snake. This information
-        should be sent back to Discord in an embed.
-
-        :param ctx: Context object passed from discord.py
-        :param name: Optional, the name of the snake to get information for - omit for a random snake
-        https://en.wikipedia.org/w/api.php?action=query&titles=Vipera_berus&prop=extracts&exsentences=2&explaintext=1&format=json
-        """
-        snake_embed = Embed(color=ctx.me.color, title="SNAKE")
         name = name.replace(" ", "_")
 
         text_params = {'action': 'query',
@@ -85,10 +71,27 @@ class Snakes:
 
         snake_image_id = list(image_url_json['query']['pages'].keys())[0]
         snake_image = image_url_json['query']['pages'][snake_image_id]['imageinfo'][0]['url']
+        snake_text = text_json['query']['pages'][page_id]['extract']
 
-        snake_embed.add_field(name=name, value=text_json['query']['pages'][page_id]['extract'])
-        snake_embed.set_thumbnail(url=snake_image)
+        snake_dict = {"name": name, "snake_text": snake_text, "snake_image":snake_image}
+        return snake_dict
 
+    @command()
+    async def get(self, ctx: Context, name: str = "Vipera berus"):
+        """
+        Go online and fetch information about a snake
+
+        This should make use of your `get_snek` method, using it to get information about a snake. This information
+        should be sent back to Discord in an embed.
+
+        :param ctx: Context object passed from discord.py
+        :param name: Optional, the name of the snake to get information for - omit for a random snake
+        https://en.wikipedia.org/w/api.php?action=query&titles=Vipera_berus&prop=extracts&exsentences=2&explaintext=1&format=json
+        """
+        snake = await self.get_snek(name)
+        snake_embed = Embed(color=ctx.me.color, title="SNAKE")
+        snake_embed.add_field(name=snake['name'], value=snake['snake_text'])
+        snake_embed.set_thumbnail(url=snake['snake_image'])
         await ctx.send(embed=snake_embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
