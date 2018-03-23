@@ -11,13 +11,11 @@ import json
 import async_timeout
 import random
 import difflib
-from googleapiclient.discovery import build
 
 log = logging.getLogger(__name__)
 
 # Probably should move these somewhere
-<<<<<<< HEAD
-BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles={}&redirect=1"
+BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles={}&redirects=1"
 PYTHON = {
     "name": "Python",
     "info": """Python is a species of programming language, \
@@ -29,11 +27,7 @@ absolutely pain-free software distribution... *sigh*""",
     "image": "https://www.python.org/static/community_logos/python-logo-master-v3-TM-flattened.png"
 }
 with open("bot/snakes.txt") as file:
-    SNAKES = file.readlines()
-=======
-BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles={}"
-SNAKE_FILE = "bot/snakes.txt"
->>>>>>> 47e03d6cd928a3bb91a1310ee04cf855c8bef834
+    SNAKES = list(map(lambda ln: ln.strip('\n'), file.readlines()))
 
 
 class Snakes:
@@ -45,47 +39,6 @@ class Snakes:
         self.bot = bot
 
     @staticmethod
-    def merge_dic(*args, all_iter=True):
-        final = {}
-        
-        for dic in args:
-            for k, v in dic.items():
-                
-                if k in final.keys():
-                    if isinstance(final[k], list):
-                        final[k].append(v)
-                    else:
-                        final[k] = [final[k], v]
-                        
-                elif k not in final.keys() and all_iter:
-                    final[k] = [v]
-                else:
-                    final[k] = v
-                    
-        return final
-
-<<<<<<< HEAD
-    def image(self, name):
-        service = build("customsearch", "v1", developerKey="API")
-        res = service.cse().list(
-            q=name,
-            cx='ENGINE',
-=======
-    def iamge(self, name):
-        service = build("customsearch", "v1", developerKey="AIzaSyBb1UN8_hETbwylEjBlmLudPTCB7Oy_UuM")
-
-        res = service.cse().list(
-            q=name,
-            cx='002819837506601299516:4u9m7sepc8w',
->>>>>>> 47e03d6cd928a3bb91a1310ee04cf855c8bef834
-            searchType='image',
-            num=10,
-            safe='off'
-        ).execute()
-        
-        return random.choice(self.merge_dic(*res['items'])['link'])
-
-    @staticmethod
     def snake_url(name) -> str:
         """Get the URL of a snake"""
 
@@ -94,15 +47,16 @@ class Snakes:
             return BASEURL.format(text.replace(' ', '%20').replace("'", '%27'))
 
         # Check if the snake name is known
-        if name.upper() + '\n' in list(map(lambda n: n.upper(), SNAKES)):
+        if name.upper() in list(map(lambda n: n.upper(), SNAKES)):
             return encode_url(name)
 
         # Get a list of similar names if a match wasn't found
-        return encode_url(difflib.get_close_matches(name, [x.strip('\n') for x in SNAKES], n=1)[0])
+        matches = difflib.get_close_matches(name, SNAKES, n=1)
+        return encode_url(matches[0] if matches != [] else random.choice(SNAKES))
 
     @staticmethod
     async def fetch(session, url):
-        """Fetch the contents of a URL as text"""
+        """Fetch the contents of a URL as a json"""
         async with async_timeout.timeout(10):
             async with session.get(url) as response:
                 return await response.json()
@@ -111,22 +65,28 @@ class Snakes:
         """Get a snake with a given name, or otherwise randomly"""
         if name is None:
             name = random.choice([x.strip('\n') for x in SNAKES])
-
-        if name.upper() == "PYTHON":
+            
+        elif name.upper() == "PYTHON":
             return PYTHON
 
         # Get snake information
         async with aiohttp.ClientSession() as session:
             url = self.snake_url(name)
+
+            # Get the 
             response = await self.fetch(session, url)
             page = response["query"]["pages"]
             content = next(iter(page.values()))
 
+            # Parse the full-res image from the thumbnail
+            thumb = content.get("thumbnail", {}).get("source", "http://i.imgur.com/HtIPyLy.png/beep")
+            image = "/".join(thumb.replace("thumb/", "").split("/")[:-1])
+            
             # WHY WOULD YOU USE DICTIONARY LITERAL IN A RETURN STATEMENT but okay lol
             return {
                 "name": content["title"],
-                "info": str(content["extract"]) + '\n' + str(response['query'] + url),
-                "image": self.image(name)
+                "info": content.get("extract", "") or "I don't know about that snake!",
+                "image": image
             }
 
     @command()
@@ -135,7 +95,7 @@ class Snakes:
         # Just a temporary thing to make sure it's working
         em = Embed()
         em.title = content["name"]
-        em.description = content["info"]
+        em.description = content["info"][:1970] + "\n\nPS. If the image is a fucking map, blame wikipedia. -Somejuan"
         em.set_image(url=content["image"])
 
         await ctx.send(embed=em)
