@@ -48,7 +48,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
         # await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
-
+        await message.channel.send(self.get_snek(name))
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
 
