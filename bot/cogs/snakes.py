@@ -9,11 +9,12 @@ import json
 import async_timeout
 import random
 import difflib
+from googleapiclient.discovery import build
 
 log = logging.getLogger(__name__)
 
 # Probably should move these somewhere
-BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=%{}"
+BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles={}"
 SNAKE_FILE = "bot/snakes.txt"
 
 
@@ -42,10 +43,11 @@ class Snakes:
         return final
 
     def iamge(self, name):
-        service = build("customsearch", "v1", developerKey="API KEY")
+        service = build("customsearch", "v1", developerKey="AIzaSyBb1UN8_hETbwylEjBlmLudPTCB7Oy_UuM")
+
         res = service.cse().list(
             q=name,
-            cx='ENGINE ID',
+            cx='002819837506601299516:4u9m7sepc8w',
             searchType='image',
             num=10,
             safe='off'
@@ -58,7 +60,7 @@ class Snakes:
 
         def encode_url(text):
             """Encode a string to URL-friendly format"""
-            return BASEURL.format("%".join("{:02x}".format(ord(c)) for c in text))
+            return BASEURL.format(text.replace(' ', '%20').replace("'", '%27'))
 
         # Check if the snake name is known
         with open(SNAKE_FILE) as snakes:
