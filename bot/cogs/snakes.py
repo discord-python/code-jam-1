@@ -8,6 +8,7 @@ import aiohttp
 import json
 import async_timeout
 import random
+import difflib
 
 log = logging.getLogger(__name__)
 
@@ -25,9 +26,36 @@ class Snakes:
         self.bot = bot
 
     @staticmethod
+    def merge_dic(*args, all_iter=True):
+        final = {}
+        for dic in args:
+            for k, v in dic.items():
+                if k in final.keys():
+                    if isinstance(final[k], list):
+                        final[k].append(v)
+                    else:
+                        final[k] = [final[k], v]
+                elif k not in final.keys() and all_iter:
+                    final[k] = [v]
+                else:
+                    final[k] = v
+        return final
+
+    def iamge(self, name):
+        service = build("customsearch", "v1", developerKey="API KEY")
+        res = service.cse().list(
+            q=name,
+            cx='ENGINE ID',
+            searchType='image',
+            num=10,
+            safe='off'
+        ).execute()
+        return random.choice(self.merge_dic(*res['items'])['link'])
+
+    @staticmethod
     def snake_url(name) -> str:
         """Get the URL of a snake"""
-        
+
         def encode_url(text):
             """Encode a string to URL-friendly format"""
             return BASEURL.format("%".join("{:02x}".format(ord(c)) for c in text))
@@ -37,16 +65,12 @@ class Snakes:
             if name + '\n' in snakes:
                 return encode_url(name)
 
-        # Get a list of similar names if a match wasn't found 
-        suggestions = []
-        with open(SNAKE_FILE) as file:
-            for line in file:
-                if len(set(name.replace(' ', '')) & set(line.replace(' ', '').strip('\n'))) > 5:
-                    suggestions.append(line.strip('\n'))
+        # Get a list of similar names if a match wasn't found
+        with open(SNAKE_FILE) as f:
+            return encode_url(difflib.get_close_matches(name, [x.strip('\n') for x in f], n=1)[0])
 
-        return encode_url(random.choice(suggestions))
-
-    async def fetch(self, session, url):
+    @staticmethod
+    async def fetch(session, url):
         """Fetch the contents of a URL as text"""
         async with async_timeout.timeout(10):
             async with session.get(url) as response:
@@ -67,7 +91,8 @@ class Snakes:
             # WHY WOULD YOU USE DICTIONARY LITERAL IN A RETURN STATEMENT but okay lol
             return {
                 "name": content["title"],
-                "info": content["extract"] or "I don't know much about this snake, sorry!"
+                "info": content["extract"] or "I don't know much about this snake, sorry!",
+                "image": self.iamge(name)
             }
 
     @command()
