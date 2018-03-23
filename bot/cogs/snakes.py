@@ -1,13 +1,14 @@
 # coding=utf-8
-
 import logging
 from typing import Any, Dict
-import discord
-
 
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
+
+@command(name="welcome")
+async def welcome(self,ctx: Context):
+    return await ctx.send("Welcome! I dont what to say ,but ill say Hello !")
 
 
 class Snakes:
@@ -19,7 +20,6 @@ class Snakes:
         self.bot = bot
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
-
         """
         Go online and fetch information about a snake
 
@@ -35,8 +35,6 @@ class Snakes:
 
     @command()
     async def get(self, ctx: Context, name: str = None):
-
-        await ctx.send("hola")
         """
         Go online and fetch information about a snake
 
@@ -48,9 +46,7 @@ class Snakes:
         """
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
-    @command(name="welcome")
-    async def welcome(self,ctx: Context):
-        return await ctx.send("Welcome! I dont what to say ,but ill say Hello !")
+
 
 def setup(bot):
     bot.add_cog(Snakes(bot))
