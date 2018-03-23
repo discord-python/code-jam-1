@@ -42,7 +42,7 @@ class Snakes:
         :return: the full JSON from the search API
         """
         url = "https://api.unsplash.com/search/photos?client_id" \
-              "={0}&query={1}".format(os.environ.get("UNSPLASH_CLIENT_ID"), snake_name)
+              "={0}&query={1}+snake".format(os.environ.get("UNSPLASH_CLIENT_ID"), snake_name)
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 response = await response.read()
