@@ -24,22 +24,24 @@ class SnakeGame:
         Draw the board
         """
         # create empty board
-        board_string = "+" + "-" * (self.board_dimensions[1]) + "+" + "\n"
+        # board_string = "+" + "-" * (self.board_dimensions[1]) + "+" + "\n"
+        board_string = ""
         for i in range(self.board_dimensions[0]):
-            row_string = "|"
+            # row_string = "|"
+            row_string = ""
             # draw snake
             for j in range(self.board_dimensions[1]):
                 if [i, j] == self.snake.positions[0]:
-                    row_string += "□"  # head
+                    row_string += ":python:"  # head
                 elif [i, j] in self.snake.positions:
-                    row_string += "■"
+                    row_string += "🐍"
                 elif [i, j] == self.food:
-                    row_string += "."
+                    row_string += "🍕"
                 else:
-                    row_string += " "
-            row_string += "|\n"
-            board_string += row_string
-        board_string += "+" + "-" * (self.board_dimensions[1]) + "+\n"
+                    row_string += "◻️"
+            # row_string += "|\n"
+            board_string += row_string + "\n"
+        # board_string += "+" + "-" * (self.board_dimensions[1]) + "+\n"
 
         return board_string
 
@@ -76,9 +78,10 @@ class SnakeGame:
         if (head[0] == -1 or
                 head[1] == -1 or
                 head[0] == self.board_dimensions[0] or
-                head[1] == self.board_dimensions[1]):
-
+                head[1] == self.board_dimensions[1] or
+                head in self.snake.positions[1:]):
             return True
+        
         return False
 
     def putFood(self):
