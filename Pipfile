@@ -5,7 +5,10 @@ name = "pypi"
 
 [packages]
 "72eb2aa" = {file = "https://github.com/Rapptz/discord.py/archive/rewrite.zip"}
+aiohttp = "*"
 aiodns = "*"
+bs4 = "*"
+html2text = "*"
 
 [dev-packages]
 "flake8" = "*"
