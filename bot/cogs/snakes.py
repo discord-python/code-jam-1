@@ -29,7 +29,11 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        
+        site = 'https://en.wikipedia.org/wiki/List_of_snakes_by_common_name'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(site) as resp:
+                text = await resp.read()
+                return text
 
 
     @command()
@@ -43,10 +47,7 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
-        async with aiohttp.ClientSession() as session:
-            async with session.get('https://en.wikipedia.org/wiki/List_of_snakes_by_common_name') as resp:
-                text = await resp.read()
-        await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
+        # await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
 
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
