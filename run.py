@@ -43,6 +43,6 @@ try:
 except FileNotFoundError:
     print('No token found.')
 else:
-    bot.run(os.environ.get("BOT_TOKEN"))
+    bot.run(token)
 
 bot.http_session.close()  # Close the aiohttp session when the bot finishes running
