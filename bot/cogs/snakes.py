@@ -1,8 +1,10 @@
 # coding=utf-8
 import logging
+import wikipedia
 from typing import Any, Dict
 
 from discord.ext.commands import AutoShardedBot, Context, command
+from discord import Embed
 
 log = logging.getLogger(__name__)
 
@@ -30,7 +32,7 @@ class Snakes:
         """
 
     @command()
-    async def get(self, ctx: Context, name: str = None):
+    async def get(self, ctx: Context, name: str = "Vipera berus"):
         """
         Go online and fetch information about a snake
 
@@ -40,6 +42,15 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
+        snakeembed = Embed(color=ctx.me.color, title="SNAKE")
+
+        snake_data = wikipedia.summary(name, sentences=1)
+        snake_image = wikipedia.WikipediaPage(name)
+
+        snakeembed.add_field(name=name, value=snake_data)
+        snakeembed.set_thumbnail(url=snake_image.images[0])
+
+        await ctx.send(embed=snakeembed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
