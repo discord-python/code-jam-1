@@ -6,11 +6,6 @@ from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
 
-@command(name="welcome")
-async def welcome(self,ctx: Context):
-    return await ctx.send("Welcome! I dont what to say ,but ill say Hello !")
-
-
 class Snakes:
     """
     Snake-related commands
