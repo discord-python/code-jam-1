@@ -23,6 +23,7 @@ class Snakes:
         async with aiohttp.ClientSession(headers={'User-Agent': 'DevBot v.10'}) as cs:
             async with async_timeout.timeout(20):
                 async with cs.get("https://en.wikipedia.org/w/api.php", params=params) as r:
+                    log.info(f"{r.url}: {r.status}: {r.reason}")
                     return await r.json()
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
@@ -38,6 +39,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
+        snake_name = name
         name = name.replace(" ", "_")
 
         text_params = {'action': 'query',
@@ -45,25 +47,36 @@ class Snakes:
                        'prop': 'extracts',
                        'exsentences': '2',
                        'explaintext': '1',
+                       'autosuggest': '1',
+                       'redirects': '1',
                        'format': 'json'}
 
         image_name_params = {'action': 'query',
                              'titles': name,
                              'prop': 'images',
+                             'redirects': '1',
+                             'autosuggest': '1',
                              'imlimit': '1',
                              'format': 'json'}
 
         text_json = await self.get_wiki_json(text_params)
+
         image_name_json = await self.get_wiki_json(image_name_params)
 
-        # snake_image = "https://pbs.twimg.com/profile_images/662615956670144512/dqsVK6Nw_400x400.jpg"
+        snake_image = "https://pbs.twimg.com/profile_images/662615956670144512/dqsVK6Nw_400x400.jpg"
 
         page_id = list(text_json['query']['pages'].keys())[0]
+        if page_id == "-1":
+            snake_dict = {"name": name, "snake_text": "You call that a snake?\nTHIS is a snake!", "snake_image": snake_image}
+            return snake_dict
+
         image_id = image_name_json['query']['pages'][page_id]['images'][0]['title']
 
         image_url_params = {'action': 'query',
                             'titles': image_id,
                             'prop': 'imageinfo',
+                            'redirects': '1',
+                            'autosuggest': '1',
                             'iiprop': 'url',
                             'format': 'json'}
 
@@ -73,7 +86,7 @@ class Snakes:
         snake_image = image_url_json['query']['pages'][snake_image_id]['imageinfo'][0]['url']
         snake_text = text_json['query']['pages'][page_id]['extract']
 
-        snake_dict = {"name": name, "snake_text": snake_text, "snake_image":snake_image}
+        snake_dict = {"name": snake_name, "snake_text": snake_text, "snake_image":snake_image}
         return snake_dict
 
     @command()
@@ -88,11 +101,21 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         https://en.wikipedia.org/w/api.php?action=query&titles=Vipera_berus&prop=extracts&exsentences=2&explaintext=1&format=json
         """
-        snake = await self.get_snek(name)
-        snake_embed = Embed(color=ctx.me.color, title="SNAKE")
-        snake_embed.add_field(name=snake['name'], value=snake['snake_text'])
-        snake_embed.set_thumbnail(url=snake['snake_image'])
-        await ctx.send(embed=snake_embed)
+        if name == "snakes on a plane":
+            await ctx.send("https://media.giphy.com/media/5xtDartXnQbcW5CfM64/giphy.gif")
+        elif name == "python":
+            with open('bot/cogs/data/quote.txt', 'r') as file:
+                text = file.read()
+                snake_embed = Embed(color=ctx.me.color, title="SNEK")
+                snake_embed.add_field(name="Python", value=f"*{text}*")
+                snake_embed.set_thumbnail(url="http://www.pngall.com/wp-content/uploads/2016/05/Python-Logo-Free-PNG-Image.png")
+                await ctx.send(embed=snake_embed)
+        else:
+            snake = await self.get_snek(name)
+            snake_embed = Embed(color=ctx.me.color, title="SNEK")
+            snake_embed.add_field(name=snake['name'], value=snake['snake_text'])
+            snake_embed.set_thumbnail(url=snake['snake_image'])
+            await ctx.send(embed=snake_embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
