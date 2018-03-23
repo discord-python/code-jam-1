@@ -35,8 +35,8 @@ bot.load_extension("bot.cogs.security")
 # Commands, etc
 bot.load_extension("bot.cogs.snakes")
 
-bot.run(os.environ.get("BOT_TOKEN"))
+#bot.run(os.environ.get("BOT_TOKEN"))
 # I SWEAR TO GOD, HONESTLY WATCH ME LEAVE THIS TOKEN IN LMAO
-#bot.run('boop, i remembered to remove it')
+bot.run('NDE0MDk5NTIyOTMxNzg1NzI4.DZYCkA.mkJ610z1Y5g1GSqRGHR-dQYAB74')
 
 bot.http_session.close()  # Close the aiohttp session when the bot finishes running
