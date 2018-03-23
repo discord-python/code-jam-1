@@ -1,6 +1,5 @@
 # coding=utf-8
 import os
-import json
 
 from aiohttp import AsyncResolver, ClientSession, TCPConnector
 
@@ -36,13 +35,6 @@ bot.load_extension("bot.cogs.security")
 # Commands, etc
 bot.load_extension("bot.cogs.snakes")
 
-try:
-    with open('config.json') as f:
-        config = json.load(f)
-        token = config.get('bot_token')
-except FileNotFoundError:
-    print('No token found.')
-else:
-    bot.run(token)
+bot.run(os.environ.get('BOT_TOKEN'))
 
 bot.http_session.close()  # Close the aiohttp session when the bot finishes running

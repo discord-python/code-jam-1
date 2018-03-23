@@ -1,7 +1,7 @@
 # coding=utf-8
 import logging
 from typing import Any, Dict
-from bs4 import BeautifulSoup
+
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
@@ -14,7 +14,12 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
-        self.base_url = 'http://www.softschools.com/facts/animals/'
+
+    def get_attr(self, type: str, attr: str):
+        return self.bot.soup.find(type, class_=attr).text
+
+    def get_all_attrs(self, type: str, attr: str):
+        return self.bot.soup.find_all(type, class_=attr)
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -29,7 +34,6 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        pass
 
     @command()
     async def get(self, ctx: Context, name: str = None):
@@ -42,7 +46,6 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
-        pass
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
