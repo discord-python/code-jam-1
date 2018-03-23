@@ -31,6 +31,11 @@ class Snakes:
         return name
 
     async def get_danger(self, level: str = None) -> str:
+        """
+        Returns the human-readable version of the danger level.
+        :param level: The danger level of a snek
+        :return: A string that is the human readable version of passed level.
+        """
         return {
             '???': 'Danger unknown',
             '---': 'Nonvenomous',
