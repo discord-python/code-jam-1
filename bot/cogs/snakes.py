@@ -90,6 +90,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
+        global snakelist
         snake_name = name
         name = name.replace(" ", "_")  # sanitize name
 
@@ -115,8 +116,8 @@ class Snakes:
         snake_image = "https://pbs.twimg.com/profile_images/662615956670144512/dqsVK6Nw_400x400.jpg"
 
         page_id = list(text_json['query']['pages'].keys())[0]
-        if page_id == "-1":  # No entry on the wiki
-            snake_dict = {"name": name,
+        if page_id == "-1" or snake_name not in snakelist:  # No entry on the wiki
+            snake_dict = {"name": snake_name,
                           "snake_text": "You call that a snake?\nTHIS is a snake!",
                           "snake_image": snake_image}
             return snake_dict
