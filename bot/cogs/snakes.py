@@ -11,10 +11,12 @@ import json
 import async_timeout
 import random
 import difflib
+from googleapiclient.discovery import build
 
 log = logging.getLogger(__name__)
 
 # Probably should move these somewhere
+<<<<<<< HEAD
 BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles={}&redirect=1"
 PYTHON = {
     "name": "Python",
@@ -28,6 +30,10 @@ absolutely pain-free software distribution... *sigh*""",
 }
 with open("bot/snakes.txt") as file:
     SNAKES = file.readlines()
+=======
+BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles={}"
+SNAKE_FILE = "bot/snakes.txt"
+>>>>>>> 47e03d6cd928a3bb91a1310ee04cf855c8bef834
 
 
 class Snakes:
@@ -58,11 +64,20 @@ class Snakes:
                     
         return final
 
+<<<<<<< HEAD
     def image(self, name):
         service = build("customsearch", "v1", developerKey="API")
         res = service.cse().list(
             q=name,
             cx='ENGINE',
+=======
+    def iamge(self, name):
+        service = build("customsearch", "v1", developerKey="AIzaSyBb1UN8_hETbwylEjBlmLudPTCB7Oy_UuM")
+
+        res = service.cse().list(
+            q=name,
+            cx='002819837506601299516:4u9m7sepc8w',
+>>>>>>> 47e03d6cd928a3bb91a1310ee04cf855c8bef834
             searchType='image',
             num=10,
             safe='off'
