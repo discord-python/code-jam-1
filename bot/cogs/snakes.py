@@ -59,7 +59,7 @@ class Snakes:
         return json_response['results'][rand]['urls']['small']
 
     @command()
-    async def get(self, ctx: Context, name: str = "python"):
+    async def get(self, ctx: Context, name: str = None):
         """
         Go online and fetch information about a snake
 
@@ -69,10 +69,27 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
-        url = await self.get_snek_image(name)   # not limited to snakes - user can search anything they like
+        embed = discord.Embed(color=0x3E885B)
+        if name == "python":
+            # handle Python special case
+            embed.add_field(
+                name="Python (programming language)",
+                value="*Guido van Rossum*\n\n"
+                      "This language is neither dangerous nor venomous and be found in software globally",
+                inline=False
+            )
+            embed.set_image(url=await self.get_snek_image("python programming language"))
+        else:
+            url = await self.get_snek_image(name)  # not limited to snakes - user can search anything they like
+            embed.add_field(
+                name="common name",
+                value="*sci name*\n\nThis snake is (**not**) venomous and can be found in (...)",
+                inline=False
+            )
+            embed.set_image(url=url)
         await ctx.channel.send(
             content=ctx.message.author.mention + " Here's your snek!",
-            embed=discord.Embed().set_image(url=url)
+            embed=embed
         )
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
