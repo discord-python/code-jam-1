@@ -153,17 +153,18 @@ class Snakes:
         image_name_json = await self.get_wiki_json(image_name_params)
         snake_image = DEFAULT_SNAKE
 
-        # Here we check if *ANY* of the values a user has submitted
-        # match *ANY* of the values in snake_cache
-
         page_id = list(text_json['query']['pages'].keys())[0]
+
+        # Check that page exists or that snake is in cache
         if page_id == "-1" or snake_name.lower() not in self.snake_cache:
+            # Build a list of matching snakes
             matched_snakes = []
 
             for snake in self.snake_cache:
                 if any(s in snake for s in snake_name.lower().split()):
                     matched_snakes.append(snake)
 
+            # On cache hit start building a sorted, trimmed, random list from hits
             if matched_snakes:
                 trimmed_snakes = []
                 random_matched_snakes = list(matched_snakes)
@@ -174,18 +175,23 @@ class Snakes:
 
                 trimmed_snakes = sorted(trimmed_snakes)
 
+                # If page doesn't exist and snake DOES exist in cache return error and suggestions
+                # E.g. "corn" wont hit any snakes directly, but exists inside more than 1 result
                 if page_id == "-1" and snake_name.lower() in self.snake_cache:
                     snake_dict = {"name": f"Found {capwords(snake_name)} but no page! Suggestions:",
                                   "snake_text": ''.join(trimmed_snakes),
                                   "snake_image": snake_image}
                     return snake_dict
 
+                # If more than 1 indirect cache hit then offer suggestions based off the hits
                 if len(matched_snakes) > 1:
 
                     snake_dict = {"name": "No snake found, here are some suggestions:",
                                   "snake_text": ''.join(trimmed_snakes),
                                   "snake_image": snake_image}
                     return snake_dict
+                # If only 1 cache hit then re-run get_snek with the full term from cache
+                # A good example of this in action is "bot.get rosy"
                 else:
                     snake = matched_snakes[0]
                     return await self.get_snek(snake)
