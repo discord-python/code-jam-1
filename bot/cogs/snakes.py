@@ -5,10 +5,11 @@ import async_timeout
 import random
 import difflib
 import logging
+import urllib
 
 import aiohttp
 
-from typing import Any, Dict
+from typing import Dict
 from discord import Embed
 from discord.ext.commands import AutoShardedBot, Context, command
 
@@ -47,24 +48,24 @@ class Snakes:
 
         def encode_url(text):
             """Encode a string to URL-friendly format"""
-            return BASEURL.format("%".join("{:02x}".format(ord(c)) for c in text))
+            return BASEURL.format(urllib.parse.quote_plus(text))
 
-        # Check if the snake name is known
-        if name.upper() in list(map(lambda n: n.upper(), SNAKES)):
+        # Check if the snake name is valid
+        if name.upper() in [name.upper() for name in SNAKES]:
             return encode_url(name)
 
         # Get the most similar name if a match wasn't found
         return encode_url(difflib.get_close_matches(name, SNAKES, n=1, cutoff=0)[0])
 
     @staticmethod
-    async def fetch(session, url):
+    async def fetch(session, url: str):
         """Fetch the contents of a URL as a json"""
         async with async_timeout.timeout(10):
             async with session.get(url) as response:
                 return await response.json()
 
     async def get_snek(self, name: str = None) -> Dict[str, str]:
-        """Get a snake with a given name, or otherwise randomly"""
+        """If a name is provided, this gets a specific snake. Otherwise, it gets a random snake."""
         if name is None:
             name = random.choice(SNAKES)
             
@@ -75,7 +76,7 @@ class Snakes:
         async with aiohttp.ClientSession() as session:
             url = self.snake_url(name)
 
-            # Get the 
+            # Get the content
             response = await self.fetch(session, url)
             page = response["query"]["pages"]
             content = next(iter(page.values()))
