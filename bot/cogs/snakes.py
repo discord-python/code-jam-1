@@ -43,7 +43,8 @@ class Snakes:
         """
         client_id = os.environ.get("UNSPLASH_CLIENT_ID")
         url = (
-            "https://api.unsplash.com/search/photos?client_id={client_id}&query={snake_name}+snake"
+            "https://api.unsplash.com/search/photos?client_id"
+            f"={client_id}&query={snake_name}+snake"
         )
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
