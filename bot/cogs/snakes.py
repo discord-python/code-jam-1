@@ -1,7 +1,7 @@
 # coding=utf-8
 import logging
 import re
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import aiohttp
 import bs4
@@ -10,11 +10,14 @@ import html2text
 from discord.ext import commands
 from discord.ext.commands import Context
 
+from ..hardcodings import categories
+
 log = logging.getLogger(__name__)
 
-API = 'http://en.wikipedia.org/w/api.php?format=json&redirects=1&action='
+API = 'https://en.wikipedia.org/w/api.php?format=json&redirects=1&action='
 rSENTENCE = re.compile(r'^.+?\.')
 rBRACK = re.compile(r'[[(].+?[\])]')
+rMDLINK = re.compile(r'(\[.*?\])\((\S+?)\s".*?"\)')
 
 
 class Snakes:
@@ -25,10 +28,19 @@ class Snakes:
     def __init__(self, bot: commands.AutoShardedBot):
         self.bot = bot
         self.session = aiohttp.ClientSession(loop=bot.loop)  # the provided session says no host is reachable
-        self.h2md = html2text.HTML2Text()  # TODO: use
-        self.base_query = API + 'parse&prop=text&page={}'
-        self.secs_query = API + 'parse&prop=sections&page={}'
-        self.img_query = API + 'query&titles={}&prop=pageimages&pithumbsize=300'
+        self.h2md = html2text.HTML2Text()
+        self.base_query = API + (
+          'parse'
+          '&page={}'
+          '&prop=text|sections'
+        )
+        self.info_query = API + (
+          'query'
+          '&titles={}'
+          '&prop=pageimages|categories'
+          '&pithumbsize=300'
+          f'&cllimit=max&clcategories={categories}'
+          )
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -45,27 +57,33 @@ class Snakes:
         """
         # TODO: Random will be done by fetching from Special:RandomInCategory/Venomous_snakes, or something
         async with self.session.get(self.base_query.format(name)) as pg_resp, \
-                   self.session.get(self.secs_query.format(name)) as sc_resp, \
-                   self.session.get(self.img_query.format(name)) as img_resp:  # noqa
+                   self.session.get(self.info_query.format(name)) as if_resp:  # noqa
             data = await pg_resp.json()
-            secs = await sc_resp.json()
-            img = await img_resp.json()
+            info = await if_resp.json()
+
+        pg_id = str(data['parse']['pageid'])
+        pg_info = info['query']['pages'][pg_id]
+        if 'categories' not in pg_info:
+            raise ValueError("This doesn't appear to be a snake!")
         soup = bs4.BeautifulSoup(data['parse']['text']['*'])
         tidbits = []
-        for section in secs['parse']['sections']:
-            tag = rBRACK.sub('', str(soup.find(id=section['anchor']).find_next('p')))
-            try:
-                tidbits.append(self.h2md.handle(rSENTENCE.match(tag).group()).replace('\n', ' '))
-            except AttributeError:
-                pass
+        for section in data['parse']['sections']:
             if sum(map(len, tidbits)) > 1500:
                 break
+            tag = rBRACK.sub('', str(soup.find(id=section['anchor']).find_next('p')))
+            try:
+                tidbit = self.h2md.handle(rSENTENCE.match(tag).group()).replace('\n', ' ')
+            except AttributeError:
+                pass
+            else:
+                tidbits.append(rMDLINK.sub(lambda m: f'{m[1]}(https://en.wikipedia.org{m[2]})', tidbit))
         try:
-            pg_id = str(data['parse']['pageid'])
-            imglink = img['query']['pages'][pg_id]['thumbnail']['source']
+            img_url = pg_info['thumbnail']['source']
         except KeyError:
-            imglink = None
-        return {'image': imglink, 'tidbits': tidbits}
+            img_url = None
+        title = data['parse']['title']
+        pg_url = f'https://en.wikipedia.org/wiki/{title.replace(" ", "_")}'
+        return {'info': (img_url, pg_url, title), 'tidbits': tidbits}
 
     @commands.command()
     async def get(self, ctx: Context, name: str = None):
@@ -78,10 +96,14 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
-        d = await self.get_snek(name)
-        embed = discord.Embed(description='\n\n • '.join(d['tidbits']))
-        if d['image'] is not None:
-            embed.set_thumbnail(url=d['image'])
+        try:
+            snek = await self.get_snek(name)
+        except ValueError as e:
+            return await ctx.send(f'`{e}`')
+        image, page, title = snek['info']
+        embed = discord.Embed(title=title, url=page, description='\n\n • '.join(snek['tidbits']))
+        if image is not None:
+            embed.set_thumbnail(url=image)
         await ctx.send(embed=embed)
 
 
