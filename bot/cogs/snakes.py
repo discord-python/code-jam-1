@@ -16,6 +16,7 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
+        self.site = 'https://en.wikipedia.org/wiki/List_of_snakes_by_common_name'
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -30,9 +31,9 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        site = 'https://en.wikipedia.org/wiki/List_of_snakes_by_common_name'
+
         async with aiohttp.ClientSession() as session:
-            async with session.get(site) as resp:
+            async with session.get(self.site) as resp:
                 text = await resp.read()
 
 
