@@ -19,6 +19,7 @@ class Snakes:
         self.bot = bot
         with open("bot/db/db.json", "r") as db:
             self.db = json.load(db)
+        self.lower_keys = [key.lower() for key in self.db.keys()]
 
     async def get_snek(self, name: str = None) -> Tuple[str, str]:
         """
@@ -41,8 +42,9 @@ class Snakes:
                                "found in areas like backend web development data science and AI.")
                 return (python_info, "https://www.python.org/static/community_logos/python-logo-master-v3-TM.png")
             else:
-                if name in self.db:
-                    return self.db[name]
+                if name in self.lower_keys:
+                    print(self.lower_keys.index(name))
+                    return self.db[list(self.db.keys())[self.lower_keys.index(name)]]
                 else:
                     return None
         else:
