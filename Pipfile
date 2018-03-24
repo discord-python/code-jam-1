@@ -8,6 +8,9 @@ name = "pypi"
 aiodns = "*"
 aiohttp = "<2.3.0,>=2.0.0"
 websockets = ">=4.0,<5.0"
+lxml = "*"
+pymarkovchain = "*"
+asyncio = "*"
 
 [dev-packages]
 "flake8" = "*"

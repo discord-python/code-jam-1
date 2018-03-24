@@ -1,4 +1,6 @@
-# Code Jam 1
+# Code Jam 1 - Team 23
+
+**This is the code jam entry for Momo & kel**
 
 This is the repository for all code relating to our first code jam, in March 2018. Participants should fork this repository, and submit their code in a pull request.
 
