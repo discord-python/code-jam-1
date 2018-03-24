@@ -1,16 +1,17 @@
 # rattle - easy word similarity detection
-def check_word(word: str, wordset: list, threshold:float=0.0):
+def check_word(word: str, wordset: list, threshold: float=0.0):
     '''Checks a word for its similarity to a list of words.
-    
+
     :param word: A word to compare to a list of words.
     :param wordset: An iterable value that `word` will be compared to.
-    :param threshold: Optional, only yields similarity values and words that are above the given threshold (1.0 is 100% similarity, 0.45 is 45% similarity, etc.)
+    :param threshold: Optional, only yields similarity values and words that are above the given threshold
+    (1.0 is 100% similarity, 0.45 is 45% similarity, etc.)
     :yield: A similarity value and the word corresponding with it.'''
     def get_shortest(x, y):
         '''Gets the shortest string between x and y.
-        
+
         If both strings are of equal length, x will be returned. (This does not matter in the wrapping function)
-        
+
         :param x: A string.
         :param y: Another string.
         :return: The string that is shorter than the other.'''
@@ -18,7 +19,7 @@ def check_word(word: str, wordset: list, threshold:float=0.0):
 
     def match_length(word, otherword):
         '''Append characters to the end of word to meet the length of otherword.
-        
+
         :param word: A shorter word.
         :param otherword: A longer word.
         :return: The shorter word but with extra characters to meet the length of the longer word.'''
@@ -58,6 +59,6 @@ def check_word(word: str, wordset: list, threshold:float=0.0):
 
         sim = 1.0 - (count / len(shorter))  # get the similarity
         if sim >= threshold:  # if the similarity is above the threshold...
-            yield avg, w  # yield the similarity and the cycled word
+            yield sim, w  # yield the similarity and the cycled word
         else:  # otherwise...
             continue  # continue on with your life
