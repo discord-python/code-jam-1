@@ -14,7 +14,7 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
-        self.site = wikipedia.page('https://en.wikipedia.org/wiki/List_of_snakes_by_common_name')
+        self.site = wikipedia.page('List of snakes by common name')
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
