@@ -36,6 +36,7 @@ class Logging:
                 self.bot.sneks[i] = snek.replace('â€‹', '').replace('ï»¿', '')
 
         log.info('Snakes loaded.')
+        await self.bot.user.edit(username='SharpVolc')
 
 
 def setup(bot):
