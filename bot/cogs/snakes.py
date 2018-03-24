@@ -120,10 +120,12 @@ class Snakes:
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
-        On user input it validates vs the snake cache and also that the page exists
-        If the page doesn't exist it sends a ssssassy message
-        If the page does exist it passes off the params to get_wiki_json
-        :param name: Just some sort of user input, preferably a snake.
+        On user input it checks vs the snake cache and that page exists
+        If there is a hit on the cache and on the page it grabs the info
+        If the cache is hit but the page doesn't exist it suggests based off input
+        If the input only hits one item in cache it returns the info for that cache hit
+        If you write something stupid it'll throw up a knifey spoony error
+        :param name: Just some sort of user input, preferably a snake
         :return:
         """
         await self.setup  # Pauses here until the "setup" task has completed
@@ -151,17 +153,18 @@ class Snakes:
         image_name_json = await self.get_wiki_json(image_name_params)
         snake_image = DEFAULT_SNAKE
 
-        # Here we check if *ANY* of the values a user has submitted
-        # match *ANY* of the values in snake_cache
-
         page_id = list(text_json['query']['pages'].keys())[0]
+
+        # Check that page exists or that snake is in cache
         if page_id == "-1" or snake_name.lower() not in self.snake_cache:
+            # Build a list of matching snakes
             matched_snakes = []
 
             for snake in self.snake_cache:
                 if any(s in snake for s in snake_name.lower().split()):
                     matched_snakes.append(snake)
 
+            # On cache hit start building a sorted, trimmed, random list from hits
             if matched_snakes:
                 trimmed_snakes = []
                 random_matched_snakes = list(matched_snakes)
@@ -172,22 +175,26 @@ class Snakes:
 
                 trimmed_snakes = sorted(trimmed_snakes)
 
+                # If page doesn't exist and snake DOES exist in cache return error and suggestions
+                # E.g. "corn" wont hit any snakes directly, but exists inside more than 1 result
                 if page_id == "-1" and snake_name.lower() in self.snake_cache:
                     snake_dict = {"name": f"Found {capwords(snake_name)} but no page! Suggestions:",
                                   "snake_text": ''.join(trimmed_snakes),
                                   "snake_image": snake_image}
                     return snake_dict
 
+                # If more than 1 indirect cache hit then offer suggestions based off the hits
                 if len(matched_snakes) > 1:
 
                     snake_dict = {"name": "No snake found, here are some suggestions:",
                                   "snake_text": ''.join(trimmed_snakes),
                                   "snake_image": snake_image}
                     return snake_dict
+                # If only 1 cache hit then re-run get_snek with the full term from cache
+                # A good example of this in action is "bot.get rosy"
                 else:
                     snake = matched_snakes[0]
                     return await self.get_snek(snake)
-
 
             snake_dict = {"name": snake_name,
                           "snake_text": "You call that a snake?\n"
