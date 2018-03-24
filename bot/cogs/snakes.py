@@ -156,6 +156,12 @@ class Snakes:
 
         page_id = list(text_json['query']['pages'].keys())[0]
         if page_id == "-1" or snake_name.lower() not in self.snake_cache:
+            if page_id == "-1" and snake_name.lower() in self.snake_cache:
+                snake_dict = {"name": "No one has written about this snake! Have some suggestions:",
+                              "snake_text": self.get_snek('snake'),
+                              "snake_image": snake_image}
+                return snake_dict
+
             matched_snakes = []
 
             for snake in self.snake_cache:
@@ -182,7 +188,7 @@ class Snakes:
                     snake_dict = {"name": snake_name,
                                   "snake_text": '',
                                   "snake_image": snake_image}
-                    # return await self.get_snek(snake)
+                    return await self.get_snek(snake)
 
 
             snake_dict = {"name": snake_name,
