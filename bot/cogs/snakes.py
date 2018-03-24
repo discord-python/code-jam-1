@@ -54,7 +54,7 @@ class Snakes:
             title=snake_info['name'].title(),
             description=snake_info['description']
         )
-        
+
         if snake_info['name'] != "python":
             embed.add_field(name="Where can you find them?", value=snake_info['location'])
             embed.add_field(name="Are they venomous?", value=snake_info['venomous'])
@@ -63,7 +63,7 @@ class Snakes:
             embed.add_field(name="Who created it?", value=snake_info['creator'])
             embed.add_field(name="When was it created?", value=snake_info['created'])
             embed.set_thumbnail(url=snake_info['image'])
-
+            
         await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
