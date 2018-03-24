@@ -51,7 +51,7 @@ class Snakes:
         """
         Shows information on different snakes.
         """
-        
+
         snake_info = await self.get_snek(name)
 
         embed = Embed(
@@ -99,6 +99,7 @@ class Snakes:
             embed.set_image(url=movies_dict[movie_name]['image'])
 
         await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Snakes(bot))
