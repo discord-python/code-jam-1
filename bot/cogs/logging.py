@@ -3,8 +3,6 @@ import logging
 
 from aiohttp import ClientSession
 
-from bs4 import BeautifulSoup
-
 from discord.ext.commands import AutoShardedBot
 
 log = logging.getLogger(__name__)
@@ -27,13 +25,18 @@ class Logging:
         log.info('Serving Team 17 in Code Jam 1!')
         log.info('--------------')
         log.info("Bot connected!")
-        async with ClientSession(loop=self.bot.loop) as session:
-            self.bot.session = session
-            self.bot.info_url = 'https://snake-facts.weebly.com/snake_names.html'
+
+        self.bot.session = ClientSession(loop=self.bot.loop)
+        self.bot.info_url = 'https://snake-facts.weebly.com/'
         log.info('Session created!')
-        async with self.bot.session.get(self.bot.info_url).text as resp:
-            self.bot.soup = BeautifulSoup(resp, 'lxml')
-        log.info('Response successful!')
+
+        with open('./snakes.txt') as f:
+            self.bot.sneks = f.read().split('\n')
+            for i, snek in enumerate(self.bot.sneks):
+                self.bot.sneks[i] = snek.replace('â€‹', '').replace('ï»¿', '')
+            print(self.bot.sneks)
+
+        log.info('Snakes loaded.')
 
 
 def setup(bot):

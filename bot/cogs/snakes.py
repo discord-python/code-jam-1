@@ -1,7 +1,12 @@
 # coding=utf-8
 import logging
+from difflib import get_close_matches
+from random import choice
 from typing import Any, Dict
 
+from bs4 import BeautifulSoup
+
+import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
@@ -15,11 +20,38 @@ class Snakes:
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
 
-    def get_attr(self, type: str, attr: str):
-        return self.bot.soup.find(type, class_=attr).text
+    def get_attr(self, soup, type, attr):
+        return soup.find(type, class_=attr)
 
-    def get_all_attrs(self, type: str, attr: str):
-        return self.bot.soup.find_all(type, class_=attr)
+    def get_all_attrs(self, soup, type, attr):
+        return soup.find_all(type, class_=attr)
+
+    def no_sneks_found(self, name):
+        '''Helper function if the snake was not found in the directory.'''
+        em = discord.Embed(
+            title='No snake found.',
+            color=discord.Color.green()
+        )
+        snakes = get_close_matches(name, self.bot.sneks)
+        if snakes:
+            em.description = 'Did you mean...\n'
+            em.description += '\n'.join(f'`{x}`' for x in snakes)
+        else:
+            snakes = 'https://github.com/SharpBit/code-jam-1/blob/master/snakes.txt'
+            em.description = f'Click [here]({snakes}) for the list of available snakes.'
+        return em
+
+    def format_info(self, data):
+        '''Formats the info with the given data'''
+        em = discord.Embed(
+            title=f"{data['name']} ({data['scientific-name']})",
+            description='Nothing yet.',
+            color=discord.Color.green()
+        )
+        em.set_thumbnail(url=data['image-url'])
+        em.set_footer(text='Bot by SharpBit and Pikuhana')
+
+        return em
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -34,9 +66,28 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
+        if name:
+            if name not in self.bot.sneks:
+                return self.no_sneks_found(name)
+        else:
+            name = choice(self.bot.sneks)
+        snake = name.lower().replace(' ', '-')
+        url = f'{self.bot.info_url}{snake}.html'
+        async with self.bot.session.get(url) as resp:
+            info = await resp.read()
+            soup = BeautifulSoup(info, 'lxml')
+        img = self.get_attr(soup, 'div', 'wsite-image wsite-image-border-none ').a.img.src
+        names = self.get_attr(soup, 'td', 'wsite-multicol-col')
+        info = {
+            'name': names.h1,
+            'scientific-name': names.h2.i,
+            'image-url': f"{self.bot.info_url}{img}"
+        }
+
+        return info
 
     @command()
-    async def get(self, ctx: Context, name: str = None):
+    async def get(self, ctx: Context, *, name: str = None):
         """
         Go online and fetch information about a snake
 
@@ -46,6 +97,13 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
+        data = await self.get_snek(name)
+        # if the snake is not found
+        if isinstance(data, discord.Embed):
+            return await ctx.send(embed=data)
+        # format the given data
+        em = self.format_info(data)
+        await ctx.send(embed=em)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
