@@ -37,12 +37,18 @@ class Snakes:
         cobra = 'Cobra is the common name of various elapid snakes, most of which belonging to the genus Naja.'
         pythonidae = 'The Pythonidae, commonly known simply as pythons,\n from the Greek word python (πυθων), are\n a family of nonvenomous snakes found in Africa, Asia, and Australia.\n Among its members are some of the largest snakes in the world.\n Eight genera and 31 species are currently recognized.'
 
-
-        embed = discord.Embed(
-            title=name1,
-            description=cobra,
-            color=0x00ff00,
-        )
+        first_line={
+            'cobra':cobra,
+            'python':pythonidae,
+        }
+       
+        for key,value in first_line.items():
+            if key==name.lower():
+                embed = discord.Embed(
+                    title=name1,
+                    description=value,
+                    color=0x00ff00,
+                )
         return await ctx.send(embed=embed)
     """
             Go online and fetch information about a snake
