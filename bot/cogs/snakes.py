@@ -33,7 +33,7 @@ class Snakes:
         """
 
         async with aiohttp.ClientSession() as session:
-            async with session.get(site) as resp:
+            async with session.get(self.site) as resp:
                 text = await resp.read()
 
 
