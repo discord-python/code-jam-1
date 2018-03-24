@@ -117,7 +117,7 @@ class Snakes:
     def get_snek_fact(self) -> str:
         with open('bot/cogs/resources/facts.json', 'r', encoding="utf8") as f:
             data = json.load(f)
-        choice = random.randint(0, len(data['facts'])-1)
+        choice = random.randint(0, len(data['facts']) - 1)
         return data['facts'][choice]
 
 
