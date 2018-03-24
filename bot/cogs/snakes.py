@@ -1,5 +1,5 @@
 # coding=utf-8
-import logging, aiohttp, random, wikipedia
+import logging, aiohttp, random, wikipedia, time
 from bs4 import BeautifulSoup
 from typing import Any, Dict
 from discord.ext.commands import AutoShardedBot, Context, command
@@ -26,6 +26,7 @@ class Snakes:
                 '''
 
     def __init__(self, bot: AutoShardedBot):
+        self.inputs = []
         self.bot = bot
         self.site = 'https://en.wikipedia.org/wiki/List_of_snakes_by_common_name'
 
@@ -75,6 +76,34 @@ class Snakes:
         # await ctx.send(name)
 
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+    @command()
+    async def snake(self, ctx: Context, x=10, y=5):
+        board = """"""
+        snake = [(x//2, y//2)]
+
+        board += "```\n " + "#" * x + "##"
+        for yAxis in range(y):
+            board += "\n #"
+            for xAxis in range(x):
+
+                for pos in snake:
+                    if pos == (xAxis, yAxis):
+                        board += "@"
+                        break
+                else:
+                        board += "0"
+
+            board += "#"
+        board += "\n " + "#" * x + "##```"
+
+        await ctx.send(board)
+
+    async def on_message(self, message):
+        if message.content in ("w", "a", "s", "d"):
+            self.inputs.append(message.content)
+
+
+
 
 
 def setup(bot):
