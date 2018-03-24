@@ -82,14 +82,23 @@ class Snakes:
 
     @command(name="randname")
     async def RandName(self,ctx:Context , name: str=None):
+        snakes=['Cobra','Python','Anaconda','Viper','Mamba']
+        snk=random.choice[snakes]
+        snLen=len(snk)
         p = len(name)
+        result=""
         front_back=random.randint(1,3)
         if front_back==1:#so the users name in substring from the front and snake random substring from back
-            #do something
+            ran = random.randint(0,p-2)
+            ranSnk=random.randint(2,snLen)
+            result=name[ :ran] + snk[ranSnk: ]
+            return await ctx.send(result)
+
         elif front_back==2:#so the users name in substring from the back and snake random substring from front
-            #do something
-
-
+            ran=random.randint(2,p)
+            ranSnk=random.randint(0,snLen-2)
+            result = name[ran: ] + snk[ :ranSnk]
+            return await ctx.send(result)
 
 
 
