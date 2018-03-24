@@ -86,17 +86,14 @@ class Snakes:
         snLen=len(snk)
         p = len(name)
         result=""
-        front_back=random.randint(1,3)
+        front_back=1
         if front_back==1:#so the users name is substring from the front and snake random substring from back
             ran = random.randint(1,p-2)
-            ranSnk=random.randint(2,snLen)
+            ranSnk=random.randint(1,snLen-1)
             result=name[ :ran] + snk[ranSnk: ]
 
 
-        elif front_back==2:#so the users name is substring from the back and snake random substring from front
-            ran=random.randint(1,p)
-            ranSnk=random.randint(0,snLen-1)
-            result = name[ran: ] + snk[ :ranSnk]
+
 
         return await ctx.send(result)
 
