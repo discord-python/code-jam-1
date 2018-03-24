@@ -1,13 +1,7 @@
 # coding=utf-8
-import logging
-from typing import Any, Dict
-
-import discord
-import aiohttp
-
-
+import logging, aiohttp, random, wikipedia
 from bs4 import BeautifulSoup
-
+from typing import Any, Dict
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
@@ -33,6 +27,7 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
+        self.site = 'https://en.wikipedia.org/wiki/List_of_snakes_by_common_name'
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -48,7 +43,7 @@ class Snakes:
         :return: A dict containing information on a snake
         """
         name = str(name)
-        site = 'https://en.wikipedia.org/wiki/' + name
+        site = self.site + name
         async with aiohttp.ClientSession() as session:
             async with session.get(site) as resp:
                 text = await resp.text()
