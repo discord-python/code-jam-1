@@ -121,8 +121,8 @@ class Snakes:
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
         On user input it validates vs the snake cache and also that the page exists
-        If the page doesn't exist it sends a ssssassy message
-        If the page does exist it passes off the params to get_wiki_json
+        If the input exists in the snake cache but the page does not exist
+        We call the function again using the previous search terms
         :param name: Just some sort of user input, preferably a snake.
         :return:
         """
@@ -187,7 +187,6 @@ class Snakes:
                 else:
                     snake = matched_snakes[0]
                     return await self.get_snek(snake)
-
 
             snake_dict = {"name": snake_name,
                           "snake_text": "You call that a snake?\n"
