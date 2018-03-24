@@ -209,7 +209,7 @@ class Snakes:
         for i in range(0, 10):
             page_guess_list.append(f"{HOLE_EMOJI} {HOLE_EMOJI} {HOLE_EMOJI} {HOLE_EMOJI}")
             page_result_list.append(f"{CROSS_EMOJI} {CROSS_EMOJI} {CROSS_EMOJI} {CROSS_EMOJI}")
-            board.append(f"`{10-i:02d}` "
+            board.append(f"`{i+1:02d}` "
                          f"{page_guess_list[i]} - "
                          f"{page_result_list[i]}")
             board.append(EMPTY)
@@ -271,13 +271,19 @@ class Snakes:
                             log.info(f"Guess Result: {' '.join(guess_result)}")
                             board = []
                             for i in range(0, 10):
-                                page_guess_list.append(f"{HOLE_EMOJI} {HOLE_EMOJI} {HOLE_EMOJI} {HOLE_EMOJI}")
-                                page_result_list.append(f"{CROSS_EMOJI} {CROSS_EMOJI} {CROSS_EMOJI} {CROSS_EMOJI}")
-                                board.append(f"`{10-i:02d}` "
+                                board.append(f"`{i+1:02d}` "
                                              f"{page_guess_list[i]} - "
                                              f"{page_result_list[i]}")
                                 board.append(EMPTY)
-                            antidote_embed.add_field(name="10 guesses remaining", value="\n".join(board))
+                            for emoji in antidote_guess_list:
+                                await board_id.remove_reaction(emoji, user)
+
+                            antidote_tries += 1
+                            guess_result = []
+                            antidote_guess_list = []
+
+                            antidote_embed.clear_fields()
+                            antidote_embed.add_field(name=f"{10 - antidote_tries} guesses remaining", value="\n".join(board))
                             await board_id.edit(embed=antidote_embed)
 
             except asyncio.TimeoutError:
