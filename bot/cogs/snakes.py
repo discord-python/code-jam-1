@@ -14,6 +14,14 @@ from ..tools import rattle
 log = logging.getLogger(__name__)
 db = load(open('bot/cogs/snek.pickledb', 'rb'))  # are we going to move this db elsewhere?
 SNAKE_NAMES = db.keys()  # make a list of common names for snakes, used for random snake and autocorrect
+DEBUG = True
+print = print if DEBUG else lambda *a, **k: None
+
+
+class NoGuessError(Exception):
+    def __init__(self, message='', debugdata=None):
+        self.message = message
+        self.debugdata = debugdata
 
 
 class Snakes:
@@ -56,7 +64,7 @@ class Snakes:
                     src = await self.get_snek(possible_misspellings[0])  # recurse/refine
                     name = src['common name']
                 except IndexError:  # no guesses on misspellings
-                    raise ValueError('snek not found')
+                    raise NoGuessError(debugdata='requested = {}'.format(name))
                 except ValueError:
                     raise ValueError('snek not found')
 
@@ -99,7 +107,11 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
 
-        snek = await self.get_snek(name)
+        try:
+            snek = await self.get_snek(name)
+        except NoGuessError as e:
+            print('debug: {}'.format(e.debugdata))
+            await ctx.send("I'm sorry, I don't know what you requested.")
 
         embed = Embed(title=snek.get('common name'), description=snek.get('description'))
         # Commented out until I know what information I have to use.
