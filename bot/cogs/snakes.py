@@ -74,7 +74,6 @@ class Snakes:
         """
         # await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
         await ctx.send(await self.get_snek(name))
-        print('resp')
         # await ctx.send(name)
 
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
