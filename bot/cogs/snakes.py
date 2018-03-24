@@ -1,11 +1,11 @@
 # coding=utf-8
 import logging
-from typing import Any, Dict
 import json
+from typing import Any, Dict
 import random
 
-from discord.ext.commands import AutoShardedBot, Context, command
 from discord import Embed
+from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
 
@@ -22,12 +22,12 @@ class Snakes:
         with open('bot/db/snakes.json', 'r') as file:
                 snakes_dict = json.load(file)
 
-        if name == None or len(name) == 0:
+        if name is None or len(name) == 0:
             _, snake_info = random.choice(list(snakes_dict.items()))
-        
+
         elif len(name) > 0:
-            snake = snakes_dict[name]
-            if snake['name'] != "Python":
+            snake = snakes_dict[name.lower()]
+            if snake['name'] != "python":
                 snake_info = {
                     'name': snake['name'],
                     'description': snake['description'],
@@ -46,23 +46,22 @@ class Snakes:
 
         return snake_info
 
-
     @command(name='get')
     async def get(self, ctx: Context, name: str = None):
         snake_info = await self.get_snek(name)
         
         embed = Embed(
-            title=snake_info['name'],
+            title=snake_info['name'].title(),
             description=snake_info['description']
         )
 
-        if snake_info['name'] != "Python":
-            embed.add_field(name="Where can you find them?",value=snake_info['location'])
-            embed.add_field(name="Are they venomous?",value=snake_info['venomous'])
+        if snake_info['name'] != "python":
+            embed.add_field(name="Where can you find them?", value=snake_info['location'])
+            embed.add_field(name="Are they venomous?", value=snake_info['venomous'])
             embed.set_image(url=snake_info['image'])
         else:
-            embed.add_field(name="Who created it?",value=snake_info['creator'])
-            embed.add_field(name="When was it created?",value=snake_info['created'])
+            embed.add_field(name="Who created it?", value=snake_info['creator'])
+            embed.add_field(name="When was it created?", value=snake_info['created'])
             embed.set_thumbnail(url=snake_info['image'])
 
         await ctx.send(embed=embed)
