@@ -27,7 +27,7 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
-        self.site = wikipedia.page('List of snakes by common name')
+        self.site = 'https://en.wikipedia.org/wiki/List_of_snakes_by_common_name'
 
     async def get_snek(self, embed, name: str = None) -> Dict[str, Any]:
         """
@@ -43,7 +43,7 @@ class Snakes:
         :return: A dict containing information on a snake
         """
         name = str(name)
-        site = 'https://en.wikipedia.org/wiki/' + name
+        site = self.site + name
         async with aiohttp.ClientSession() as session:
             async with session.get(site) as resp:
                 text = await resp.text()
