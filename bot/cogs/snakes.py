@@ -1,21 +1,24 @@
 # coding=utf-8
-import logging
-from typing import Any, Dict
 
-from googleapiclient.discovery import build
-from discord.ext.commands import AutoShardedBot, Context, command
-from discord import Embed
-
-import aiohttp
 import json
 import async_timeout
 import random
 import difflib
+import logging
+
+import aiohttp
+
+from typing import Any, Dict
+from discord import Embed
+from discord.ext.commands import AutoShardedBot, Context, command
+
 
 log = logging.getLogger(__name__)
 
 # Probably should move these somewhere
-BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles=%{}&redirects=1"
+
+WIKI = "https://en.wikipedia.org/w/api.php?"
+BASEURL = WIKI + "format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles={}&redirects=1"
 PYTHON = {
     "name": "Python",
     "info": """Python is a species of programming language, \
@@ -26,8 +29,8 @@ alongside significant whitespace, heavy emphasis on readability, and, above all,
 absolutely pain-free software distribution... *sigh*""",
     "image": "https://www.python.org/static/community_logos/python-logo-master-v3-TM-flattened.png"
 }
-with open("bot/snakes.txt") as file:
-    SNAKES = list(map(lambda ln: ln.strip('\n'), file.readlines()))
+with open("bot/snakes.txt") as f:
+    SNAKES = [line.strip() for line in f.readlines()]
 
 
 class Snakes:
@@ -39,7 +42,7 @@ class Snakes:
         self.bot = bot
 
     @staticmethod
-    def snake_url(name) -> str:
+    def snake_url(name: str) -> str:
         """Get the URL of a snake"""
 
         def encode_url(text):
@@ -63,9 +66,9 @@ class Snakes:
     async def get_snek(self, name: str = None) -> Dict[str, str]:
         """Get a snake with a given name, or otherwise randomly"""
         if name is None:
-            name = random.choice([x.strip('\n') for x in SNAKES])
+            name = random.choice(SNAKES)
             
-        elif name.upper() == "PYTHON":
+        if name.upper() == "PYTHON":
             return PYTHON
 
         # Get snake information
@@ -80,11 +83,10 @@ class Snakes:
             # Parse the full-res image from the thumbnail
             thumb = content.get("thumbnail", {}).get("source", "http://i.imgur.com/HtIPyLy.png/beep")
             image = "/".join(thumb.replace("thumb/", "").split("/")[:-1])
-            
-            # WHY WOULD YOU USE DICTIONARY LITERAL IN A RETURN STATEMENT but okay lol
+
             return {
                 "name": content["title"],
-                "info": content.get("extract", "") or "I don't know about that snake!",
+                "info": content.get("extract", "I don't know about that snake!"),
                 "image": image
             }
 
@@ -92,12 +94,13 @@ class Snakes:
     async def get(self, ctx: Context, name: str = None):
         content = await self.get_snek(name)
         # Just a temporary thing to make sure it's working
-        em = Embed()
-        em.title = content["name"]
-        em.description = content["info"][:1970] + "\n\nPS. If the image is a fucking map, blame wikipedia. -Somejuan"
-        em.set_image(url=content["image"])
+        embed = Embed(
+            title = content["name"],
+            description = content["info"][:1970] + "\n\nPS. If the image is a fucking map, blame wikipedia. -Somejuan",
+        )
+        embed.set_image(url=content["image"])
 
-        await ctx.send(embed=em)
+        await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
