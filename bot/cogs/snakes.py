@@ -156,12 +156,6 @@ class Snakes:
 
         page_id = list(text_json['query']['pages'].keys())[0]
         if page_id == "-1" or snake_name.lower() not in self.snake_cache:
-            if page_id == "-1" and snake_name.lower() in self.snake_cache:
-                snake_dict = {"name": "No one has written about this snake! Have some suggestions:",
-                              "snake_text": self.get_snek('snake'),
-                              "snake_image": snake_image}
-                return snake_dict
-
             matched_snakes = []
 
             for snake in self.snake_cache:
@@ -169,12 +163,20 @@ class Snakes:
                     matched_snakes.append(snake)
 
             if matched_snakes:
-                if len(matched_snakes) > 1:
-                    random.shuffle(matched_snakes)
-                    trimmed_snakes = []
-                    for snake in matched_snakes[0:9]:
-                        trimmed_snakes.append(capwords(f'{snake}') + '\n')
+                trimmed_snakes = []
+                random_matched_snakes = list(matched_snakes)
+                random.shuffle(random_matched_snakes)
 
+                for snake in random_matched_snakes[0:9]:
+                    trimmed_snakes.append(capwords(f'{snake}') + '\n')
+
+                if page_id == "-1" and snake_name.lower() in self.snake_cache:
+                    snake_dict = {"name": f"Cannot find a page for {snake_name}! Suggestions from query:",
+                                  "snake_text": ''.join(trimmed_snakes),
+                                  "snake_image": snake_image}
+                    return snake_dict
+
+                if len(matched_snakes) > 1:
                     trimmed_snakes = sorted(trimmed_snakes)
                     print(f"Trimmed: {trimmed_snakes}")
 
@@ -185,10 +187,10 @@ class Snakes:
                 else:
                     snake = matched_snakes[0]
                     print(snake)
-                    snake_dict = {"name": snake_name,
-                                  "snake_text": '',
-                                  "snake_image": snake_image}
-                    return await self.get_snek(snake)
+                    # snake_dict = {"name": snake_name,
+                    #               "snake_text": "This snake doesn't appear to have a page.",
+                    #               "snake_image": snake_image}
+                    return self.get_snek(snake)
 
 
             snake_dict = {"name": snake_name,
