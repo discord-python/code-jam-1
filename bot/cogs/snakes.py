@@ -17,7 +17,8 @@ class Snakes:
         self.bot = bot
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
-        """
+        
+     """
         Go online and fetch information about a snake
 
         The information includes the name of the snake, a picture of the snake, and various other pieces of info.
@@ -28,16 +29,21 @@ class Snakes:
 
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
-        """
+     """
 
     @command(name="get")
     async def get(self, ctx: Context, name: str = None):
-        if name=="cobra":
-            msg=""" A Cobra is a species of venomous snake in the
-                    family Elapidae, endemic to forests from India
-                    through Southeast Asia. This serpent is the
-                    world's longest venomous snake."""
-        return await ctx.send(msg)
+        name1 = name.lower()
+        cobra = 'Cobra is the common name of various elapid snakes, most of which belonging to the genus Naja.'
+        pythonidae = 'The Pythonidae, commonly known simply as pythons,\n from the Greek word python (πυθων), are\n a family of nonvenomous snakes found in Africa, Asia, and Australia.\n Among its members are some of the largest snakes in the world.\n Eight genera and 31 species are currently recognized.'
+
+
+        embed = discord.Embed(
+            title=name1,
+            description=cobra,
+            color=0x00ff00,
+        )
+        return await ctx.send(embed=embed)
     """
             Go online and fetch information about a snake
 
