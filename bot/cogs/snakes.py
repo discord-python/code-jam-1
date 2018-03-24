@@ -198,6 +198,7 @@ class Snakes:
         board = []
         page_guess_list = []
         page_result_list = []
+        win = False
         antidote_embed = Embed(color=ctx.me.color, title="Antidote")
         antidote_embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
         # Generate answer
@@ -247,14 +248,13 @@ class Snakes:
         while True:
             try:
                 reaction, user = await ctx.bot.wait_for("reaction_add", timeout=300, check=event_check)
-                log.trace(f"Got reaction: {reaction}")
                 if antidote_tries < 10:
                     if antidote_guess_count < 4:
                         if reaction.emoji in ANTIDOTE_EMOJI:
                             antidote_guess_list.append(reaction.emoji)
                             antidote_guess_count += 1
 
-                        if antidote_guess_count == 4: # GUESSES COMPLETE
+                        if antidote_guess_count == 4:  # GUESSES COMPLETE
                             antidote_guess_count = 0
                             page_guess_list[antidote_tries] = " ".join(antidote_guess_list)
                             log.info(f"Guess: {' '.join(antidote_guess_list)}")
@@ -267,6 +267,7 @@ class Snakes:
                                     guess_result.append(BLANK_EMOJI)
                                 else:
                                     guess_result.append(CROSS_EMOJI)
+                            guess_result.sort()
                             page_result_list[antidote_tries] = " ".join(guess_result)
                             log.info(f"Guess Result: {' '.join(guess_result)}")
                             board = []
@@ -278,17 +279,34 @@ class Snakes:
                             for emoji in antidote_guess_list:
                                 await board_id.remove_reaction(emoji, user)
 
+                            if antidote_guess_list == antidote_answer:
+                                win = True
+
                             antidote_tries += 1
                             guess_result = []
                             antidote_guess_list = []
 
                             antidote_embed.clear_fields()
-                            antidote_embed.add_field(name=f"{10 - antidote_tries} guesses remaining", value="\n".join(board))
+                            antidote_embed.add_field(name=f"{10 - antidote_tries} "
+                                                          f"guesses remaining",
+                                                     value="\n".join(board))
                             await board_id.edit(embed=antidote_embed)
+
+                            if win is True:
+                                break
+                            if antidote_tries == 10:
+                                break
 
             except asyncio.TimeoutError:
                 log.debug("Timed out waiting for a reaction")
                 break  # We're done, no reactions for the last 5 minutes
+
+        if win is True:
+            await ctx.send(f"You have created the snake antidote! with {10 - antidote_tries} tries remaining")
+            await board_id.clear_reactions()
+        else:
+            await ctx.send(f"Sorry you didnt make the antidote in time, the formula was {' '.join(antidote_answer)}")
+            await board_id.clear_reactions()
 
         log.debug("Ending pagination and removing all reactions...")
         await board_id.clear_reactions()
