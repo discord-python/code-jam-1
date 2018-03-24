@@ -1,12 +1,16 @@
 # coding=utf-8
+import asyncio
 import logging
-from typing import Any, Dict
-import aiohttp
-import async_timeout
 import random
+from typing import Any, Dict
 
+import aiohttp
+
+import async_timeout
+
+from discord import Embed, Member, Reaction
 from discord.ext.commands import AutoShardedBot, Context, command
-from discord import Embed
+
 
 log = logging.getLogger(__name__)
 
@@ -14,13 +18,24 @@ SNEKFILE = 'bot/cogs/data/quote.txt'
 PYTHONPIC = "http://www.pngall.com/wp-content/uploads/2016/05/Python-Logo-Free-PNG-Image.png"
 DEFAULT_SNEK = "https://pbs.twimg.com/profile_images/662615956670144512/dqsVK6Nw_400x400.jpg"
 
-FIRST_EMOJI = "💉"
-SECOND_EMOJI = "💊"
-THIRD_EMOJI = "🌡️"
-FOURTH_EMOJI = "☠️"
-FIFTH_EMOJI = "⚗️"
+# Pegs
+FIRST_EMOJI = "\U0001F489"
+SECOND_EMOJI = "\U0001F48A"
+THIRD_EMOJI = "\u231B"
+FOURTH_EMOJI = "\u2620"
+FIFTH_EMOJI = "\u2697"
 
-snakelist = []
+EMPTY = u'\u200b'
+
+# Results
+TICK_EMOJI = "\u2714"  # Correct Peg, Correct Hole
+CROSS_EMOJI = "\u274C"  # Wrong
+BLANK_EMOJI = "\u26AA"  # Correct Peg Wrong Hole
+
+# Holes
+HOLE_EMOJI = "\u2B1C"
+
+ANTIDOTE_EMOJI = [FIRST_EMOJI, SECOND_EMOJI, THIRD_EMOJI, FOURTH_EMOJI, FIFTH_EMOJI]
 
 
 class Snakes:
@@ -30,10 +45,12 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
+        self.snakelist = []
+        self.setup = bot.loop.create_task(self.cache_snakelist())
 
     async def cache_snakelist(self):
-        global snakelist
-        snakelist = await self.get_snake_list()
+        return
+        self.snakelist = await self.get_snake_list()
 
     async def get_wiki_json(self, params):
         async with aiohttp.ClientSession(headers={'User-Agent': 'DevBot v.10'}) as cs:
@@ -90,7 +107,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        global snakelist
+        await self.setup  # pauses here until the "setup" task has completed
         snake_name = name
         name = name.replace(" ", "_")  # sanitize name
 
@@ -116,7 +133,7 @@ class Snakes:
         snake_image = DEFAULT_SNEK
 
         page_id = list(text_json['query']['pages'].keys())[0]
-        if page_id == "-1" or snake_name not in snakelist:  # No entry on the wiki
+        if page_id == "-1" or snake_name not in self.snakelist:  # No entry on the wiki
             snake_dict = {"name": snake_name,
                           "snake_text": "You call that a snake?\n"
                                         "THIS is a snake!",
@@ -144,7 +161,6 @@ class Snakes:
 
     @command()
     async def get(self, ctx: Context, name: str = None):
-        global snakelist
         """
         Go online and fetch information about a snake
 
@@ -155,7 +171,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
         if name is None:
-            name = random.choice(snakelist)
+            name = random.choice(self.snakelist)
         elif name == "snakes on a plane":
             await ctx.send("https://media.giphy.com/media/5xtDartXnQbcW5CfM64/giphy.gif")
         elif name == "python":
@@ -173,9 +189,65 @@ class Snakes:
         await ctx.send(embed=snake_embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+    @command(name="bb")
+    async def build_board(self, ctx: Context):
+        antidote_embed = Embed(color=ctx.me.color, title="Antidote")
+        antidote_embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+        # Generate answer
+        antidote_answer = list(ANTIDOTE_EMOJI)  # duplicate list, not reference it
+        random.shuffle(antidote_answer)
+        log.info(antidote_answer)
+        # begin board building
+        board = []
+        for i in range(0, 10):
+            board.append(f"`{10-i:02d}` "
+                         f"{HOLE_EMOJI} {HOLE_EMOJI} {HOLE_EMOJI} {HOLE_EMOJI} - "
+                         f"{CROSS_EMOJI} {CROSS_EMOJI} {CROSS_EMOJI} {CROSS_EMOJI}")
+            board.append(EMPTY)
+
+        antidote_embed.add_field(name="10 guesses remaining", value="\n".join(board))
+        # Display board
+        board_id = await ctx.send(embed=antidote_embed)
+        # add our reactions
+        for emoji in ANTIDOTE_EMOJI:
+            await board_id.add_reaction(emoji)
+
+        def event_check(reaction_: Reaction, user_: Member):
+            """
+            Make sure that this reaction is what we want to operate on
+            """
+
+            no_restrictions = (
+                # Pagination is not restricted
+                user_.id == ctx.author.id
+            )
+
+            return (
+                # Conditions for a successful pagination:
+                all((
+                    # Reaction is on this message
+                    reaction_.message.id == board_id.id,
+                    # Reaction is one of the pagination emotes
+                    reaction_.emoji in ANTIDOTE_EMOJI,
+                    # Reaction was not made by the Bot
+                    user_.id != self.bot.user.id,
+                    # There were no restrictions
+                    no_restrictions
+                ))
+            )
+
+        while True:
+            try:
+                reaction, user = await ctx.bot.wait_for("reaction_add", timeout=300, check=event_check)
+                log.trace(f"Got reaction: {reaction}")
+            except asyncio.TimeoutError:
+                log.debug("Timed out waiting for a reaction")
+                break  # We're done, no reactions for the last 5 minutes
+
+        log.debug("Ending pagination and removing all reactions...")
+        await board_id.clear_reactions()
 
 
 def setup(bot):
     bot.add_cog(Snakes(bot))
     log.info("Cog loaded: Snakes")
-    bot.loop.create_task(Snakes(bot).cache_snakelist())
