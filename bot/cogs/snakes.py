@@ -245,6 +245,16 @@ class Snakes:
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
     @command(name="antidote")
     async def build_board(self, ctx: Context):
+        """
+        Antidote - Can you create the antivenom before the patient dies!
+        Rules:  You have 4 ingredients for each antidote, you only have 10 attempts
+                Once you synthesize the antidote, you will be presented with 4 markers
+                Tick: This means you have a CORRECT ingredient in the CORRECT position
+                Circle: This means you have a CORRECT ingredient in the WRONG position
+                Cross: This means you have a WRONG ingredient in the WRONG position
+        Info:   The game automatically ends after 5 minutes inactivity.
+                You should only use each ingredient once.
+        """
         antidote_tries = 0
         antidote_guess_count = 0
         antidote_guess_list = []
@@ -253,14 +263,19 @@ class Snakes:
         page_guess_list = []
         page_result_list = []
         win = False
+
+        # initialize variables
+
         antidote_embed = Embed(color=ctx.me.color, title="Antidote")
         antidote_embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+
         # Generate answer
         antidote_answer = list(ANTIDOTE_EMOJI)  # duplicate list, not reference it
         random.shuffle(antidote_answer)
         antidote_answer.pop()
         log.info(antidote_answer)
-        # begin board building
+
+        # begin initial board building
         for i in range(0, 10):
             page_guess_list.append(f"{HOLE_EMOJI} {HOLE_EMOJI} {HOLE_EMOJI} {HOLE_EMOJI}")
             page_result_list.append(f"{CROSS_EMOJI} {CROSS_EMOJI} {CROSS_EMOJI} {CROSS_EMOJI}")
@@ -269,8 +284,10 @@ class Snakes:
                          f"{page_result_list[i]}")
             board.append(EMPTY)
         antidote_embed.add_field(name="10 guesses remaining", value="\n".join(board))
+
         # Display board
         board_id = await ctx.send(embed=antidote_embed)
+
         # add our player reactions
         for emoji in ANTIDOTE_EMOJI:
             await board_id.add_reaction(emoji)
@@ -324,6 +341,9 @@ class Snakes:
                             guess_result.sort()
                             page_result_list[antidote_tries] = " ".join(guess_result)
                             log.info(f"Guess Result: {' '.join(guess_result)}")
+
+                            # Rebuild the board
+
                             board = []
                             for i in range(0, 10):
                                 board.append(f"`{i+1:02d}` "
@@ -344,6 +364,7 @@ class Snakes:
                             antidote_embed.add_field(name=f"{10 - antidote_tries} "
                                                           f"guesses remaining",
                                                      value="\n".join(board))
+                            # Redisplay the board
                             await board_id.edit(embed=antidote_embed)
 
                             if win is True:
@@ -355,6 +376,7 @@ class Snakes:
                 log.debug("Timed out waiting for a reaction")
                 break  # We're done, no reactions for the last 5 minutes
 
+        # Winning / Ending Screen
         if win is True:
             await ctx.send(f"You have created the snake antidote! with {10 - antidote_tries} tries remaining")
             await board_id.clear_reactions()
