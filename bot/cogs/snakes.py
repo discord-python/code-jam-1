@@ -106,7 +106,7 @@ class Snakes:
             img_url = None
         title = data['parse']['title']
         pg_url = f"{WKPD}/wiki/{title.replace(' ', '_')}"
-        return {'info': (img_url, pg_url, title), 'tidbits': tidbits}
+        return {'🐍': (img_url, pg_url, title), 'tidbits': tidbits}
 
     @commands.command()
     async def get(self, ctx: Context, name: str = None):
@@ -123,7 +123,7 @@ class Snakes:
             snek = await self.get_snek(name)
         except BadSnake as e:
             return await ctx.send(f'`{e}`')
-        image, page, title = snek['info']
+        image, page, title = snek['🐍']
         embed = discord.Embed(title=title, url=page, description='\n\n • '.join(snek['tidbits']))
         if image is not None:
             embed.set_thumbnail(url=image)
