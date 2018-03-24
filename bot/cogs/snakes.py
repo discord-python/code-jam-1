@@ -4,6 +4,7 @@ from typing import Any, Dict
 import discord
 import random
 import time
+import wikipedia
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
@@ -33,32 +34,23 @@ class Snakes:
 
     @command(name="get")
     async def get(self, ctx: Context, name: str = None):
-        name1 = name.lower()
-        cobra = 'Cobra is the common name of various elapid snakes, most of which belonging to the genus Naja.'
-        pythonidae = 'The Pythonidae, commonly known simply as pythons,\n from the Greek word python (πυθων), are\n a family of nonvenomous snakes found in Africa, Asia, and Australia.\n Among its members are some of the largest snakes in the world.\n Eight genera and 31 species are currently recognized.'
-
-        first_line={
-            'cobra':cobra,
-            'python':pythonidae,
-        }
-       
-        for key,value in first_line.items():
-            if key==name.lower():
-                embed = discord.Embed(
-                    title=name1,
-                    description=value,
-                    color=0x00ff00,
-                )
+        if name.lower()=="python":
+            name_rechange="Python Programming Language"
+        else:
+            name_rechange=name
+        test=wikipedia.page(name_rechange)
+        embed=discord.Embed(
+            title=test.title,
+            description= wikipedia.summary(name_rechange, sentences=1),
+            color=0x00ff00,
+        )
+        embed.add_field(name="Image", value=test.images, inline=False)
         return await ctx.send(embed=embed)
-    """
-            Go online and fetch information about a snake
 
-            This should make use of your `get_snek` method, using it to get information about a snake. This information
-            should be sent back to Discord in an embed.
 
-            :param ctx: Context object passed from discord.py
-            :param name: Optional, the name of the snake to get information for - omit for a random snake
-    """
+
+
+
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
@@ -88,23 +80,24 @@ class Snakes:
 
     @command(name="randname")
     async def RandName(self,ctx:Context , name: str=None):
-        snakes=['Cobra','Python','Anaconda','Viper','Mamba']
-        snk=random.choice[snakes]
+
+        snk=random.choice(['Cobra','Python','Anaconda','Viper','Mamba'])
         snLen=len(snk)
         p = len(name)
         result=""
         front_back=random.randint(1,3)
-        if front_back==1:#so the users name in substring from the front and snake random substring from back
-            ran = random.randint(0,p-2)
+        if front_back==1:#so the users name is substring from the front and snake random substring from back
+            ran = random.randint(1,p-2)
             ranSnk=random.randint(2,snLen)
             result=name[ :ran] + snk[ranSnk: ]
-            return await ctx.send(result)
 
-        elif front_back==2:#so the users name in substring from the back and snake random substring from front
-            ran=random.randint(2,p)
-            ranSnk=random.randint(0,snLen-2)
+
+        elif front_back==2:#so the users name is substring from the back and snake random substring from front
+            ran=random.randint(1,p)
+            ranSnk=random.randint(0,snLen-1)
             result = name[ran: ] + snk[ :ranSnk]
-            return await ctx.send(result)
+
+        return await ctx.send(result)
 
 
 
