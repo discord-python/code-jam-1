@@ -36,10 +36,10 @@ class Snakes:
         if name:
             name = name.lower()
             if name == "python":
-                return (("The Python Programming language(Python Sermone) is a dynamically typed, interpreted ",
-                         "programming language. It is a member of the high level programming languges usually found ",
-                         "in areas like backend web development data science and AI."),
-                        "https://www.python.org/static/community_logos/python-logo-master-v3-TM.png")
+                python_info = ("The Python Programming language(Python Sermone) is a dynamically typed, interpreted "
+                               "programming language. It is a member of the high level programming languges usually "
+                               "found in areas like backend web development data science and AI.")
+                return (python_info, "https://www.python.org/static/community_logos/python-logo-master-v3-TM.png")
             else:
                 if name in self.db:
                     return self.db[name]
@@ -59,13 +59,14 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
+        print("DEBUG IM RUNNING")
         snake = await self.get_snek(name)
         if snake:
             snake_embed = Embed(title=name, description=snake[0])
             snake_embed.set_image(url=snake[1])
-            ctx.send(embed=snake_embed)
+            await ctx.send(embed=snake_embed)
         else:
-            ctx.send("I was not able to find your snake, I am sorry.")
+            await ctx.send("I was not able to find your snake, I am sorry.")
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
