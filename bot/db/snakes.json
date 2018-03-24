@@ -1,16 +1,27 @@
 {
+	"Python":
+	{
+		"name": "Python",
+		"description": "Python is an interpreted high-level programming language for general-purpose programming. Python has a design philosophy that emphasizes code readability, notably using significant whitespace. It provides constructs that enable clear programming on both small and large scales.",
+		"creator": "Guido van Rossum",
+		"created": "First concieved in the late 1980's",
+		"image": "https://i.imgur.com/GDcwKmZ.png"
+	},
+
 	"cobra": 
 	{
-		"info": "Cobras are large and diverse group of snakes. There are 270 different types of cobras",
-		"location": "Africa, Asia and Australia, usually in forests and areas near river",
+		"name": "Cobra",
+		"description": "Cobras are large and diverse group of snakes. There are 270 different types of cobras.",
+		"location": "Africa, Asia and Australia, usually in forests and areas near river.",
 		"venomous": "Yes",
 		"image": "https://i.imgur.com/WSnvhC0.jpg"
 	},
 	
 	"anaconda":
 	{
-		"info": "Anacondas are the largest and heaviest known snakes. There are 4 types of anacondas",
-		"location": "Tropical rainforests, lakes and swamps of South America",
+		"name": "Anaconda",
+		"description": "Anacondas are the largest and heaviest known snakes. There are 4 types of anacondas.",
+		"location": "Tropical rainforests, lakes and swamps of South America. Anacondas are especially numerous near Amazon and Orinoco rivers.",
 		"venomous": "No",
 		"image": "https://i.imgur.com/MNIY8zX.jpg"
 	}

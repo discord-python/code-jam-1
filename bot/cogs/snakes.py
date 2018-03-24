@@ -5,6 +5,7 @@ import json
 import random
 
 from discord.ext.commands import AutoShardedBot, Context, command
+from discord import Embed
 
 log = logging.getLogger(__name__)
 
@@ -18,41 +19,53 @@ class Snakes:
         self.bot = bot
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
-        """
-        Go online and fetch information about a snake
-
-        The information includes the name of the snake, a picture of the snake, and various other pieces of info.
-        What information you get for the snake is up to you. Be creative!
-
-        If "python" is given as the snake name, you should return information about the programming language, but with
-        all the information you'd provide for a real snake. Try to have some fun with this!
-
-        :param name: Optional, the name of the snake to get information for - omit for a random snake
-        :return: A dict containing information on a snake
-        """
         with open('bot/db/snakes.json', 'r') as file:
                 snakes_dict = json.load(file)
 
-        if name == None:
-            snake_name, snake_info = random.choice(list(snakes_dict.items()))
+        if name == None or len(name) == 0:
+            _, snake_info = random.choice(list(snakes_dict.items()))
         
-        elif name == "Python":
-            print("stuff about python lang")
+        elif len(name) > 0:
+            snake = snakes_dict[name]
+            if snake['name'] != "Python":
+                snake_info = {
+                    'name': snake['name'],
+                    'description': snake['description'],
+                    'location': snake['location'],
+                    'venomous': snake['venomous'],
+                    'image': snake['image']
+                }
+            else:
+                snake_info = {
+                    'name': snake['name'],
+                    'description': snake['description'],
+                    'creator': snake['creator'],
+                    'created': snake['created'],
+                    'image': snake['image']
+                }
 
-        return snake_name, snake_info
+        return snake_info
 
 
-    @command()
+    @command(name='get')
     async def get(self, ctx: Context, name: str = None):
-        """
-        Go online and fetch information about a snake
+        snake_info = await self.get_snek(name)
+        
+        embed = Embed(
+            title=snake_info['name'],
+            description=snake_info['description']
+        )
 
-        This should make use of your `get_snek` method, using it to get information about a snake. This information
-        should be sent back to Discord in an embed.
+        if snake_info['name'] != "Python":
+            embed.add_field(name="Where can you find them?",value=snake_info['location'])
+            embed.add_field(name="Are they venomous?",value=snake_info['venomous'])
+            embed.set_image(url=snake_info['image'])
+        else:
+            embed.add_field(name="Who created it?",value=snake_info['creator'])
+            embed.add_field(name="When was it created?",value=snake_info['created'])
+            embed.set_thumbnail(url=snake_info['image'])
 
-        :param ctx: Context object passed from discord.py
-        :param name: Optional, the name of the snake to get information for - omit for a random snake
-        """
+        await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
