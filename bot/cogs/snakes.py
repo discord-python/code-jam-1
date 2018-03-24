@@ -20,7 +20,7 @@ THIRD_EMOJI = "🌡️"
 FOURTH_EMOJI = "☠️"
 FIFTH_EMOJI = "⚗️"
 
-snakelist = []
+snake_cache = []
 
 
 class Snakes:
@@ -32,8 +32,8 @@ class Snakes:
         self.bot = bot
 
     async def cache_snakelist(self):
-        global snakelist
-        snakelist = await self.get_snake_list()
+        global snake_cache
+        snake_cache = await self.get_snake_list()
 
     async def get_wiki_json(self, params):
         async with aiohttp.ClientSession(headers={'User-Agent': 'DevBot v.10'}) as cs:
@@ -71,8 +71,8 @@ class Snakes:
         async for dicks in result:
             listed = dicks
             for item in listed:
-                if not any(s in item['title'] for s in ambiguous):
-                    snake_list.append(item['title'])
+                # if not any(s in item['title'] for s in ambiguous):
+                snake_list.append(item['title'])
 
         snake_list.append("trouser snake")
         return snake_list
@@ -90,7 +90,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        global snakelist
+        global snake_cache
         snake_name = name
         name = name.replace(" ", "_")  # sanitize name
 
@@ -116,11 +116,14 @@ class Snakes:
         snake_image = "https://pbs.twimg.com/profile_images/662615956670144512/dqsVK6Nw_400x400.jpg"
 
         page_id = list(text_json['query']['pages'].keys())[0]
-        if page_id == "-1" or snake_name not in snakelist:  # No entry on the wiki
+        if page_id == "-1" or snake_name not in snake_cache:  # No entry on the wiki
             snake_dict = {"name": snake_name,
                           "snake_text": "You call that a snake?\nTHIS is a snake!",
                           "snake_image": snake_image}
             return snake_dict
+
+        if any(s in snake_name for s in snake_cache):
+            print("Yes there is a snake in here")
 
         image_id = image_name_json['query']['pages'][page_id]['images'][0]['title']
 
@@ -143,7 +146,7 @@ class Snakes:
 
     @command()
     async def get(self, ctx: Context, name: str = None):
-        global snakelist
+        global snake_cache
         """
         Go online and fetch information about a snake
 
@@ -154,7 +157,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
         if name is None:
-            name = random.choice(snakelist)
+            name = random.choice(snake_cache)
         elif name == "snakes on a plane":
             await ctx.send("https://media.giphy.com/media/5xtDartXnQbcW5CfM64/giphy.gif")
         elif name == "python":
