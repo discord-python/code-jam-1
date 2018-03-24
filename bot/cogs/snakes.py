@@ -20,12 +20,6 @@ class Snakes:
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
 
-    def get_attr(self, soup, type, attr):
-        return soup.find(type, class_=attr)
-
-    def get_all_attrs(self, soup, type, attr):
-        return soup.find_all(type, class_=attr)
-
     def no_sneks_found(self, name):
         '''Helper function if the snake was not found in the directory.'''
         em = discord.Embed(
@@ -49,7 +43,7 @@ class Snakes:
             color=discord.Color.green()
         )
         em.set_thumbnail(url=data['image-url'])
-        em.set_footer(text='Bot by SharpBit and Pikuhana')
+        em.set_footer(text='Bot by SharpBit and Volcyy')
 
         return em
 
@@ -76,12 +70,12 @@ class Snakes:
         async with self.bot.session.get(url) as resp:
             info = await resp.read()
             soup = BeautifulSoup(info, 'lxml')
-        img = self.get_attr(soup, 'img alt', name.title() + ' ')
-        names = self.get_attr(soup, 'td', 'wsite-multicol-col')
+        img = soup.find(attrs={'property': {'og:image'}})['content']
+        names = soup.find('td', class_='wsite-multicol-col')
         info = {
             'name': names.h1.string,
-            'scientific-name': names.h2.i.string,
-            'image-url': f"{self.bot.info_url}{img}"
+            'scientific-name': names.h2.string,
+            'image-url': img
         }
 
         return info
