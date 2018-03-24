@@ -118,8 +118,8 @@ class Snakes:
         # embed.add_field(name="More Information", value="```Species | xxx\rGenus   | xxx\rFamily  | xxx```")
         embed.add_field(name=snek.get('rating'), value=await self.get_danger(snek.get('rating')), inline=True)
         embed.set_image(url=snek.get('image'))
-        embed.set_footer(text="Information from Wikipedia and snakedatabase.org. Information has been" \
-                         "automatically fetched and may not be accurate."
+        embed.set_footer(text="Information from Wikipedia and snakedatabase.org. Information has been " \
+                         "automatically fetched and may not be accurate.")
         await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
