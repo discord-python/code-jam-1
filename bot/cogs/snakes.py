@@ -93,7 +93,7 @@ class Snakes:
             )
             embed.set_image(url=url)
         await ctx.channel.send(
-            content=ctx.message.author.mention + " Here's your snek!",
+            content=ctx.message.author.mention + " :snake: !",
             embed=embed
         )
 
