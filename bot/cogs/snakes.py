@@ -61,11 +61,13 @@ class Snakes:
         :return: A dict containing information on a snake
         """
         all_snakes_url = 'https://protected-reef-75100.herokuapp.com/get_all_snakes?format=json'
-        search_url = ''   # INCOMPLETE - NEED SEARCHABLE ENDPOINT
+        search_url = 'https://protected-reef-75100.herokuapp.com/search'
+        token = os.getenv('ACCESS_TOKEN')
+        headers = {'Authorization':f'Token {token}'}
         if not name:
             # get a random snake...
             async with aiohttp.ClientSession() as session:
-                async with session.get(all_snakes_url) as response:
+                async with session.get(all_snakes_url,headers=headers) as response:
                     response = await response.read()
                     data = json.loads(response.decode("utf-8"))
                     rand = random.randint(0, len(data) - 1)
@@ -73,13 +75,15 @@ class Snakes:
         else:
             # todo: get snake info from API
             # todo: make api endpoint to search for snakes?
+            params = {'snake':name}
             async with aiohttp.ClientSession() as session:
-                async with session.get(search_url) as response:
+                async with session.get(search_url, headers=headers, params=params) as response:
                     # search snake endpoint something...
-                    # response = await response.read()
-                    # data = json.loads(response.decode("utf-8"))
-                    # rand = random.randint(0, len(data) - 1)
-                    pass
+                     response = await response.read()
+                     data = json.loads(response.decode("utf-8"))
+                     rand = random.randint(0, len(data) - 1)
+                     snake_info = data[rand]
+                     
         snake_info['image_url'] = await self.get_snek_image(snake_info['common_name'])
         return snake_info
 
