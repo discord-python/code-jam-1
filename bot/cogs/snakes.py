@@ -1,8 +1,8 @@
 # coding=utf-8
-import logging
 import json
-from typing import Any, Dict
+import logging
 import random
+from typing import Any, Dict
 
 from discord import Embed
 from discord.ext.commands import AutoShardedBot, Context, command
