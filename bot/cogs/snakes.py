@@ -17,11 +17,14 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
+        self.python_image = "https://www.python.org/static/community_logos/python-logo-master-v3-TM.png"
+        self.python_info = ("The Python Programming language(Python Sermone) is a dynamically typed, interpreted "
+                            "programming language. It is a member of the high level programming languges usually "
+                            "found in areas like backend web development data science and AI.")
         with open("bot/db/db.json", "r") as db:
             self.db = json.load(db)
-        self.lower_keys = [key.lower() for key in self.db.keys()]
 
-    async def get_snek(self, name: str = None) -> Tuple[str, str]:
+    async def get_snek(self, name: str = None) -> Tuple[str, str, str]:
         """
         Go online and fetch information about a snake
 
@@ -37,16 +40,11 @@ class Snakes:
         if name:
             name = name.lower()
             if name == "python":
-                python_info = ("The Python Programming language(Python Sermone) is a dynamically typed, interpreted "
-                               "programming language. It is a member of the high level programming languges usually "
-                               "found in areas like backend web development data science and AI.")
-                return (python_info, "https://www.python.org/static/community_logos/python-logo-master-v3-TM.png")
+                return ("python", self.python_info, self.python_image)
             else:
-                if name in self.lower_keys:
-                    print(self.lower_keys.index(name))
-                    return self.db[list(self.db.keys())[self.lower_keys.index(name)]]
-                else:
-                    return None
+                for key in self.db.keys():
+                    if key.lower() == name.lower():
+                        return (key, self.db[key][0], self.db[key][1])
         else:
             return self.db[random.choice(list(self.db.keys()))]
 
@@ -64,8 +62,8 @@ class Snakes:
         print("DEBUG IM RUNNING")
         snake = await self.get_snek(name)
         if snake:
-            snake_embed = Embed(title=name, description=snake[0])
-            snake_embed.set_image(url=snake[1])
+            snake_embed = Embed(title=snake[0], description=snake[1])
+            snake_embed.set_image(url=snake[2])
             await ctx.send(embed=snake_embed)
         else:
             await ctx.send("I was not able to find your snake, I am sorry.")
