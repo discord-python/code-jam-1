@@ -4,6 +4,7 @@ import logging
 import random
 from typing import Tuple
 
+from discord import Embed
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
@@ -36,7 +37,7 @@ class Snakes:
             name = name.lower()
             if name == "python":
                 return (("The Python Programming language(Python Sermone) is a dynamically typed, interpreted ",
-                         "programming language. It is a member of the high level programming languges usually found",
+                         "programming language. It is a member of the high level programming languges usually found ",
                          "in areas like backend web development data science and AI."),
                         "https://www.python.org/static/community_logos/python-logo-master-v3-TM.png")
             else:
@@ -45,7 +46,7 @@ class Snakes:
                 else:
                     return None
         else:
-            return random.choice(self.db[self.db.keys()])
+            return self.db[random.choice(list(self.db.keys()))]
 
     @command()
     async def get(self, ctx: Context, name: str = None):
@@ -58,6 +59,13 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
+        snake = await self.get_snek(name)
+        if snake:
+            snake_embed = Embed(title=name, description=snake[0])
+            snake_embed.set_image(url=snake[1])
+            ctx.send(embed=snake_embed)
+        else:
+            ctx.send("I was not able to find your snake, I am sorry.")
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
