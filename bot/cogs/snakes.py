@@ -1,11 +1,17 @@
 # coding=utf-8
 import logging
+from copy import copy
+from pickle import load
+from random import choice
 from typing import Any, Dict
 
 from discord import Embed
+from ...tools import rattle
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
+db = load(open('snek.pickledb', 'rb'))  # are we going to move this db elsewhere?
+SNAKE_NAMES = db.keys()  # make a list of common names for snakes, used for random snake and autocorrect
 
 
 class Snakes:
@@ -29,7 +35,33 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        return name
+        if name is None:  # if it's None
+            name = choice(SNAKE_NAMES)  # get random key (common) name
+            src = db[name]  # source of info = db[common name]
+        else:
+            try:
+                name = name.lower()  # lowercase the name for hitting dict
+                src = db[name]  # source of info = db[common name]
+            except KeyError:  # if name not found...
+                possible_misspellings = list(rattle.check_word(name, SNAKE_NAMES, threshold=0.62))  # get similars
+                possible_misspellings = sorted(possible_misspellings, key=lambda x: x[0])  # sort the list
+                possible_misspellings = list(reversed(possible_misspellings))  # reverse it
+                '''
+                just a thought, should we check if the next command request from the same person goes from a possibility
+                rate from, say, 0.5 to 1.0 (50% accuracy to 100%) so that we can cache known misspellings?
+                '''
+                try:
+                    src = await self.get_snek(possible_misspellings[0])  # recurse/refine
+                    name = src['common name']
+                except IndexError:  # no guesses on misspellings
+                    raise ValueError('snek not found')
+                except ValueError:
+                    raise ValueError('snek not found')
+
+                raise ValueError('snek not found')
+        info = copy(src)  # make a copy of the dictionary
+        info['common name'] = name  # make common name key
+        return info
 
     async def get_danger(self, level: str = None) -> str:
         """
@@ -71,9 +103,9 @@ class Snakes:
         embed = Embed(title=snek.get('common name'), description=snek.get('description'))
         # Commented out until I know what information I have to use.
         # embed.add_field(name="More Information", value="```Species | xxx\rGenus   | xxx\rFamily  | xxx```")
-        embed.add_field(snek.get('level'), value=await self.get_danger(snek.get('level')), inline=True)
+        embed.add_field(snek.get('rating'), value=await self.get_danger(snek.get('rating')), inline=True)
         embed.set_image(url=snek.get('image'))
-        embed.set_footer(text="Information from Wikipedia")
+        embed.set_footer(text="Information from Wikipedia and snakedatabase.org")
         await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
