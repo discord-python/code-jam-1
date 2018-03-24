@@ -6,11 +6,13 @@ from random import choice
 from typing import Any, Dict
 
 from discord import Embed
-from ...tools import rattle
 from discord.ext.commands import AutoShardedBot, Context, command
 
+from ..tools import rattle
+
+
 log = logging.getLogger(__name__)
-db = load(open('snek.pickledb', 'rb'))  # are we going to move this db elsewhere?
+db = load(open('bot/cogs/snek.pickledb', 'rb'))  # are we going to move this db elsewhere?
 SNAKE_NAMES = db.keys()  # make a list of common names for snakes, used for random snake and autocorrect
 
 
