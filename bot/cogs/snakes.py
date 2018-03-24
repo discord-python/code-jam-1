@@ -2,6 +2,7 @@
 import logging
 from typing import Any, Dict
 
+import discord
 import aiohttp
 
 
@@ -33,7 +34,7 @@ class Snakes:
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
 
-    async def get_snek(self, name: str = None) -> Dict[str, Any]:
+    async def get_snek(self, embed, name: str = None) -> Dict[str, Any]:
         """
         Go online and fetch information about a snake
 
@@ -47,21 +48,21 @@ class Snakes:
         :return: A dict containing information on a snake
         """
         name = str(name)
-        site = 'https://en.wikipedia.org/wiki/List_of_snakes_by_common_name'
+        site = 'https://en.wikipedia.org/wiki/' + name
         async with aiohttp.ClientSession() as session:
             async with session.get(site) as resp:
                 text = await resp.text()
                 soup = BeautifulSoup(text, 'lxml')
-                snake = soup.find(text=name)
+                table = discord.Embed(title=soup.find('tbody'))
+
 
         if name.lower() == 'python':
             name = self.python_info
         else:
-            name = snake
-        return name
+            embed = table
 
     @command()
-    async def get(self, ctx: Context, name: str = None):
+    async def get(self, embed, ctx: Context, name: str = None,):
         """
         Go online and fetch information about a snake
 
@@ -75,7 +76,7 @@ class Snakes:
         if name:
             await ctx.send(await self.get_snek(name))
         else:
-            await ctx.send('<REPLACE WITH RANDOM SNAKE>')
+            ctx.send(embed=embed)
         # await ctx.send(name)
 
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
