@@ -39,12 +39,13 @@ class Snakes:
         else:
             name_rechange=name
         test=wikipedia.page(name_rechange)
+
         embed=discord.Embed(
             title=test.title,
             description= wikipedia.summary(name_rechange, sentences=1),
             color=0x00ff00,
         )
-        embed.add_field(name="Image", value=test.images, inline=False)
+        embed.add_field(name="Image", value=test.images[0], inline=False)
         return await ctx.send(embed=embed)
 
 
