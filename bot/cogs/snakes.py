@@ -120,10 +120,12 @@ class Snakes:
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
-        On user input it validates vs the snake cache and also that the page exists
-        If the input exists in the snake cache but the page does not exist
-        We call the function again using the previous search terms
-        :param name: Just some sort of user input, preferably a snake.
+        On user input it checks vs the snake cache and that page exists
+        If there is a hit on the cache and on the page it grabs the info
+        If the cache is hit but the page doesn't exist it suggests based off input
+        If the input only hits one item in cache it returns the info for that cache hit
+        If you write something stupid it'll throw up a knifey spoony error
+        :param name: Just some sort of user input, preferably a snake
         :return:
         """
         await self.setup  # Pauses here until the "setup" task has completed
