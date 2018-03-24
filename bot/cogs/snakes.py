@@ -2,6 +2,7 @@
 import logging
 from typing import Any, Dict
 
+from discord import Embed
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
@@ -65,7 +66,15 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
 
-        print("SNEKS")
+        snek = await self.get_snek(name)
+
+        embed = Embed(title=snek.get('common name'), description=snek.get('description'))
+        # Commented out until I know what information I have to use.
+        # embed.add_field(name="More Information", value="```Species | P. regius\rGenus   | Python\rFamily  | Pythonidae```", inline=True)
+        embed.add_field(snek.get('level'), value=await self.get_danger(snek.get('level')), inline=True)
+        embed.set_image(url=snek.get('image'))
+        embed.set_footer(text="Information from Wikipedia")
+        await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
