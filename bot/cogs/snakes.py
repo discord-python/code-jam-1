@@ -170,15 +170,15 @@ class Snakes:
                 for snake in random_matched_snakes[0:9]:
                     trimmed_snakes.append(capwords(f'{snake}') + '\n')
 
+                trimmed_snakes = sorted(trimmed_snakes)
+
                 if page_id == "-1" and snake_name.lower() in self.snake_cache:
-                    snake_dict = {"name": f"Cannot find a page for {snake_name}! Suggestions from query:",
+                    snake_dict = {"name": f"Found {capwords(snake_name)} but no page! Suggestions:",
                                   "snake_text": ''.join(trimmed_snakes),
                                   "snake_image": snake_image}
                     return snake_dict
 
                 if len(matched_snakes) > 1:
-                    trimmed_snakes = sorted(trimmed_snakes)
-                    print(f"Trimmed: {trimmed_snakes}")
 
                     snake_dict = {"name": "No snake found, here are some suggestions:",
                                   "snake_text": ''.join(trimmed_snakes),
@@ -186,11 +186,7 @@ class Snakes:
                     return snake_dict
                 else:
                     snake = matched_snakes[0]
-                    print(snake)
-                    # snake_dict = {"name": snake_name,
-                    #               "snake_text": "This snake doesn't appear to have a page.",
-                    #               "snake_image": snake_image}
-                    return self.get_snek(snake)
+                    return await self.get_snek(snake)
 
 
             snake_dict = {"name": snake_name,
@@ -215,7 +211,7 @@ class Snakes:
         snake_image = image_url_json['query']['pages'][snake_image_id]['imageinfo'][0]['url']
         snake_text = text_json['query']['pages'][page_id]['extract']
 
-        snake_dict = {"name": snake_name, "snake_text": snake_text, "snake_image": snake_image}
+        snake_dict = {"name": capwords(snake_name), "snake_text": snake_text, "snake_image": snake_image}
         return snake_dict
 
     @command()
