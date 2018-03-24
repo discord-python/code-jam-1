@@ -59,7 +59,6 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
-        print("DEBUG IM RUNNING")
         snake = await self.get_snek(name)
         if snake:
             snake_embed = Embed(title=snake[0], description=snake[1])
