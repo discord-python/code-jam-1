@@ -48,6 +48,10 @@ class Snakes:
 
     @command(name='get')
     async def get(self, ctx: Context, name: str = None):
+        """
+        Shows information on different snakes.
+        """
+        
         snake_info = await self.get_snek(name)
 
         embed = Embed(
@@ -66,8 +70,35 @@ class Snakes:
 
         await ctx.send(embed=embed)
 
-    # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+    @command(name='movies')
+    async def movies(self, ctx: Context, movie_name: str = None):
+        """
+        Shows 5 snake movies. Warning: They are all pretty bad.
+        """
 
+        with open('bot/db/movies.json', 'r') as file:
+            movies_dict = json.load(file)
+
+        if movie_name is None or len(movie_name) == 0:
+            embed = Embed(
+                title="Snake Movies",
+                description="A list of snake movies.",
+            )
+
+            for movie in movies_dict.values():
+                embed.add_field(name=movie['title'], value=f"bot.movies('{movie['title'].lower()}')\n\n")
+
+            embed.set_thumbnail(url="https://i.imgur.com/dB38NwN.png")
+
+        elif len(movie_name) > 0:
+            embed = Embed(
+                title=movies_dict[movie_name]['title'],
+                description=movies_dict[movie_name]['description']
+            )
+
+            embed.set_image(url=movies_dict[movie_name]['image'])
+
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Snakes(bot))

@@ -24,5 +24,32 @@
 		"location": "Tropical rainforests, lakes and swamps of South America. Anacondas are especially numerous near Amazon and Orinoco rivers.",
 		"venomous": "No",
 		"image": "https://i.imgur.com/MNIY8zX.jpg"
+	},
+
+	"black mamba":
+	{
+		"name": "black mamba",
+		"description": "Black mamba is one of the deadliest snakes on the planet. Black mamba can survive in different types of habitat: savannas, swamps, forests, woods and rocky areas.",
+		"location": "Eastern and Southern parts of Africa",
+		"venomous": "Yes",
+		"image": "https://i.imgur.com/aLbAFkE.jpg"
+	},
+
+	"rattlesnake":
+	{
+		"name": "rattlesnake",
+		"description": "Rattlesnakes are easily recognized animals. There are 32 known species of rattlesnakes. Major threats to survival of rattlesnakes are habitat loss and organized killing (extermination) due to fear of these creatures.",
+		"location": "North and South America.",
+		"venomous": "Yes",
+		"image": "https://i.imgur.com/BjWQ9Tv.jpg"
+	},
+
+	"boa constrictor":
+	{
+		"name": "boa constrictor",
+		"description": "Boa constrictor is a close relative of anaconda. Boa constrictor is known as one of the most beautiful snakes because of its colorful skin with interesting prints.",
+		"location": "South and Central America.",
+		"venomous": "No",
+		"image": "https://i.imgur.com/vuJeUwl.jpg"
 	}
 }
