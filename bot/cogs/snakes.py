@@ -46,7 +46,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-
+        name = str(name)
         site = 'https://en.wikipedia.org/wiki/List_of_snakes_by_common_name'
         async with aiohttp.ClientSession() as session:
             async with session.get(site) as resp:
@@ -54,11 +54,10 @@ class Snakes:
                 soup = BeautifulSoup(text, 'lxml')
                 snake = soup.find(text=name)
 
-        if str(name).lower() == 'python':
+        if name.lower() == 'python':
             name = self.python_info
-        elif name.lower() == snake.lower():
+        else:
             name = snake
-
         return name
 
     @command()
@@ -73,7 +72,10 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
         # await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
-        await ctx.send(await self.get_snek(name))
+        if name:
+            await ctx.send(await self.get_snek(name))
+        else:
+            await ctx.send('<REPLACE WITH RANDOM SNAKE>')
         # await ctx.send(name)
 
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
