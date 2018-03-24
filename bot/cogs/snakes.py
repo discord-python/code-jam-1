@@ -1,5 +1,5 @@
 # coding=utf-8
-import logging, aiohttp, random
+import logging, aiohttp, random, wikipedia
 from bs4 import BeautifulSoup
 from typing import Any, Dict
 from discord.ext.commands import AutoShardedBot, Context, command
@@ -31,7 +31,7 @@ class Snakes:
         """
 
         if name is None:
-
+            print(self.site)
 
         async with aiohttp.ClientSession() as session:
             async with session.get(self.site) as resp:
