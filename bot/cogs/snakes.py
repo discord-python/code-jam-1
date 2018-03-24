@@ -21,20 +21,6 @@ class Snakes:
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
 
-    async def get_snek(self, name: str = None) -> Dict[str, Any]:
-        """
-        Go online and fetch information about a snake
-
-        The information includes the name of the snake, a picture of the snake, and various other pieces of info.
-        What information you get for the snake is up to you. Be creative!
-
-        If "python" is given as the snake name, you should return information about the programming language, but with
-        all the information you'd provide for a real snake. Try to have some fun with this!
-
-        :param name: Optional, the name of the snake to get information for - omit for a random snake
-        :return: A dict containing information on a snake
-        """
-
     async def get_snek_qwant_json(self, snake_name: str) -> str:
         """
         Gets the json from Unsplash for a given snake query
@@ -61,6 +47,42 @@ class Snakes:
         rand = random.randint(0, 9)  # prevents returning the same image every time
         return json_response['results'][rand]['urls']['small']
 
+    async def get_snek(self, name: str = None) -> Dict[str, Any]:
+        """
+        Go online and fetch information about a snake
+
+        The information includes the name of the snake, a picture of the snake, and various other pieces of info.
+        What information you get for the snake is up to you. Be creative!
+
+        If "python" is given as the snake name, you should return information about the programming language, but with
+        all the information you'd provide for a real snake. Try to have some fun with this!
+
+        :param name: Optional, the name of the snake to get information for - omit for a random snake
+        :return: A dict containing information on a snake
+        """
+        all_snakes_url = 'https://protected-reef-75100.herokuapp.com/get_all_snakes?format=json'
+        search_url = ''   # INCOMPLETE - NEED SEARCHABLE ENDPOINT
+        if not name:
+            # get a random snake...
+            async with aiohttp.ClientSession() as session:
+                async with session.get(all_snakes_url) as response:
+                    response = await response.read()
+                    data = json.loads(response.decode("utf-8"))
+                    rand = random.randint(0, len(data) - 1)
+                    snake_info = data[rand]
+        else:
+            # todo: get snake info from API
+            # todo: make api endpoint to search for snakes?
+            async with aiohttp.ClientSession() as session:
+                async with session.get(search_url) as response:
+                    # search snake endpoint something...
+                    # response = await response.read()
+                    # data = json.loads(response.decode("utf-8"))
+                    # rand = random.randint(0, len(data) - 1)
+                    pass
+        snake_info['image_url'] = await self.get_snek_image(snake_info['common_name'])
+        return snake_info
+
     @command(aliases=["g"])
     async def get(self, ctx: Context, name: str = None):
         """
@@ -85,15 +107,32 @@ class Snakes:
             )
             embed.set_image(url=await self.get_snek_image("python programming language"))
         else:
-            url = await self.get_snek_image(name)  # not limited to snakes - user can search anything they like
-            embed.add_field(
-                name="common name",
-                value="*sci name*\n\nThis snake is (**not**) venomous and can be found in (...)",
-                inline=False
-            )
-            embed.set_image(url=url)
+            snek_info = await self.get_snek(name)
+            if snek_info['is_venomous']:
+                # if the snake is venomous -- use the fancy check icon
+                embed.add_field(
+                    name=snek_info['common_name'],
+                    value=(
+                        f":microscope: *{snek_info['scientific_name']}*\n\n"
+                        f":white_check_mark: venomous\n\n"
+                        f":globe_with_meridians: Found in {snek_info['locations']}"
+                    ),
+                    inline=False
+                )
+            else:
+                # if the snake is not venomous -- use the fancy not allowed icon
+                embed.add_field(
+                    name=snek_info['common_name'],
+                    value=(
+                        f":microscope: *{snek_info['scientific_name']}*\n\n"
+                        f":no_entry_sign: NOT venomous\n\n"
+                        f":globe_with_meridians: Found in {snek_info['locations']}"
+                    ),
+                    inline=False
+                )
+            embed.set_image(url=snek_info['image_url'])
         await ctx.channel.send(
-            content=ctx.message.author.mention + " :snake: !",
+            # content=ctx.message.author.mention + " :snake: !",
             embed=embed
         )
 
