@@ -1,9 +1,12 @@
 # coding=utf-8
 import logging
-import aiohttp
-import random
-from bs4 import BeautifulSoup
 from typing import Any, Dict
+
+import aiohttp
+
+
+from bs4 import BeautifulSoup
+
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
@@ -13,7 +16,6 @@ class Snakes:
     """
     Snake-related commands
     """
-    embed = {}
     python_info = '''
                     Python (Programming Language)
                     \n
@@ -23,7 +25,7 @@ class Snakes:
                     is friendly & easy to learn;\n
                     is Open.
                     -------------------------------
-                    Created by: Guido Van Rossum \n 
+                    Created by: Guido Van Rossum \n
                     Founded: 20th of February, 1991 \n
                     Official website: https://python.org
                 '''
@@ -44,31 +46,19 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        '''
+
         site = 'https://en.wikipedia.org/wiki/List_of_snakes_by_common_name'
         async with aiohttp.ClientSession() as session:
             async with session.get(site) as resp:
-                text = await resp.read()
-                snake = name
+                text = await resp.text()
                 soup = BeautifulSoup(text, 'lxml')
-                soup.find(snake)
-        '''
+                snake = soup.find(text=name)
 
         if str(name).lower() == 'python':
-                '''
-                Python (Programming Language)
-                \n
-                Python is powerful... and fast;\n
-                plays well with others;\n
-                runs everywhere;\n
-                is friendly & easy to learn;\n
-                is Open.
-                -------------------------------
-                Created by: Guido Van Rossum \n 
-                Founded: 20th of February, 1991 \n
-                Official website: https://python.org
-                '''
-                name = self.python_info
+            name = self.python_info
+        elif name.lower() == snake.lower():
+            name = snake
+
         return name
 
     @command()
@@ -84,6 +74,7 @@ class Snakes:
         """
         # await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
         await ctx.send(await self.get_snek(name))
+        # await ctx.send(name)
 
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
