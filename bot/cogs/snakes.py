@@ -53,11 +53,13 @@ class Snakes:
         soup = bs4.BeautifulSoup(data['parse']['text']['*'])
         tidbits = []
         for section in secs['parse']['sections']:
-            tag = soup.find(id=section['anchor']).find_next('p')
+            tag = rBRACK.sub('', str(soup.find(id=section['anchor']).find_next('p')))
             try:
-                tidbits.append(rBRACK.sub('', rSENTENCE.match(tag.text).group()))
+                tidbits.append(self.h2md.handle(rSENTENCE.match(tag).group()).replace('\n', ' '))
             except AttributeError:
                 pass
+            if sum(map(len, tidbits)) > 1500:
+                break
         try:
             pg_id = str(data['parse']['pageid'])
             imglink = img['query']['pages'][pg_id]['thumbnail']['source']
