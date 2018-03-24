@@ -17,7 +17,7 @@ class Snakes:
         self.bot = bot
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
-        
+
      """
         Go online and fetch information about a snake
 
@@ -79,6 +79,15 @@ class Snakes:
         elif randsnake.startswith("blac"):
             return await ctx.send("Shiny liitle fella !",embed=embed)
 
+
+    @command(name="randname")
+    async def RandName(self,ctx:Context , name: str=None):
+        p = len(name)
+        front_back=random.randint(1,3)
+        if front_back==1:#so the users name in substring from the front and snake random substring from back
+            #do something
+        elif front_back==2:#so the users name in substring from the back and snake random substring from front
+            #do something
 
 
 
