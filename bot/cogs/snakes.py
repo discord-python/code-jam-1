@@ -79,7 +79,10 @@ class Snakes:
     @command()
     async def snake(self, ctx: Context, x=10, y=5):
         board = """"""
+        running = True
         snake = [(x//2, y//2)]
+
+        userID = ctx.author.id
 
         board += "```\n " + "#" * x + "##"
         for yAxis in range(y):
@@ -98,9 +101,17 @@ class Snakes:
 
         await ctx.send(board)
 
+        while True:
+            for mess in self.inputs:
+                if mess.author.id == userID:
+                    await ctx.send("success")
+                    self.inputs.clear
+                    break
+
     async def on_message(self, message):
         if message.content in ("w", "a", "s", "d"):
             self.inputs.append(message)
+
 
 
 def setup(bot):
