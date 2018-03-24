@@ -100,10 +100,7 @@ class Snakes:
 
     async def on_message(self, message):
         if message.content in ("w", "a", "s", "d"):
-            self.inputs.append(message.content)
-
-
-
+            self.inputs.append(message)
 
 
 def setup(bot):
