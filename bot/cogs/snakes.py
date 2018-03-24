@@ -73,12 +73,14 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
         embed = discord.Embed(color=0x3E885B)
-        if name == "python":
+        if name and name.lower() == "python":
             # handle Python special case
             embed.add_field(
                 name="Python (programming language)",
-                value="*Guido van Rossum*\n\n"
-                      "This language is neither dangerous nor venomous and can be found in software globally",
+                value=(
+                    "*Guido van Rossum*\n\n"
+                    "This language is neither dangerous nor venomous and can be found in software globally"
+                ),
                 inline=False
             )
             embed.set_image(url=await self.get_snek_image("python programming language"))
