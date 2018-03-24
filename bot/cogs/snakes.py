@@ -60,7 +60,6 @@ class Snakes:
                 except ValueError:
                     raise ValueError('snek not found')
 
-                raise ValueError('snek not found')
         info = copy(src)  # make a copy of the dictionary
         info['common name'] = name  # make common name key
         return info
