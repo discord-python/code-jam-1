@@ -1,6 +1,8 @@
 # coding=utf-8
+import json
 import logging
-from typing import Any, Dict
+import random
+from typing import Tuple
 
 from discord.ext.commands import AutoShardedBot, Context, command
 
@@ -14,8 +16,10 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
+        with open("bot/db/db.json", "r") as db:
+            self.db = json.load(db)
 
-    async def get_snek(self, name: str = None) -> Dict[str, Any]:
+    async def get_snek(self, name: str = None) -> Tuple[str, str]:
         """
         Go online and fetch information about a snake
 
@@ -28,6 +32,20 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
+        if name:
+            name = name.lower()
+            if name == "python":
+                return (("The Python Programming language(Python Sermone) is a dynamically typed, interpreted ",
+                         "programming language. It is a member of the high level programming languges usually found",
+                         "in areas like backend web development data science and AI."),
+                        "https://www.python.org/static/community_logos/python-logo-master-v3-TM.png")
+            else:
+                if name in self.db:
+                    return self.db[name]
+                else:
+                    return None
+        else:
+            return random.choice(self.db[self.db.keys()])
 
     @command()
     async def get(self, ctx: Context, name: str = None):
