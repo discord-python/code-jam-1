@@ -10,6 +10,14 @@ import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
+SNEK_MAP_SELECTOR = (
+    "#wsite-content > div:nth-of-type(2) > div > div > table > "
+    "tbody > tr > td:nth-of-type(2) > div:nth-of-type(3) > div > a > img"
+)
+SCIENTIFIC_NAME_SELECTOR = (
+    "#wsite-content > div:nth-of-type(1) > div > div > "
+    "table > tbody > tr > td:nth-of-type(1) > div:nth-of-type(2)"
+)
 
 
 class Snakes:
@@ -40,10 +48,11 @@ class Snakes:
         em = discord.Embed(
             title=f"{data['name']} ({data['scientific-name']})",
             description=data['description'],
-            color=discord.Color.green()
+            color=discord.Color.green(),
+            url=data['url']
         )
         em.set_image(url=data['image-url'])
-        em.set_footer(text='Bot by SharpBit and Volcyy')
+        em.set_thumbnail(url=data['map-url'])
 
         return em
 
@@ -72,11 +81,16 @@ class Snakes:
             soup = BeautifulSoup(info, 'lxml')
         img = soup.find(attrs={'property': {'og:image'}})['content']
         names = soup.find('td', class_='wsite-multicol-col')
+        sci_name = soup.select(SNEK_MAP_SELECTOR)[0].text.strip()
+        location_map = soup.select(SCIENTIFIC_NAME_SELECTOR)[0]['src']
+        description_tag = soup.find(attrs={'property': {'og:description'}})
         info = {
             'name': names.h1.string,
-            'scientific-name': names.h2.string,
+            'scientific-name': sci_name,
             'image-url': img,
-            'description': soup.find(attrs={'property': {'og:description'}})['content']
+            'map-url': f'{self.bot.info_url}{location_map}',
+            'description': description_tag['content'],
+            'url': url
         }
 
         return info
