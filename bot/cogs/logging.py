@@ -30,10 +30,10 @@ class Logging:
         self.bot.info_url = 'https://snake-facts.weebly.com/'
         log.info('Session created!')
 
-        with open('./snakes.txt') as f:
+        with open('./snakes.txt', encoding='utf-8') as f:
             self.bot.sneks = f.read().split('\n')
             for i, snek in enumerate(self.bot.sneks):
-                self.bot.sneks[i] = snek.replace('â€‹', '').replace('ï»¿', '')
+                self.bot.sneks[i] = snek.replace('\u200b', '').replace('\ufeff', '')
 
         log.info('Snakes loaded.')
 

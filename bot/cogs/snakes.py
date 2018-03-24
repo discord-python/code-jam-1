@@ -39,10 +39,10 @@ class Snakes:
         '''Formats the info with the given data'''
         em = discord.Embed(
             title=f"{data['name']} ({data['scientific-name']})",
-            description='Nothing yet.',
+            description=data['description'],
             color=discord.Color.green()
         )
-        em.set_thumbnail(url=data['image-url'])
+        em.set_image(url=data['image-url'])
         em.set_footer(text='Bot by SharpBit and Volcyy')
 
         return em
@@ -75,7 +75,8 @@ class Snakes:
         info = {
             'name': names.h1.string,
             'scientific-name': names.h2.string,
-            'image-url': img
+            'image-url': img,
+            'description': soup.find(attrs={'property': {'og:description'}})['content']
         }
 
         return info
