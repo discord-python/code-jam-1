@@ -1,8 +1,10 @@
 # coding=utf-8
-import logging, aiohttp, random, wikipedia, time
+import logging, aiohttp, random, wikipedia
+from time import sleep
 from bs4 import BeautifulSoup
 from typing import Any, Dict
 from discord.ext.commands import AutoShardedBot, Context, command
+import asyncio
 
 log = logging.getLogger(__name__)
 
@@ -51,7 +53,6 @@ class Snakes:
                 soup = BeautifulSoup(text, 'lxml')
                 table = discord.Embed(title=soup.find('tbody'))
 
-
         if name.lower() == 'python':
             name = self.python_info
         else:
@@ -77,41 +78,68 @@ class Snakes:
 
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
     @command()
-    async def snake(self, ctx: Context, x=10, y=5):
+    async def snake(self, ctx: Context, x=50, y=30):
         board = """"""
         running = True
-        snake = [(x//2, y//2)]
+        head = [x//2, y//2]
 
         userID = ctx.author.id
+        facing = 0
 
         board += "```\n " + "#" * x + "##"
         for yAxis in range(y):
             board += "\n #"
             for xAxis in range(x):
-
-                for pos in snake:
-                    if pos == (xAxis, yAxis):
-                        board += "@"
-                        break
+                if head == [xAxis, yAxis]:
+                    board += "X"
                 else:
                         board += "0"
 
             board += "#"
         board += "\n " + "#" * x + "##```"
 
-        await ctx.send(board)
+        snakeBoard = await ctx.send(board)
 
-        while True:
+        while running:
             for mess in self.inputs:
                 if mess.author.id == userID:
                     await ctx.send("success")
-                    self.inputs.clear
+                    self.inputs = []
+                    if mess.content == "a":
+                        facing = (facing - 1) % 4
+                    if mess.content == "d":
+                        facing = (facing + 1) % 4
                     break
+
+            if facing == 0:
+                head[1] -= 1
+            elif facing == 1:
+                head[0] += 1
+            elif facing == 2:
+                head[1] += 1
+            else:
+                head[0] -= 1
+
+            board = """"""
+            board += "```\n " + "#" * x + "##"
+            for yAxis in range(y):
+                board += "\n #"
+                for xAxis in range(x):
+                    if head == [xAxis, yAxis]:
+                        board += "X"
+                    else:
+                        board += "0"
+
+                board += "#"
+            board += "\n " + "#" * x + "##```"
+
+            await snakeBoard.edit(content=board)
+            await asyncio.sleep(1)
 
     async def on_message(self, message):
         if message.content in ("w", "a", "s", "d"):
             self.inputs.append(message)
-
+            await message.delete()
 
 
 def setup(bot):
