@@ -63,7 +63,7 @@ class Snakes:
             embed.add_field(name="Who created it?", value=snake_info['creator'])
             embed.add_field(name="When was it created?", value=snake_info['created'])
             embed.set_thumbnail(url=snake_info['image'])
-            
+
         await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
