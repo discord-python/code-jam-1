@@ -34,7 +34,7 @@ class Snakes:
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
 
-    async def get_snek(self, embed, name: str = None) -> Dict[str, Any]:
+    async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
         Go online and fetch information about a snake
 
@@ -53,16 +53,17 @@ class Snakes:
             async with session.get(site) as resp:
                 text = await resp.text()
                 soup = BeautifulSoup(text, 'lxml')
-                table = discord.Embed(title=soup.find('tbody'))
 
 
         if name.lower() == 'python':
             name = self.python_info
-        else:
-            embed = table
+
+        return name
+
+
 
     @command()
-    async def get(self, embed, ctx: Context, name: str = None,):
+    async def get(self, ctx: Context, name: str = None,):
         """
         Go online and fetch information about a snake
 
@@ -73,10 +74,18 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
         # await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
-        if name:
+        name = str(name)
+        site = 'https://en.wikipedia.org/wiki/' + name
+        async with aiohttp.ClientSession() as session:
+            async with session.get(site) as resp:
+                text = await resp.text()
+                soup = BeautifulSoup(text, 'lxml')
+                em = discord.Embed(title=name, description="Description")
+
+        if name.lower() == 'python':
             await ctx.send(await self.get_snek(name))
         else:
-            ctx.send(embed=embed)
+            await ctx.send(embed=em)
         # await ctx.send(name)
 
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
