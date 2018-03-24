@@ -58,7 +58,7 @@ class Snakes:
         rand = random.randint(0, 9)  # prevents returning the same image every time
         return json_response['results'][rand]['urls']['small']
 
-    @command()
+    @command(aliases=["g"])
     async def get(self, ctx: Context, name: str = None):
         """
         Go online and fetch information about a snake
@@ -93,6 +93,29 @@ class Snakes:
         )
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+
+    @command(aliases=["f"])
+    async def fact(self, ctx: Context):
+        """
+        Gets a random fact about snakes
+        :param ctx: Context object passed from discord.py
+        """
+        em = discord.Embed(color=0x399600)
+        em.add_field(
+            name="Snake Fact",
+            value=self.get_snek_fact(),
+            inline=False
+        )
+        await ctx.channel.send(
+            content=ctx.message.author.mention,
+            embed=em
+        )
+
+    def get_snek_fact(self):
+        with open('bot/cogs/resources/facts.json', 'r', encoding="utf8") as f:
+            data = json.load(f)
+        choice = random.randint(0, len(data['facts'])-1)
+        return data['facts'][choice]
 
 
 def setup(bot):
