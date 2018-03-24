@@ -1,11 +1,10 @@
 # coding=utf-8
 
-import json
 import async_timeout
 import random
 import difflib
 import logging
-import urllib
+import urllib.parse
 
 import aiohttp
 
@@ -20,6 +19,7 @@ log = logging.getLogger(__name__)
 
 WIKI = "https://en.wikipedia.org/w/api.php?"
 BASEURL = WIKI + "format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles={}&redirects=1"
+FAILIMAGE = "http://i.imgur.com/HtIPyLy.png/beep"
 PYTHON = {
     "name": "Python",
     "info": """Python is a species of programming language, \
@@ -43,19 +43,19 @@ class Snakes:
         self.bot = bot
 
     @staticmethod
-    def snake_url(name: str) -> str:
+    def snake_url(name: str):
         """Get the URL of a snake"""
 
-        def encode_url(text):
-            """Encode a string to URL-friendly format"""
+        def format_url(text: str):
+            """Get the full URL with that snake :D"""
             return BASEURL.format(urllib.parse.quote_plus(text))
 
         # Check if the snake name is valid
         if name.upper() in [name.upper() for name in SNAKES]:
-            return encode_url(name)
+            return format_url(name)
 
         # Get the most similar name if a match wasn't found
-        return encode_url(difflib.get_close_matches(name, SNAKES, n=1, cutoff=0)[0])
+        return difflib.get_close_matches(name, SNAKES, n=5, cutoff=0)
 
     @staticmethod
     async def fetch(session, url: str):
@@ -64,7 +64,7 @@ class Snakes:
             async with session.get(url) as response:
                 return await response.json()
 
-    async def get_snek(self, name: str = None) -> Dict[str, str]:
+    async def get_snek(self, name: str = None, autocorrect: bool = False) -> Dict[str, str]:
         """If a name is provided, this gets a specific snake. Otherwise, it gets a random snake."""
         if name is None:
             name = random.choice(SNAKES)
@@ -76,13 +76,22 @@ class Snakes:
         async with aiohttp.ClientSession() as session:
             url = self.snake_url(name)
 
+            if isinstance(url, list):
+                if autocorrect:
+                    return await self.get_snek(url[0])
+
+                return {
+                    "name": "Oops!",
+                    "info": "We couldn't find that snake, but here are some with similar names:\n\n" + "\n".join(url),
+                }
+
             # Get the content
             response = await self.fetch(session, url)
             page = response["query"]["pages"]
             content = next(iter(page.values()))
 
             # Parse the full-res image from the thumbnail
-            thumb = content.get("thumbnail", {}).get("source", "http://i.imgur.com/HtIPyLy.png/beep")
+            thumb = content.get("thumbnail", {}).get("source", FAILIMAGE)
             image = "/".join(thumb.replace("thumb/", "").split("/")[:-1])
 
             return {
@@ -92,14 +101,35 @@ class Snakes:
             }
 
     @command()
-    async def get(self, ctx: Context, name: str = None):
-        content = await self.get_snek(name)
+    async def get(self, ctx: Context, name: str = None, kwarg: str = None):
+
+        # Really dirty autocomplete kwarg handling
+        # I'm sorry, lemon.
+        if kwarg is not None:
+            if kwarg.lower().startswith("autocorrect="):
+                items = kwarg.split("=")
+                autocorrect = (items[1] == "True")
+
+            elif kwarg in ["True", "False"]:
+                autocorrect = (kwarg == "True")
+
+            else:
+                await ctx.send("That's a bad argument! >:(")
+                return
+
+        else:
+            autocorrect = False
+
+        content = await self.get_snek(name, autocorrect)
         # Just a temporary thing to make sure it's working
         embed = Embed(
-            title = content["name"],
-            description = content["info"][:1970] + "\n\nPS. If the image is a fucking map, blame wikipedia. -Somejuan",
+            title=content["name"],
+            description=content["info"][:1970],
+            color=0x7289da
         )
-        embed.set_image(url=content["image"])
+
+        if "image" in content:
+            embed.set_image(url=content.get("image"))
 
         await ctx.send(embed=embed)
 
