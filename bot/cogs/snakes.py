@@ -15,7 +15,7 @@ import difflib
 log = logging.getLogger(__name__)
 
 # Probably should move these somewhere
-BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles={}&redirects=1"
+BASEURL = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles=%{}&redirects=1"
 PYTHON = {
     "name": "Python",
     "info": """Python is a species of programming language, \
@@ -44,15 +44,14 @@ class Snakes:
 
         def encode_url(text):
             """Encode a string to URL-friendly format"""
-            return BASEURL.format(text.replace(' ', '%20').replace("'", '%27'))
+            return BASEURL.format("%".join("{:02x}".format(ord(c)) for c in text))
 
         # Check if the snake name is known
         if name.upper() in list(map(lambda n: n.upper(), SNAKES)):
             return encode_url(name)
 
-        # Get a list of similar names if a match wasn't found
-        matches = difflib.get_close_matches(name, SNAKES, n=1)
-        return encode_url(matches[0] if matches != [] else random.choice(SNAKES))
+        # Get the most similar name if a match wasn't found
+        return encode_url(difflib.get_close_matches(name, SNAKES, n=1, cutoff=0)[0])
 
     @staticmethod
     async def fetch(session, url):
@@ -61,7 +60,7 @@ class Snakes:
             async with session.get(url) as response:
                 return await response.json()
 
-    async def get_snek(self, name: str = None) -> Dict[str, Any]:
+    async def get_snek(self, name: str = None) -> Dict[str, str]:
         """Get a snake with a given name, or otherwise randomly"""
         if name is None:
             name = random.choice([x.strip('\n') for x in SNAKES])
