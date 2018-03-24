@@ -116,7 +116,7 @@ class Snakes:
         embed = Embed(title=snek.get('common name'), description=snek.get('description'))
         # Commented out until I know what information I have to use.
         # embed.add_field(name="More Information", value="```Species | xxx\rGenus   | xxx\rFamily  | xxx```")
-        embed.add_field(snek.get('rating'), value=await self.get_danger(snek.get('rating')), inline=True)
+        embed.add_field(name=snek.get('rating'), value=await self.get_danger(snek.get('rating')), inline=True)
         embed.set_image(url=snek.get('image'))
         embed.set_footer(text="Information from Wikipedia and snakedatabase.org")
         await ctx.send(embed=embed)
