@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 import aiohttp
+import random
 from bs4 import BeautifulSoup
 from typing import Any, Dict
 from discord.ext.commands import AutoShardedBot, Context, command
@@ -49,6 +50,7 @@ class Snakes:
         """
         # await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
         await ctx.send(self.get_snek(name))
+        await ctx.send(random.choice(["snake1", "snake2", "snake3"]))
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
 
