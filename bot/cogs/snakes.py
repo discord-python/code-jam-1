@@ -4,7 +4,6 @@ from typing import Any, Dict
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
-import wikipedia
 import discord
 
 class Snakes:
