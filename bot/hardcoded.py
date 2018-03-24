@@ -1,7 +1,7 @@
 #encoding: utf-8
 
-categories = '|'.join(
-  f'Category:{s}' for s in [
+categories = [
+  f'Category:{s}' for s in (
     'Acrochordidae',
     'Alethinophidia',
     'Aniliidae',
@@ -38,5 +38,5 @@ categories = '|'.join(
     'Xenopeltidae',
     'Xenophidiidae',
     'Xenotyphlopidae',
-  ]
-)
+  )
+]

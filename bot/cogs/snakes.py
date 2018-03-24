@@ -1,5 +1,7 @@
 # coding=utf-8
+import asyncio
 import logging
+import random
 import re
 from typing import Any, Dict
 
@@ -10,14 +12,19 @@ import html2text
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from ..hardcodings import categories
+from .. import hardcoded
 
 log = logging.getLogger(__name__)
 
-API = 'https://en.wikipedia.org/w/api.php?format=json&redirects=1&action='
+WKPD = 'https://en.wikipedia.org'
+API = WKPD + '/w/api.php?format=json&redirects=1&action='
 rSENTENCE = re.compile(r'^.+?\.')
 rBRACK = re.compile(r'[[(].+?[\])]')
 rMDLINK = re.compile(r'(\[.*?\])\((\S+?)\s".*?"\)')
+
+
+class BadSnake(ValueError):
+    pass
 
 
 class Snakes:
@@ -39,8 +46,22 @@ class Snakes:
           '&titles={}'
           '&prop=pageimages|categories'
           '&pithumbsize=300'
-          f'&cllimit=max&clcategories={categories}'
+          f"&cllimit=max&clcategories={'|'.join(hardcoded.categories)}"
           )
+
+    async def get_rand_snek(self, category: str = None):
+        """
+        Follow wikipedia's Special:RandomInCategory to grab the name of a random snake.
+        """
+        if category is None:
+            category = random.choice(hardcoded.categories)
+        while True:
+            async with self.session.get(f"{WKPD}/wiki/Special:RandomInCategory/{category}") as resp:
+                *_, name = resp.url.path.split('/')
+                if 'Category:' not in name:  # Sometimes is a subcategory instead of an article
+                    break
+            await asyncio.sleep(1)  # hmm
+        return name
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -55,7 +76,9 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        # TODO: Random will be done by fetching from Special:RandomInCategory/Venomous_snakes, or something
+        if name is None:
+            name = await self.get_rand_snek()
+
         async with self.session.get(self.base_query.format(name)) as pg_resp, \
                    self.session.get(self.info_query.format(name)) as if_resp:  # noqa
             data = await pg_resp.json()
@@ -64,7 +87,7 @@ class Snakes:
         pg_id = str(data['parse']['pageid'])
         pg_info = info['query']['pages'][pg_id]
         if 'categories' not in pg_info:
-            raise ValueError("This doesn't appear to be a snake!")
+            raise BadSnake("This doesn't appear to be a snake!")
         soup = bs4.BeautifulSoup(data['parse']['text']['*'])
         tidbits = []
         for section in data['parse']['sections']:
@@ -76,13 +99,13 @@ class Snakes:
             except AttributeError:
                 pass
             else:
-                tidbits.append(rMDLINK.sub(lambda m: f'{m[1]}(https://en.wikipedia.org{m[2]})', tidbit))
+                tidbits.append(rMDLINK.sub(lambda m: f'{m[1]}({WKPD}{m[2]})', tidbit))
         try:
             img_url = pg_info['thumbnail']['source']
         except KeyError:
             img_url = None
         title = data['parse']['title']
-        pg_url = f'https://en.wikipedia.org/wiki/{title.replace(" ", "_")}'
+        pg_url = f"{WKPD}/wiki/{title.replace(' ', '_')}"
         return {'info': (img_url, pg_url, title), 'tidbits': tidbits}
 
     @commands.command()
@@ -98,7 +121,7 @@ class Snakes:
         """
         try:
             snek = await self.get_snek(name)
-        except ValueError as e:
+        except BadSnake as e:
             return await ctx.send(f'`{e}`')
         image, page, title = snek['info']
         embed = discord.Embed(title=title, url=page, description='\n\n • '.join(snek['tidbits']))
