@@ -4,8 +4,6 @@ from typing import Any, Dict
 import aiohttp
 import async_timeout
 import random
-import asyncio
-import pprint
 
 from discord.ext.commands import AutoShardedBot, Context, command
 from discord import Embed
@@ -13,6 +11,8 @@ from discord import Embed
 log = logging.getLogger(__name__)
 
 SNEKFILE = 'bot/cogs/data/quote.txt'
+PYTHONPIC = "http://www.pngall.com/wp-content/uploads/2016/05/Python-Logo-Free-PNG-Image.png"
+DEFAULT_SNEK = "https://pbs.twimg.com/profile_images/662615956670144512/dqsVK6Nw_400x400.jpg"
 
 FIRST_EMOJI = "💉"
 SECOND_EMOJI = "💊"
@@ -113,12 +113,13 @@ class Snakes:
 
         text_json = await self.get_wiki_json(text_params)
         image_name_json = await self.get_wiki_json(image_name_params)
-        snake_image = "https://pbs.twimg.com/profile_images/662615956670144512/dqsVK6Nw_400x400.jpg"
+        snake_image = DEFAULT_SNEK
 
         page_id = list(text_json['query']['pages'].keys())[0]
         if page_id == "-1" or snake_name not in snakelist:  # No entry on the wiki
             snake_dict = {"name": snake_name,
-                          "snake_text": "You call that a snake?\nTHIS is a snake!",
+                          "snake_text": "You call that a snake?\n"
+                                        "THIS is a snake!",
                           "snake_image": snake_image}
             return snake_dict
 
@@ -162,7 +163,7 @@ class Snakes:
                 text = file.read()
                 snake_embed = Embed(color=ctx.me.color, title="SNEK")
                 snake_embed.add_field(name="Python", value=f"*{text}*")
-                snake_embed.set_thumbnail(url="http://www.pngall.com/wp-content/uploads/2016/05/Python-Logo-Free-PNG-Image.png")
+                snake_embed.set_thumbnail(url=PYTHONPIC)
                 await ctx.send(embed=snake_embed)
 
         snake = await self.get_snek(name)
