@@ -49,12 +49,12 @@ class Snakes:
     @command(name='get')
     async def get(self, ctx: Context, name: str = None):
         snake_info = await self.get_snek(name)
-        
+
         embed = Embed(
             title=snake_info['name'].title(),
             description=snake_info['description']
         )
-
+        
         if snake_info['name'] != "python":
             embed.add_field(name="Where can you find them?", value=snake_info['location'])
             embed.add_field(name="Are they venomous?", value=snake_info['venomous'])
