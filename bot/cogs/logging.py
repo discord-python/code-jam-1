@@ -34,7 +34,6 @@ class Logging:
             self.bot.sneks = f.read().split('\n')
             for i, snek in enumerate(self.bot.sneks):
                 self.bot.sneks[i] = snek.replace('â€‹', '').replace('ï»¿', '')
-            print(self.bot.sneks)
 
         log.info('Snakes loaded.')
 

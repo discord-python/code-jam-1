@@ -76,11 +76,11 @@ class Snakes:
         async with self.bot.session.get(url) as resp:
             info = await resp.read()
             soup = BeautifulSoup(info, 'lxml')
-        img = self.get_attr(soup, 'div', 'wsite-image wsite-image-border-none ').a.img.src
+        img = soup.find(itemprop='image')
         names = self.get_attr(soup, 'td', 'wsite-multicol-col')
         info = {
-            'name': names.h1,
-            'scientific-name': names.h2.i,
+            'name': names.h1.string,
+            'scientific-name': names.h2.string,
             'image-url': f"{self.bot.info_url}{img}"
         }
 
