@@ -189,7 +189,7 @@ class Snakes:
         await ctx.send(embed=snake_embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
-    @command(name="bb")
+    @command(name="antidote")
     async def build_board(self, ctx: Context):
         antidote_tries = 0
         antidote_guess_count = 0
