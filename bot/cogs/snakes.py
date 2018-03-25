@@ -18,16 +18,19 @@ class Snakes:
     """
     Snake-related commands
     """
-    python_info = '''Python (Programming Language)
-                Python is powerful... and fast;
-                plays well with others;
-                runs everywhere;
-                is friendly & easy to learn;
-                is Open source.
-                -------------------------------
-                Created by: Guido Van Rossum
-                Founded: 20th of February, 1991
-                Official website: https://python.org'''
+    python_info = '''
+                    Python (Programming Language)
+                    \n
+                    Python is powerful... and fast;\n
+                    plays well with others;\n
+                    runs everywhere;\n
+                    is friendly & easy to learn;\n
+                    is Open-Source.
+                    -------------------------------
+                    Created by: Guido Van Rossum \n
+                    Founded: 20th of February, 1991 \n
+                    Official website: https://python.org
+                '''
 
     def __init__(self, bot: AutoShardedBot):
         self.inputs = []
@@ -115,14 +118,20 @@ class Snakes:
         snakeBoard = await ctx.send(board)
 
         while running:
+            directionChange = True
             for mess in self.inputs:
                 if mess.author.id == userID:
                     self.inputs = []
                     if mess.content == "a":
-                        facing = (facing - 1) % 4
-                    if mess.content == "d":
-                        facing = (facing + 1) % 4
-                    break
+                        if directionChange:
+                            facing = (facing - 1) % 4
+                            directionChange = False
+                        await mess.delete()
+                    elif mess.content == "d":
+                        if directionChange:
+                            facing = (facing + 1) % 4
+                            directionChange = False
+                        await mess.delete()
 
             if facing == 0:
                 head[1] -= 1
@@ -133,6 +142,13 @@ class Snakes:
             else:
                 head[0] -= 1
 
+            if tuple(head) == any(snake):
+                await ctx.send(str(ctx.author.mention) + " ate yourself...")
+                break
+            if head[0] < 0 or head[1] < 0 or head[0] > x or head[1] > y:
+                await ctx.send(str(ctx.author.mention) + " ate a wall?")
+                break
+
             for snakeTail in snake:
                 if snakeTail == apple:
                     apple = (random.randint(0, x), random.randint(0, y))
@@ -141,7 +157,7 @@ class Snakes:
                 snake.pop(0)
             snake.append(tuple(head))
 
-            board = """Snake!\n"""
+            board = """Snake! {}\n""".format(ctx.author.mention)
             board += "```\n " + "#" * x + "##"
             for yAxis in range(y):
                 board += "\n #"
@@ -163,9 +179,8 @@ class Snakes:
             await asyncio.sleep(0.9)
 
     async def on_message(self, message):
-        if message.content in ("w", "a", "s", "d"):
+        if message.content in ("a", "d"):
             self.inputs.append(message)
-            await message.delete()
 
 
 def setup(bot):
