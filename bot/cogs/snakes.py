@@ -6,12 +6,13 @@ import difflib
 import logging
 import os
 import random
+import textwrap
 import urllib.parse
 from functools import partial
 from io import BytesIO
 from typing import Dict
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 import aiohttp
 
@@ -60,7 +61,8 @@ CARD = {
     "bottom": Image.open("bot/cards/card_bottom.png"),
     "backs": [
         Image.open(f"bot/cards/backs/{file}") for file in os.listdir("bot/cards/backs")
-    ]
+    ],
+    "font": ImageFont.truetype("bot/cards/expressway.ttf", 20)
 }
 
 
@@ -76,6 +78,7 @@ class Snakes:
     @staticmethod
     def kwargs(args, positional_args=list()):
         """for given command parameters *args **kwargs turns them into a dictionary with given positional_args list"""
+        # This is Someone's fancy kwarg stuff - juan
         final = {}
         if all('=' in str(arg) for arg in args):
             for arg in args:
@@ -174,10 +177,10 @@ class Snakes:
 
     @command()
     async def get(self, ctx: Context, *args):
-
+        """Get information about a snake :D"""
         content = await self.get_snek(
             args[0] if args else None,
-            self.kwargs(args[1:], positional_args=["autocorrect", "details"])
+            self.kwargs(args[1:], positional_args=["autocorrect"])
         )
 
         embed = Embed(
@@ -196,7 +199,7 @@ class Snakes:
     # Cards are here :D
 
     @staticmethod
-    def generate_card(buffer: BytesIO) -> BytesIO:
+    def generate_card(buffer: BytesIO, content: dict) -> BytesIO:
         """Generate a card from snake information"""
         snake = Image.open(buffer)
 
@@ -232,7 +235,42 @@ class Snakes:
         for offset in range(back_copies):
             full_image.paste(back, (16, 16 + offset * back.height))
 
+        # Place the foreground onto the final image
         full_image.paste(foreground, (0, 0), foreground)
+
+        # Get the first two sentences of the info
+        description = '.'.join(content['info'].split(".")[:2]) + '.'
+
+        # Setup positioning variables
+        margin = 36
+        offset = CARD['top'].height + icon_height + margin
+
+        # Create blank rectangle image which will be behind the text
+        rectangle = Image.new(
+            "RGBA",
+            (main_width, main_height),
+            (0, 0, 0, 0)
+        )
+
+        # Draw a semi-transparent rectangle on it
+        rect = ImageDraw.Draw(rectangle)
+        rect.rectangle(
+            (margin, offset, main_width - margin, main_height - margin),
+            fill=(63, 63, 63, 128)
+        )
+
+        del rect
+
+        # Paste it onto the final image
+        full_image.paste(rectangle, (0, 0), mask=rectangle)
+
+        # Draw the text onto the final image
+        draw = ImageDraw.Draw(full_image)
+        for line in textwrap.wrap(description, 36):
+            draw.text([margin + 4, offset], line, font=CARD['font'])
+            offset += CARD['font'].getsize(line)[1]
+
+        del draw
 
         # Get the image contents as a BufferIO object
         buffer = BytesIO()
@@ -243,7 +281,15 @@ class Snakes:
 
     @command()
     async def snake_card(self, ctx: Context, *args):
-        content = await self.get_snek(args[0] if args else None, self.kwargs(args[1:], positional_args=["autocorrect", "details"]))
+        """Create an interesting little card from a snake!"""
+        # Someone's funky kwarg stuff
+        content = await self.get_snek(
+            args[0] if args else None,
+            self.kwargs(
+                args[1:],
+                positional_args=["autocorrect"]
+            )
+        )
 
         async with ctx.typing():
 
@@ -254,7 +300,7 @@ class Snakes:
 
             stream.seek(0)
 
-            func = partial(self.generate_card, stream)
+            func = partial(self.generate_card, stream, content)
             final_buffer = await self.bot.loop.run_in_executor(None, func)
 
         await ctx.send(
