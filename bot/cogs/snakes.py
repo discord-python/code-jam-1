@@ -3,6 +3,8 @@ import logging
 from typing import Any, Dict
 import random
 import wikipedia
+import aiohttp
+import requests
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
@@ -33,8 +35,18 @@ class Snakes:
         """
 
     @command(name="get")
-    async def get(self, ctx: Context, name: str = None):
-        if name.lower() == "python":
+    async def get(self, ctx: Context):#, name: str = None):
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://en.wikipedia.org/wiki/Cobra') as resp:
+                return await ctx.send(yield from resp.text)
+                #return await resp.()
+            #r = yield from aiohttp.request('get', 'http://python.org')
+            #raw = yield from r.text()
+
+            #print(raw)
+
+    """if name.lower() == "python":
             name_rechange = "Python Programming Language"
         else:
             name_rechange = name
@@ -47,6 +59,7 @@ class Snakes:
         )
         embed.add_field(name="Image", value=test.images[0], inline=False)
         return await ctx.send(embed=embed)
+        """
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
