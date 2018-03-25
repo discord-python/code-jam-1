@@ -1,0 +1,27 @@
+{
+    "questions":[
+        {
+            "id": 0,
+            "question": " What kind of bear is best?",
+            "a":"Black bear",
+            "b":"Battlestar Galactica",
+            "c":"Brown Bear",
+            "d":"Pandas",
+            "answerkey":"🇦"
+
+        },
+                {
+            "id": 1,
+            "question": "2+2=",
+            "a":"2",
+            "b":"5",
+            "c":"4",
+            "d":"8",
+            "answerkey":"🇨"
+
+
+
+        }
+]
+
+} 

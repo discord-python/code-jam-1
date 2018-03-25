@@ -5,6 +5,8 @@ from bot.cogs import WikiListener
 from discord.ext.commands import AutoShardedBot, Context, command
 import discord
 import aiohttp
+import random
+import json
 
 log = logging.getLogger(__name__)
 
@@ -18,7 +20,6 @@ class Snakes:
         self.bot = bot
 
     async def is_snek(self, name: str = None) -> Dict[str, Any]:
-        """ Verifies if whatever the user has inputted is actually a snake against a textfile. """
         if name in WikiListener.get_all_snek():
             return True
         else:
@@ -26,8 +27,7 @@ class Snakes:
 
     @command()
     async def get(self, ctx: Context, name: str = None):
-        """ Get some informaton on snakes using wikipedia. """
-        name = name.lower()
+
         if name is None:
             ctx.send("Ensure your command specifies the correct arguments.")
         state = await self.is_snek(name)
@@ -61,10 +61,12 @@ class Snakes:
         async def addmoji(msg, emojilist):
             for emoji in emojilist:
                 await msg.add_reaction(emoji)
+        with open("bot/snakedata/questions.json") as quizson:
+            questions = json.load(quizson)
 
         quemoji = ['🇦', '🇧', '🇨', '🇩']
-        question = ['Which snek is the sneakiest snek?', '🇦Cobra\n\n🇧Regular Snek\n\n🇨Python\n\n🇩<Cobra></Cobra>', '🇨']
-        em = discord.Embed(title=question[0], description=question[1])
+        random_quiz = questions["questions"][random.randint(0,1)]
+        em = discord.Embed(title=random_quiz['question'], description='🇦 {0}\n\n🇧 {1}\n\n🇨 {2}\n\n🇩 {3}'.format(random_quiz['a'],random_quiz['b'],random_quiz['c'],random_quiz['d']))
         channel = ctx.channel
         quiz = await channel.send('', embed=em)
         await addmoji(quiz, quemoji)
@@ -77,10 +79,10 @@ class Snakes:
         except asyncio.TimeoutError as err:
             await channel.send('👎')            
         else:
-            if str(reaction.emoji) == question[2]:
+            if str(reaction.emoji) == random_quiz["answerkey"]:
                 await channel.send('👍')
             else:
-                pass
+                await channel.send('Sorry the correct answer was: {0}'.format(random_quiz["answerkey"]))
 
 
 # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
