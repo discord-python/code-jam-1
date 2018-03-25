@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 
+
 from discord.ext.commands import AutoShardedBot
 
 log = logging.getLogger(__name__)
