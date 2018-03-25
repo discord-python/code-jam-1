@@ -7,8 +7,6 @@ from typing import Any, Dict
 
 import aiohttp
 
-import async_timeout
-
 from discord import Embed, Member, Reaction
 from discord.ext.commands import AutoShardedBot, Context, command
 
@@ -70,7 +68,7 @@ class Snakes:
         :return:
         """
         async with aiohttp.ClientSession(headers={'User-Agent': 'DevBot v.10'}) as cs:
-            async with async_timeout.timeout(20):
+            async with aiohttp.Timeout(20):
                 async with cs.get("https://en.wikipedia.org/w/api.php", params=params) as r:
                     log.info(f"{r.url}: {r.status}: {r.reason}")
                     return await r.json()
