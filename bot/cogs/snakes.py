@@ -58,6 +58,8 @@ class Snakes:
         Calls get_snake_list, which is *very* hungry, and caches it
         :return:
         """
+        # This could be done more efficiently by combining it with get_snake_list
+        # However this is will do for now
         self.snake_cache = await self.get_snake_list()
         return
 
@@ -122,11 +124,11 @@ class Snakes:
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
-        On user input it checks vs the snake cache and that page exists
-        If there is a hit on the cache and on the page it grabs the info
-        If the cache is hit but the page doesn't exist it suggests based off input
-        If the input only hits one item in cache it returns the info for that cache hit
-        If you write something stupid it'll throw up a knifey spoony error
+        Builds a Wiki API query and then checks if the result contains a page
+        If the cache is hit and the page exists then it pulls info
+        If the cache is hit and the page does not exist, offer suggestions
+        If the cache is hit once it returns the info for that hit
+        If you write something stupid it'll throw a snakey-wakey error
         :param name: Just some sort of user input, preferably a snake
         :return:
         """
