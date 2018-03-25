@@ -12,7 +12,9 @@ import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
 from bot.selectors import (
+    ALT_IMG_SELECTOR,
     DID_YOU_KNOW_SELECTOR,
+    SNAKE_IMG_SELECTOR,
     SCIENTIFIC_NAME_SELECTOR,
     SNEK_MAP_SELECTOR
 )
@@ -110,7 +112,18 @@ class Snakes:
             info = await resp.read()
             soup = BeautifulSoup(info, 'lxml')
 
-        img = soup.find(attrs={'property': {'og:image'}})['content']
+        for x in range(1, 7):
+            try:
+                img = soup.select(SNAKE_IMG_SELECTOR.format(x))[0]['src']
+                break
+            except IndexError:
+                continue
+        try:
+            img = img[1:]
+        except UnboundLocalError:
+            print(name)
+            img = soup.select(ALT_IMG_SELECTOR)[0]['src'][1:]
+
         names = soup.find('td', class_='wsite-multicol-col')
         sci_name = soup.select(SCIENTIFIC_NAME_SELECTOR)[0].text.strip()
         description_tag = soup.find(attrs={'property': {'og:description'}})
@@ -125,7 +138,7 @@ class Snakes:
         info = {
             'name': names.h1.string,
             'scientific-name': sci_name,
-            'image-url': img,
+            'image-url': f'{self.info_url}{img}',
             'map-url': f'{self.info_url}{location_map[1:]}',
             'description': description_tag['content'],
             'url': url

@@ -49,7 +49,6 @@ fer-de-lance
 green anaconda
 ​golden lancehead
 gaboon viper
-​gigantophis
 green tree python
 ​gopher snake
 ​grass snake
@@ -87,7 +86,6 @@ red-bellied black snake
 ​southern black racer
 ​sidewinder​
 spotted python
-​titanoboa
 ​tiger snake
 ​timber rattlesnake
 white-lipped python
