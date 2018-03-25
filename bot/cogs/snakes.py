@@ -170,10 +170,11 @@ class Snakes:
         embed = Embed(title=common)
         # Commented out until I know what information I have to use.
         length = str(length) + ' cm' if custom else ''
+        length = length.replace(' ', '')
         embed.add_field(name="More Information", value='''```Scientific | {0}
 Length     | {1}
 Spitting   | {2}
-```'''.format(scient, str(length) + ' cm', spit))
+```'''.format(scient, length, spit))
         got_danger = await self.get_danger(rating)
         embed.add_field(name='Threat', value='{0}\n'.format(rating) + got_danger, inline=False)
         embed.set_image(url=uimage)
