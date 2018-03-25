@@ -141,6 +141,19 @@ class Snakes:
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
 
+    PYTHON_INFO = {
+        'name': 'Python',
+        'scientific-name': 'Pseudo anguis',
+        'image-url': 'https://www.python.org/static/community_logos/python-logo-master-v3-TM.png',
+        'url': 'https://en.wikipedia.org/wiki/Python_(programming_language)',
+        'map-url': 'https://ih0.redbubble.net/image.80621508.8934/flat,800x800,075,t.u1.jpg',
+        'description': 'Python is an interpreted high-level programming language '
+                       'for general-purpose programming. '
+                       'Created by Guido van Rossum and first released in 1991, '
+                       'Python has a design philosophy that emphasizes code readability, '
+                       'notably using significant whitespace.'
+    }
+
     async def on_ready(self):
         self.session = ClientSession(loop=self.bot.loop)
         self.info_url = 'https://snake-facts.weebly.com/'
@@ -170,12 +183,12 @@ class Snakes:
 
         return em
 
-    def format_info(self, data):
+    def format_info(self, data, color=discord.Color.green()):
         '''Formats the info with the given data.'''
         em = discord.Embed(
             title=f"{data['name']} ({data['scientific-name']})",
             description=data['description'],
-            color=discord.Color.green(),
+            color=color,
             url=data['url']
         )
 
@@ -259,18 +272,7 @@ class Snakes:
         # Sends info about the programming language
         if name:
             if name.lower() == 'python':
-                # Python language info.
-                em = discord.Embed(
-                    title='Python (Pseudo anguis)',
-                    description='Python is an interpreted high-level programming language for general-purpose programming. '
-                                'Created by Guido van Rossum and first released in 1991, '
-                                'Python has a design philosophy that emphasizes code readability, '
-                                'notably using significant whitespace.',
-                    color=discord.Color.blurple()
-                )
-
-                em.set_thumbnail(url='https://ih0.redbubble.net/image.80621508.8934/flat,800x800,075,t.u1.jpg')
-                em.set_image(url='https://www.python.org/static/community_logos/python-logo-master-v3-TM.png')
+                em = self.format_info(self.PYTHON_INFO, discord.Color.blurple())
                 return await ctx.send(embed=em)
         data = await self.get_snek(name)
         # if the snake is not found
