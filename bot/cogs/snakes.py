@@ -51,7 +51,15 @@ class Snakes:
         self.snake_cache = []
 
         # This caches the very expensive snake list operation on load
-        self.setup = bot.loop.create_task(self.get_snake_list())
+        self.setup = bot.loop.create_task(self.cache_snake_list())
+
+    async def cache_snake_list(self):
+        """
+        Calls get_snake_list, which is *very* hungry, and caches it
+        :return:
+        """
+        self.snake_cache = await self.get_snake_list()
+        return
 
     async def get_wiki_json(self, params):
         """
