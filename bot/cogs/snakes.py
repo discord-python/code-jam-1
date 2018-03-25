@@ -9,6 +9,7 @@ import aiohttp
 
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
+from titlecase import titlecase
 
 log = logging.getLogger(__name__)
 
@@ -61,7 +62,6 @@ class Snakes:
         :return: A dict containing information on a snake
         """
         base_url = "https://protected-reef-75100.herokuapp.com/"
-        all_snakes_url = base_url + 'get_all_snakes?format=json'
         random_url = 'https://protected-reef-75100.herokuapp.com/random_snake'
         search_url = base_url + 'search'
         token = os.getenv('ACCESS_TOKEN')
@@ -117,9 +117,9 @@ class Snakes:
                 # if the snake is not venomous -- use the fancy not allowed icon
                 venom_info = f":no_entry_sign: NOT venomous\n\n"
             embed.add_field(
-                name=snek_info['common_name'],
+                name=titlecase(snek_info['common_name']),
                 value=(
-                    f":microscope: *{snek_info['scientific_name']}*\n\n"
+                    f":microscope: *{titlecase(snek_info['scientific_name'])}*\n\n"
                     f"{venom_info}"
                     f":globe_with_meridians: Found in {snek_info['locations']}"
                 ),
