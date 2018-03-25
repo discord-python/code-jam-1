@@ -210,6 +210,40 @@ class Snakes:
         gif_url = random.choice(data['gifs'][gif_cat])
         return {'message': random_fact, 'gif': gif_url, 'cat': gif_cat}
 
+    async def get_video_json(self, search: str) -> str:
+        """
+        Gets the json from the YouTube search API (YouTube Data API v3), with an optional search query
+        :param search: optional param for a user to search a specific type/name of snake videos
+        :return: the full JSON from the search API, as a string
+        """
+        youtube_key = os.getenv('YOUTUBE_DATA_KEY')  # generated: https://console.developers.google.com/apis/credentials
+        if search:
+            query = search + ' snake'
+        else:
+            query = 'snake'
+        url = f'https://www.googleapis.com/youtube/v3/search' \
+              f'?part=snippet&q={urllib.parse.quote(query)}&type=video&key={youtube_key}'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                response = await response.json()
+                return response['items']
+
+    @command(aliases=["v"])
+    async def video(self, ctx: Context, name: str = None):
+        """
+        Gets a YouTube video about snakes
+        :param name: Optional, a name of a snake. Used to search for videos with that name
+        :param ctx: Context object passed from discord.py
+        :return:
+        """
+        data = await self.get_video_json(name)
+        num = random.randint(0, 5)   # 5 videos are returned from the api
+        youtube_base_url = 'https://www.youtube.com/watch?v='
+        await ctx.channel.send(
+            content=f"{ctx.message.author.mention} Here's a Snake Video!"
+                    f"\n{youtube_base_url}{data[num]['id']['videoId']}"
+        )
+
 
 def setup(bot):
     bot.add_cog(Snakes(bot))
