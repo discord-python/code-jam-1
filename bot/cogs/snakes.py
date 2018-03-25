@@ -91,19 +91,18 @@ class Snakes:
 
     @command()
     async def snake(self, ctx: Context, x=10, y=7):
-        board = """"""
-        running = True
-        snake = []
 
-        head = [x // 2, y // 2]
-        snake.append(head)
+        snake = []  # define snake (where snake sections are stored)
+        head = [x // 2, y // 2] # define head (where current snake head is stored)
+        apple = (random.randint(0, x), random.randint(0, y))    # define apple (where current apple position is stored)
+
         userID = ctx.author.id
-
         facing = 0
-        snake.append(head)
-        apple = (random.randint(0, x), random.randint(0, y))
 
-        board += "```\n " + "#" * x + "##"
+        snake.append(head)
+        running = True
+
+        board = "```\n " + "#" * x + "##"
         for yAxis in range(y):
             board += "\n #"
             for xAxis in range(x):
@@ -122,11 +121,13 @@ class Snakes:
             for mess in self.inputs:
                 if mess.author.id == userID:
                     self.inputs = []
+
                     if mess.content == "a":
                         if directionChange:
                             facing = (facing - 1) % 4
                             directionChange = False
                         await mess.delete()
+
                     elif mess.content == "d":
                         if directionChange:
                             facing = (facing + 1) % 4
@@ -142,42 +143,61 @@ class Snakes:
             else:
                 head[0] -= 1
 
-            if tuple(head) == any(snake):
-                await ctx.send(str(ctx.author.mention) + " ate yourself...")
-                break
             if head[0] < 0 or head[1] < 0 or head[0] > x or head[1] > y:
-                await ctx.send(str(ctx.author.mention) + " ate a wall?")
+                await ctx.send(str(ctx.author.mention) + " become a wall :cry:")
                 break
 
+            # check if
+            for snakeTail in snake:
+                if snakeTail == tuple(head):
+                    await ctx.send(str(ctx.author.mention) + " ate himself :open_mouth: ")
+                    running = False
+
+            # check if an apple was eaten
             for snakeTail in snake:
                 if snakeTail == apple:
-                    apple = (random.randint(0, x), random.randint(0, y))
+                    # if so it generates a new apple
+                    apple = (random.randrange(x), random.randrange(y))
                     break
+            # if no apple is eaten then the else will run. So when a apple is eaten the last tuple to be added to  list (snake) will not be removed
+            # this effectively makes the snake one section longer.
             else:
                 snake.pop(0)
+            # add the current snake head to the list snake
             snake.append(tuple(head))
 
-            board = """Snake! {}\n""".format(ctx.author.mention)
+            # add title
+            board = """Snake! \n"""
+            # add top of board
             board += "```\n " + "#" * x + "##"
             for yAxis in range(y):
+                # add side of board
                 board += "\n #"
                 for xAxis in range(x):
+                    # add snake sections
                     for snakeTail in snake:
                         if snakeTail == (xAxis, yAxis):
                             board += "X"
                             break
+
                     else:
+                        # add apple
                         if apple == (xAxis, yAxis):
                             board += "@"
+                        # add background
                         else:
                             board += "0"
 
+                # add side of board
                 board += "#"
+            # add bottom of board
             board += "\n " + "#" * x + "##```"
 
+            # edit message then wait for next frame
             await snakeBoard.edit(content=board)
             await asyncio.sleep(0.9)
 
+    # get user snake inputs
     async def on_message(self, message):
         if message.content in ("a", "d"):
             self.inputs.append(message)
