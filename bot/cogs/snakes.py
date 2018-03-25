@@ -53,7 +53,7 @@ class Snakes:
                 name = name.lower()  # lowercase the name for hitting dict
                 src = db[name]  # source of info = db[common name]
             except KeyError:  # if name not found...
-                possible_misspellings = list(rattle.check_word(name, SNAKE_NAMES, threshold=0.62))  # get similars
+                possible_misspellings = list(rattle.check_word(name, SNAKE_NAMES, threshold=0.19))  # get similars
                 possible_misspellings = sorted(possible_misspellings, key=lambda x: x[0])  # sort the list
                 possible_misspellings = list(reversed(possible_misspellings))  # reverse it
                 '''
