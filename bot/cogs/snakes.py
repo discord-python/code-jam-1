@@ -104,7 +104,7 @@ class Snakes:
             )
 
             for movie in movies_dict.values():
-                embed.add_field(name=movie['title'], value=f"bot.movies('{movie['title']}')\n\n")
+                embed.add_field(name=movie['title'].title(), value=f"bot.movies('{movie['title'].title()}')\n\n")
 
             embed.set_thumbnail(url="https://i.imgur.com/dB38NwN.png")
 
@@ -112,7 +112,7 @@ class Snakes:
             movie_name = movie_name.lower()
             if movie_name in movies_dict:
                 embed = Embed(
-                    title=movies_dict[movie_name]['title'],
+                    title=movies_dict[movie_name]['title'].title(),
                     description=movies_dict[movie_name]['description']
                 )
 

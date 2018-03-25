@@ -53,7 +53,7 @@
 		"image": "https://i.imgur.com/vuJeUwl.jpg"
 	},
 
-	"king":
+	"king snake":
 	{
 		"name": "king",
 		"description": "King snake is a type of snake that belongs to the colubrid family. There are 11 species and 45 subspecies of king snakes",
@@ -77,5 +77,59 @@
 		"location": "Indian and Pacific Ocean.",
 		"venomous": "Yes",
 		"image": "https://i.imgur.com/hEjQK0m.jpg"
+	},
+
+	"garter":
+	{
+		"name": "garter snake",
+		"description": "Garter snakes are among the most common snakes in some countries. Often kept as pets, they are relatively harmless, although some species do possess a mild neurotoxic venom.",
+		"location": "North America; from Canada to Florida",
+		"venomous": "No",
+		"image": "https://i.imgur.com/qTFD4ml.jpg"
+	},
+
+	"mole snake":
+	{
+		"name": "mole snake",
+		"description": "Mole snakes spend the vast majority of their time underground. Their muscular build and pointed snout make them adept at pushing themselves through sandy burrows after their prey which consists primarily of golden moles and mole/dune rats.",
+		"location": "South Africa",
+		"venomous": "No",
+		"image": "https://i.imgur.com/VQKg9kb.jpg"
+	},
+
+	"false cobra":
+	{
+		"name": "false cobra",
+		"description": "The name 'false cobra' comes from the fact that this is not a cobra. It imitates a cobra's stance by spreading its neck into a hood and hissing like the cobra. It can grow up to 1.5 metres in length and preys on rodents and lizards.",
+		"location": "Africa and the Middle East",
+		"venomous": "Yes",
+		"image": "https://i.imgur.com/xmkrI4v.jpg"
+	},
+
+	"ninia":
+	{
+		"name": "ninia",
+		"description": "Ninia is a genus of colubroid snakes commonly referred to as coffee snakes. The genus consists of 10 species.",
+		"location": "Mexico, Central America and northern South America.",
+		"venomous": "No",
+		"image": "https://i.imgur.com/4BUr6vH.jpg"
+	},
+
+	"sharp-tailed":
+	{
+		"name": "sharp-tailed",
+		"description": "The sharp-tailed snake averages from eight to twelve inches long as an adult. It is distinguished by its sharp tail spine, which is the protruding tip of the last tail vertebra. The spine is not toxic and cannot injure humans.",
+		"location": "Western United States and parts of British Colombia",
+		"venomous": "No",
+		"image": "https://i.imgur.com/SNX5p2Z.jpg"
+	},
+
+	"sunbeam":
+	{
+		"name": "sunbeam",
+		"description": "Sunbeam snakes are thicker than a large banana (with skin) as adults. Their scales are very smooth and the snake has a texture like rubber. Dirt doesn’t appear to stick to the scales.",
+		"location": "South East Asia",
+		"venomous": "No",
+		"image": "https://i.imgur.com/vBRnuxv.jpg"
 	}
 }
