@@ -1,6 +1,6 @@
 # coding=utf-8
-import logging
 import json
+import logging
 from copy import copy
 from difflib import get_close_matches
 from os import environ
@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 db = load(open('bot/cogs/snek.pickledb', 'rb'))  # are we going to move this db elsewhere?
 SNAKE_NAMES = db.keys()  # make a list of common names for snakes, used for random snake and autocorrect
 DEBUG = environ.get('SNAKES_DEBUG', None)
-print = print if DEBUG[-1] else lambda *a, **k: None  # -1 index is used for easy temp debug hardcode
+dprint = print if DEBUG[-1] else lambda *a, **k: None  # -1 index is used for easy temp debug hardcode
 
 SNEK_FACTS = json.loads(open('bot/cogs/facts.json', 'r', encoding='utf-8').read())
 
@@ -128,7 +128,7 @@ class Snakes:
         """
 
         name = name.lower()
-        print(name)
+        dprint(name)
 
         custom = False
 
@@ -151,7 +151,7 @@ class Snakes:
             custom = True
 
         elif name == 'electron':
-            print(name,'==electron')
+            dprint(name, '==electron')
             rating = '🐍🐍🐍🐍🐍'
             spit = 'extremely venomous'
             common = 'Pure Evil'
@@ -165,7 +165,7 @@ class Snakes:
             if not custom:
                 snek = await self.get_snek(name)
         except NoGuessError as e:
-            print('debug: {0}'.format(e.debugdata))
+            dprint('debug: {0}'.format(e.debugdata))
             await ctx.send("I'm sorry, I don't know what you requested.")
 
         if not custom:
