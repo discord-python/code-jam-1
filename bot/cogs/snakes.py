@@ -97,7 +97,6 @@ class Snakes:
             ran = random.randint(1, p - 2)
             ranSnk = random.randint(1, snLen - 1)
             result = name[:ran] + snk[ranSnk:]
-
         embed = discord.Embed(
             title="Random Name",
             description="You're that is generated is " + result,
