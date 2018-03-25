@@ -145,7 +145,7 @@ class Snakes:
             rating = '---'
             common = 'Anaconda Cloud'
             length = '???'
-            uimage = 'https://upload.wikimedia.org/wikipedia/en/thumb/c/cd/Anaconda_Logo.png/'
+            uimage = 'https://upload.wikimedia.org/wikipedia/en/thumb/c/cd/Anaconda_Logo.png/' \
             '200px-Anaconda_Logo.png'
             spit = 'none'
             scient = 'anaconda-project/master'
@@ -156,7 +156,7 @@ class Snakes:
             rating = '🐍🐍🐍🐍🐍'
             spit = 'extremely venomous'
             common = 'Pure Evil'
-            uimage = "https://vignette.wikia.nocookie.net/happytreefanon/images/9/95/"
+            uimage = "https://vignette.wikia.nocookie.net/happytreefanon/images/9/95/" \
             "Tumblr_m2g660GN9z1qcwgmzo1_1280.png/revision/latest?cb=20120611212456"
             scient = 'Chironex fleckeri'
             length = '9.8 ft'
