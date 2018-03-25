@@ -3,7 +3,6 @@ import logging
 from typing import Any, Dict
 import random
 import wikipedia
-import aiohttp
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
@@ -34,10 +33,7 @@ class Snakes:
         """
 
     @command(name="get")
-    async def get(self, ctx: Context, name: str = None):
-        async with aiohttp.ClientSession() as session:
-            async with session.get('https://en.wikipedia.org/wiki/Cobra') as resp:
-                return await ctx.send(await resp.text)
+
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
@@ -75,11 +71,19 @@ class Snakes:
             ran = random.randint(1, p - 2)
             ranSnk = random.randint(1, snLen - 1)
             result = name[:ran] + snk[ranSnk:]
+            embed=discord.Embed(
+                title="Name Generator !",
+                description="You have been hooked up with the snake "+snk+"and your name is "+result,
+                color=0x00ff00
+            )
 
         return await ctx.send(result)
 
     @command(name="RandomName")
     async def randomName(selfself,ctx:Context, name:str= None):
+        snakes = ['cobra', 'python', 'anaconda', 'viper', 'mamba', 'taipan', 'rattle', 'garter', 'cylindrophis','colubridae']
+        snk = random.choice(snakes)
+        
 
 
 
