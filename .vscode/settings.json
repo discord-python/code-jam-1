@@ -1,0 +1,6 @@
+{
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.pythonPath": "C:\\Users\\Refath\\.virtualenvs\\code-jam-1-4_DiCMqJ\\scripts\\python.exe"
+}
