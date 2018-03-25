@@ -48,10 +48,8 @@ class Snakes:
         """
         json_response = await self.get_snek_qwant_json(name)
         result_count = len(json_response["data"]["result"]["items"])
-        print(result_count)
         if 3 > result_count > 1:
             rand = random.randint(0, result_count - 1)
-            print(rand)
         if result_count == 1:
             rand = 0
         else:
