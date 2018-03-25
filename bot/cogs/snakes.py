@@ -8,7 +8,7 @@ from typing import Any, Dict
 from discord import Embed
 from discord.ext.commands import AutoShardedBot, Context, command
 
-from ..tools import rattle
+from bot.tools import rattle
 
 
 log = logging.getLogger(__name__)
@@ -64,7 +64,7 @@ class Snakes:
                     src = await self.get_snek(possible_misspellings[0][1])  # recurse/refine
                     name = src['common name']
                 except IndexError:  # no guesses on misspellings
-                    raise NoGuessError(debugdata='requested = {}'.format(name))
+                    raise NoGuessError(debugdata='requested = {0}'.format(name))
                 except ValueError:
                     raise ValueError('snek not found')
 
@@ -78,6 +78,7 @@ class Snakes:
         :param level: The danger level of a snek
         :return: A string that is the human readable version of passed level.
         """
+        
         return {
             '???': 'Danger unknown',
             '---': 'Nonvenomous',
@@ -110,7 +111,7 @@ class Snakes:
         try:
             snek = await self.get_snek(name)
         except NoGuessError as e:
-            print('debug: {}'.format(e.debugdata))
+            print('debug: {0}'.format(e.debugdata))
             await ctx.send("I'm sorry, I don't know what you requested.")
 
         embed = Embed(title=snek.get('common name'), description=snek.get('description'))
@@ -118,11 +119,24 @@ class Snakes:
         # embed.add_field(name="More Information", value="```Species | xxx\rGenus   | xxx\rFamily  | xxx```")
         embed.add_field(name=snek.get('rating'), value=await self.get_danger(snek.get('rating')), inline=True)
         embed.set_image(url=snek.get('image'))
-        embed.set_footer(text="Information from Wikipedia and snakedatabase.org. Information has been " \
+        embed.set_footer(text="Information from Wikipedia and snakedatabase.org. Information has been "
                          "automatically fetched and may not be accurate.")
         await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+    @command()
+    async def speak(self, ctx: Context, text: str=None):
+        """
+        Takes any text passed in and snekifies it.
+
+        :param ctx: Context from discord.py
+        :param text: Optional, the text to snekify
+        """
+
+        if text is None:
+            await ctx.send("I can't ssssnekify nothing!")
+        else:
+            await ctx.send("Sssneks ssay " + text.replace('s', 'ss'))
 
 
 def setup(bot):
