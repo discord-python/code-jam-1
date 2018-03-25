@@ -9,7 +9,6 @@ from typing import Any, Dict
 from bs4 import BeautifulSoup
 
 
-# from discord import Embed, Reaction, Member
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
