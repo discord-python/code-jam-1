@@ -45,7 +45,7 @@ class Snakes:
         """
         json_response = await self.get_snek_qwant_json(name)
         rand = random.randint(0, 9)  # prevents returning the same image every time
-        return json_response['results'][rand]['urls']['small']
+        return str(json_response['results'][rand]['urls']['small'])
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -60,30 +60,30 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        all_snakes_url = 'https://protected-reef-75100.herokuapp.com/get_all_snakes?format=json'
-        search_url = 'https://protected-reef-75100.herokuapp.com/search'
+        base_url = "https://protected-reef-75100.herokuapp.com/{}"
+        all_snakes_url = base_url.format('get_all_snakes?format=json')
+        search_url = base_url.format('search')
         token = os.getenv('ACCESS_TOKEN')
-        headers = {'Authorization':f'Token {token}'}
+        headers = {'Authorization': f'Token {token}'}
         if not name:
             # get a random snake...
             async with aiohttp.ClientSession() as session:
-                async with session.get(all_snakes_url,headers=headers) as response:
+                async with session.get(all_snakes_url, headers=headers) as response:
                     response = await response.read()
+                    print(response)
                     data = json.loads(response.decode("utf-8"))
                     rand = random.randint(0, len(data) - 1)
                     snake_info = data[rand]
         else:
-            # todo: get snake info from API
-            # todo: make api endpoint to search for snakes?
-            params = {'snake':name}
+            params = {'snake': name}
             async with aiohttp.ClientSession() as session:
                 async with session.get(search_url, headers=headers, params=params) as response:
                     # search snake endpoint something...
-                     response = await response.read()
-                     data = json.loads(response.decode("utf-8"))
-                     rand = random.randint(0, len(data) - 1)
-                     snake_info = data[rand]
-                     
+                    response = await response.read()
+                    data = json.loads(response.decode("utf-8"))
+                    rand = random.randint(0, len(data) - 1)
+                    snake_info = data[rand]
+
         snake_info['image_url'] = await self.get_snek_image(snake_info['common_name'])
         return snake_info
 
@@ -114,26 +114,19 @@ class Snakes:
             snek_info = await self.get_snek(name)
             if snek_info['is_venomous']:
                 # if the snake is venomous -- use the fancy check icon
-                embed.add_field(
-                    name=snek_info['common_name'],
-                    value=(
-                        f":microscope: *{snek_info['scientific_name']}*\n\n"
-                        f":white_check_mark: venomous\n\n"
-                        f":globe_with_meridians: Found in {snek_info['locations']}"
-                    ),
-                    inline=False
-                )
+                venom_info = f":white_check_mark: venomous\n\n"
             else:
                 # if the snake is not venomous -- use the fancy not allowed icon
-                embed.add_field(
-                    name=snek_info['common_name'],
-                    value=(
-                        f":microscope: *{snek_info['scientific_name']}*\n\n"
-                        f":no_entry_sign: NOT venomous\n\n"
-                        f":globe_with_meridians: Found in {snek_info['locations']}"
-                    ),
-                    inline=False
-                )
+                venom_info = f":no_entry_sign: NOT venomous\n\n"
+            embed.add_field(
+                name=snek_info['common_name'],
+                value=(
+                    f":microscope: *{snek_info['scientific_name']}*\n\n"
+                    f"{venom_info}"
+                    f":globe_with_meridians: Found in {snek_info['locations']}"
+                ),
+                inline=False
+            )
             embed.set_image(url=snek_info['image_url'])
         await ctx.channel.send(
             # content=ctx.message.author.mention + " :snake: !",
