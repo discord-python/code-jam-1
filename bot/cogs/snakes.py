@@ -240,18 +240,9 @@ class Snakes:
         data = await self.get_video_json(name)
         num = random.randint(0, 5)   # 5 videos are returned from the api
         youtube_base_url = 'https://www.youtube.com/watch?v='
-        embed = discord.Embed(color=0x399600)
-        embed.add_field(
-            name='Snake YouTube Video',
-            value=ctx.message.author.mention,
-            # value=youtube_base_url + data[num]['id']['videoId'],
-            inline=False
-        )
-        # embed.set_image(url=_fact['gif'])
         await ctx.channel.send(
-            content=youtube_base_url + data[num]['id']['videoId'],
-            # content=ctx.message.author.mention,
-            embed=embed
+            content=f"{ctx.message.author.mention} Here's a Snake Video!"
+                    f"\n{youtube_base_url}{data[num]['id']['videoId']}"
         )
 
 
