@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 db = load(open('bot/cogs/snek.pickledb', 'rb'))  # are we going to move this db elsewhere?
 SNAKE_NAMES = db.keys()  # make a list of common names for snakes, used for random snake and autocorrect
 DEBUG = environ.get('SNAKES_DEBUG', None)
-dprint = print if DEBUG[-1] else lambda *a, **k: None  # -1 index is used for easy temp debug hardcode
+dprint = print if DEBUG else lambda *a, **k: None  # -1 index is used for easy temp debug hardcode
 
 SNEK_FACTS = json.loads(open('bot/cogs/facts.json', 'r', encoding='utf-8').read())
 
