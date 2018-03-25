@@ -38,8 +38,8 @@ class Snakes:
         url = f'https://api.qwant.com/api/search/images?count=5&offset=1&q={urllib.parse.quote(snake_name)}+snake'
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=head) as response:
-                response = await response.read()
-                return json.loads(response.decode("utf-8"))
+                response = await response.json()
+                return response
 
     async def get_snek_image(self, name: str) -> str:
         """
@@ -49,12 +49,10 @@ class Snakes:
         """
         json_response = await self.get_snek_qwant_json(name)
         result_count = len(json_response["data"]["result"]["items"])
-        if 3 > result_count > 1:
-            rand = random.randint(0, result_count - 1)
         if result_count == 1:
             rand = 0
         else:
-            rand = random.randint(0, 3)  # prevents returning the same image every time
+            rand = random.randint(0, 2)  # prevents returning the same image every time
         try:
             choice = str(json_response["data"]["result"]["items"][rand]["media"])
         except IndexError:
@@ -115,7 +113,7 @@ class Snakes:
     @command(aliases=["g"])
     async def get(self, ctx: Context, name: str = None):
         """
-        Go online and fetch information about a snake
+        Gets information and an image about a snake
 
         This should make use of your `get_snek` method, using it to get information about a snake. This information
         should be sent back to Discord in an embed.
@@ -146,12 +144,19 @@ class Snakes:
                 )
                 await ctx.channel.send(embed=embed)
                 return  # break out of rest of method
+
             if snek_info['is_venomous']:
                 # if the snake is venomous -- use the fancy check icon
-                venom_info = f":white_check_mark: venomous\n\n"
+                venom_info = f":white_check_mark: venomous"
             else:
                 # if the snake is not venomous -- use the fancy not allowed icon
-                venom_info = f":no_entry_sign: NOT venomous\n\n"
+                venom_info = f":no_entry_sign: NOT venomous"
+
+            if not snek_info['locations']:
+                # if no location field
+                location_info = ''
+            else:
+                location_info = f"\n\n:globe_with_meridians: Found in {snek_info['locations']}"
             additional_info = ''  # required to prevent referencing before assignment
             if snek_info['matches_count'] and snek_info['matches_count'] > 1:
                 additional_info = f"\n\n" \
@@ -163,7 +168,7 @@ class Snakes:
                 value=(
                     f":microscope: *{titlecase(snek_info['scientific_name'])}*\n\n"
                     f"{venom_info}"
-                    f":globe_with_meridians: Found in {snek_info['locations']}"
+                    f"{location_info}"
                     f"{additional_info}"
                 ),
                 inline=False
@@ -180,15 +185,15 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         """
         message_suffix = {
-            "dangerous":["Yikes!!","Oh my!"],
-            "interesting":["Pretty cool!","Whoah!!","Pretty sick!!"],
-            "self-harm":["Ouch!!"]
+            "dangerous": ["Yikes!!", "Oh my!"],
+            "interesting": ["Pretty cool!", "Whoah!!", "Pretty sick!!"],
+            "self-harm": ["Ouch!!"]
         }
         _fact = self.get_snek_fact(cat)
         em = discord.Embed(color=0x399600)
         em.add_field(
-            name=f"{_fact['cat']} snake fact",
-            value=f"{_fact['message']}. {random.choice(message_suffix[_fact['cat']])}",
+            name=titlecase(f"{_fact['cat']} snake fact"),
+            value=f"{_fact['message']} {random.choice(message_suffix[_fact['cat']])}",
             inline=False
         )
         em.set_image(url=_fact['gif'])
@@ -197,7 +202,7 @@ class Snakes:
             embed=em
         )
 
-    def get_snek_fact(self, cat = None) -> str:
+    def get_snek_fact(self) -> Dict[str, any]:
         with open('bot/cogs/resources/facts.json', 'r', encoding="utf8") as f:
             data = json.load(f)
         if cat:
@@ -207,7 +212,41 @@ class Snakes:
             random_fact = random.choice(list(data['facts'].keys()))
         gif_cat = data['facts'][random_fact]
         gif_url = random.choice(data['gifs'][gif_cat])
-        return {'message':random_fact, 'gif':gif_url, 'cat':gif_cat}
+        return {'message': random_fact, 'gif': gif_url, 'cat': gif_cat}
+
+    async def get_video_json(self, search: str) -> str:
+        """
+        Gets the json from the YouTube search API (YouTube Data API v3), with an optional search query
+        :param search: optional param for a user to search a specific type/name of snake videos
+        :return: the full JSON from the search API, as a string
+        """
+        youtube_key = os.getenv('YOUTUBE_DATA_KEY')  # generated: https://console.developers.google.com/apis/credentials
+        if search:
+            query = search + ' snake'
+        else:
+            query = 'snake'
+        url = f'https://www.googleapis.com/youtube/v3/search' \
+              f'?part=snippet&q={urllib.parse.quote(query)}&type=video&key={youtube_key}'
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                response = await response.json()
+                return response['items']
+
+    @command(aliases=["v"])
+    async def video(self, ctx: Context, name: str = None):
+        """
+        Gets a YouTube video about snakes
+        :param name: Optional, a name of a snake. Used to search for videos with that name
+        :param ctx: Context object passed from discord.py
+        :return:
+        """
+        data = await self.get_video_json(name)
+        num = random.randint(0, 5)   # 5 videos are returned from the api
+        youtube_base_url = 'https://www.youtube.com/watch?v='
+        await ctx.channel.send(
+            content=f"{ctx.message.author.mention} Here's a Snake Video!"
+                    f"\n{youtube_base_url}{data[num]['id']['videoId']}"
+        )
 
 
 def setup(bot):
