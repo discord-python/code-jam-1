@@ -1,6 +1,7 @@
 # coding=utf-8
-import aiohttp
 import asyncio
+
+import aiohttp
 import logging
 import random
 from bs4 import BeautifulSoup
