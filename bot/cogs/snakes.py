@@ -66,7 +66,7 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
-        # await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
+
         site = 'https://en.wikipedia.org/wiki/' + name
         async with aiohttp.ClientSession() as session:
             async with session.get(site) as resp:
@@ -93,8 +93,8 @@ class Snakes:
     async def snake(self, ctx: Context, x=10, y=7):
 
         snake = []  # define snake (where snake sections are stored)
-        head = [x // 2, y // 2] # define head (where current snake head is stored)
-        apple = (random.randint(0, x), random.randint(0, y))    # define apple (where current apple position is stored)
+        head = [x // 2, y // 2]  # define head (where current snake head is stored)
+        apple = (random.randint(0, x), random.randint(0, y))  # define apple (where current apple position is stored)
 
         userID = ctx.author.id
         facing = 0
@@ -159,7 +159,8 @@ class Snakes:
                     # if so it generates a new apple
                     apple = (random.randrange(x), random.randrange(y))
                     break
-            # if no apple is eaten then the else will run. So when a apple is eaten the last tuple to be added to  list (snake) will not be removed
+            # if no apple is eaten then the else will run.
+            # So when an apple is eaten the last tuple to be added to  list (snake) will not be removed
             # this effectively makes the snake one section longer.
             else:
                 snake.pop(0)
