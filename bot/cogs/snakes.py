@@ -65,7 +65,7 @@ class Snakes:
             questions = json.load(quizson)
 
         quemoji = ['🇦', '🇧', '🇨', '🇩']
-        random_quiz = questions["questions"][random.randint(0,1)]
+        random_quiz = questions["questions"][random.randint(0,10)]
         em = discord.Embed(title=random_quiz['question'], description='🇦 {0}\n\n🇧 {1}\n\n🇨 {2}\n\n🇩 {3}'.format(random_quiz['a'],random_quiz['b'],random_quiz['c'],random_quiz['d']))
         channel = ctx.channel
         quiz = await channel.send('', embed=em)
@@ -77,12 +77,12 @@ class Snakes:
         try:
             reaction, user = await ctx.bot.wait_for('reaction_add', timeout=20.0, check=check)
         except asyncio.TimeoutError as err:
-            await channel.send('👎')            
+            await channel.send('Bah! You took too long.')            
         else:
             if str(reaction.emoji) == random_quiz["answerkey"]:
-                await channel.send('👍')
+                await channel.send('That was correct! Well done!')
             else:
-                await channel.send('Sorry the correct answer was: {0}'.format(random_quiz["answerkey"]))
+                await channel.send('That was incorrect! The correct answer was {0}, unfortunately.'.format(random_quiz["answerkey"]))
 
 
 # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
