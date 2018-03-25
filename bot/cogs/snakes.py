@@ -85,7 +85,7 @@ class Snakes:
         elif randsnake.startswith("blac"):
             return await ctx.send("Shiny liitle fella !", embed=embed)
 
-    @command(name="randname")#this name generator randomply slics strings and joins them
+    @command(name="randname")  # this name generator randomply slics strings and joins them
     async def Random_name(self, ctx: Context, name: str = None):
 
         snk = random.choice(SNAKE_LIST)
@@ -100,7 +100,7 @@ class Snakes:
 
         return await ctx.send(result)
 
-    @command(name="namegen")#this name generator looks at vowels
+    @command(name="namegen")  # this name generator looks at vowels
     async def name_generator(self, ctx: Context, name: str = None):
         snk = random.choice(SNAKE_LIST)
         s = name
@@ -113,29 +113,27 @@ class Snakes:
         index1 = 0
         for index, char in enumerate(str1):
             if char in 'aeiou':
-
                 index1 = index
                 break
             
         name_index = len(s) - index1
 
-        name_sub_string = s[:name_index-1]
+        name_sub_string = s[:name_index - 1]
 
         snake = snk
         for i in snake:
             str2 = i + str2
 
-
         for index, char in enumerate(str2):
             if char in 'aeiou':
-
                 index2 = index
                 break
 
         sub_string_index = len(snake) - index2
         snake_sub_string = snake[1:sub_string_index]
 
-        return await ctx.send(name_sub_string+snake_sub_string)
+        return await ctx.send(name_sub_string + snake_sub_string)
+
 
 def setup(bot):
     bot.add_cog(Snakes(bot))
