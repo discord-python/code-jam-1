@@ -36,6 +36,8 @@ async def check_spelling(word):
 async def fix_margins(text, maxlength=10):
     '''
     Fixes text to be a certain length.
+    
+    :return: A length-fixed string.
     '''
     textlen = len(text)
     if textlen > maxlength:
