@@ -272,7 +272,7 @@ class Snakes:
             await ctx.send("Unable to start game as I dont have manage_messages permissions")
             return
 
-        # initialize variables
+        # Initialize variables
         antidote_tries = 0
         antidote_guess_count = 0
         antidote_guess_list = []
@@ -286,12 +286,12 @@ class Snakes:
         antidote_embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
 
         # Generate answer
-        antidote_answer = list(ANTIDOTE_EMOJI)  # duplicate list, not reference it
+        antidote_answer = list(ANTIDOTE_EMOJI)  # Duplicate list, not reference it
         random.shuffle(antidote_answer)
         antidote_answer.pop()
         log.info(antidote_answer)
 
-        # begin initial board building
+        # Begin initial board building
         for i in range(0, 10):
             page_guess_list.append(f"{HOLE_EMOJI} {HOLE_EMOJI} {HOLE_EMOJI} {HOLE_EMOJI}")
             page_result_list.append(f"{CROSS_EMOJI} {CROSS_EMOJI} {CROSS_EMOJI} {CROSS_EMOJI}")
@@ -302,7 +302,7 @@ class Snakes:
         antidote_embed.add_field(name="10 guesses remaining", value="\n".join(board))
         board_id = await ctx.send(embed=antidote_embed)  # Display board
 
-        # add our player reactions
+        # Add our player reactions
         for emoji in ANTIDOTE_EMOJI:
             await board_id.add_reaction(emoji)
 
@@ -320,7 +320,7 @@ class Snakes:
                 ))
             )
 
-        #  Begin main game loop
+        # Begin main game loop
         while not win and antidote_tries < 10:
             try:
                 reaction, user = await ctx.bot.wait_for("reaction_add", timeout=300, check=event_check)
