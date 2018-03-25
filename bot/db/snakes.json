@@ -51,5 +51,31 @@
 		"location": "South and Central America.",
 		"venomous": "No",
 		"image": "https://i.imgur.com/vuJeUwl.jpg"
+	},
+
+	"king":
+	{
+		"name": "king",
+		"description": "King snake is a type of snake that belongs to the colubrid family. There are 11 species and 45 subspecies of king snakes",
+		"location": "North, Central and South America. ",
+		"venomous": "No",
+		"image": "https://i.imgur.com/7XsXJGs.jpg"
+	},
+
+	"taipan":{
+		"name": "taipan",
+		"description": "The taipans are snakes of the genus Oxyuranus in the elapid family. They are large and fast-moving. The taipans are considered some of the most deadly known snakes.",
+		"location": "Australasia",
+		"venomous": "Yes",
+		"image": "https://i.imgur.com/Z0y52fm.jpg"
+	},
+
+	"sea snake":
+	{
+		"name": "sea snake",
+		"description": "Sea snakes are group of snakes adapted to the life in salty and brackish water. Sea snakes belong to the family of cobras.",
+		"location": "Indian and Pacific Ocean.",
+		"venomous": "Yes",
+		"image": "https://i.imgur.com/hEjQK0m.jpg"
 	}
 }

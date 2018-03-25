@@ -96,6 +96,8 @@ class Snakes:
                 description=movies_dict[movie_name]['description']
             )
 
+            embed.add_field(name="Director", value=movies_dict[movie_name]['director'])
+            embed.add_field(name="Release Date", value=movies_dict[movie_name]['released'])
             embed.set_image(url=movies_dict[movie_name]['image'])
 
         await ctx.send(embed=embed)
