@@ -2,14 +2,14 @@
 import logging
 from typing import Any, Dict
 import random
-import wikipedia
 import aiohttp
-import requests
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
+import wikipedia
 
 log = logging.getLogger(__name__)
 
+SNAKE_LIST = ['cobra', 'python', 'anaconda', 'viper', 'mamba', 'taipan', 'rattle', 'garter', 'cylindrophis','colubridae']
 
 class Snakes:
     """
@@ -33,33 +33,34 @@ class Snakes:
            :param name: Optional, the name of the snake to get information for - omit for a random snake
            :return: A dict containing information on a snake
         """
+        if name is None:
+            name = random.choice(SNAKE_LIST)
+        elif name.lower() == "python":
+            name = "Python (Programming Language)"
+        try:
+            text = wikipedia.summary(name)
+        except Exception as e:
+            text = wikipedia.summary(e.options[0])
+        return (name, text)
 
     @command(name="get")
-    async def get(self, ctx: Context):#, name: str = None):
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get('https://en.wikipedia.org/wiki/Cobra') as resp:
-                return await ctx.send(yield from resp.text)
-                #return await resp.()
-            #r = yield from aiohttp.request('get', 'http://python.org')
-            #raw = yield from r.text()
-
-            #print(raw)
-
-    """if name.lower() == "python":
+    async def get(self, ctx: Context, name: str=None):
+        """if name.lower() == "python":
             name_rechange = "Python Programming Language"
         else:
             name_rechange = name
         test = wikipedia.page(name_rechange)
 
-        embed = discord.Embed(
-            title=test.title,
-            description=wikipedia.summary(name_rechange, sentences=1),
-            color=0x00ff00,
-        )
         embed.add_field(name="Image", value=test.images[0], inline=False)
         return await ctx.send(embed=embed)
         """
+        name, text = await self.get_snek(name)
+        embed = discord.Embed(
+            title=name,
+            description=text,
+            color=0x00ff00
+            )
+        await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
