@@ -1,8 +1,9 @@
 # coding=utf-8
 import logging
 from difflib import get_close_matches
+from enum import Enum
 from random import choice
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 
 from bs4 import BeautifulSoup
 
@@ -10,12 +11,121 @@ import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
 from bot.selectors import (
-    SNEK_MAP_SELECTOR,
+    DID_YOU_KNOW_SELECTOR,
     SCIENTIFIC_NAME_SELECTOR,
-    DID_YOU_KNOW_SELECTOR
+    SNEK_MAP_SELECTOR
 )
 
 log = logging.getLogger(__name__)
+
+
+TICTACTOE_REACTIONS = {
+    (0, 0): '↖',
+    (0, 1): '⬆',
+    (0, 2): '↗',
+    (1, 0): '⬅',
+    (1, 1): '☀',
+    (1, 2): '➡',
+    (2, 0): '↙',
+    (2, 1): '⬇',
+    (2, 2): '↘'
+}
+
+
+class TicTacToeSymbol(Enum):
+    NOT_SET = ' '
+    USER_FIELD = '🐍'
+    BOT_FIELD = '🤖'
+
+
+class TicTacToePlayer(Enum):
+    BOT = 1
+    USER = 2
+
+
+class TicTacToeBoard:
+    def __init__(self, ctx):
+        self.board = [
+            [' ', ' ', ' '],
+            [' ', ' ', ' '],
+            [' ', ' ', ' ']
+        ]
+        self.ctx = ctx
+        self.msg = None
+        self.player = ctx.author
+        self.turn_user = choice(tuple(TicTacToePlayer))
+        self.winner = None
+
+    def __str__(self):
+        return '\n---+---+---\n'.join(
+            '|'.join(
+                f' {field} ' for field in line
+            ) for line in self.board
+        )
+
+    def advance_turn(self):
+        """Switches the active player."""
+
+        if self.turn_user == TicTacToePlayer.BOT:
+            self.turn_user = TicTacToePlayer.USER
+        else:
+            self.turn_user = TicTacToePlayer.BOT
+
+    def can_set(self, coordinates: Tuple[int, int]):
+        """Checks if the given coordinate pair can be set."""
+
+        field = self.board[coordinates[0]][coordinates[1]]
+        return field == TicTacToeSymbol.NOT_SET
+
+    def get_random_open_field(self) -> Tuple[int, int]:
+        """Returns a random open field for the bot to mark."""
+
+        return choice(
+            choice(
+                field for field in line if field == TicTacToeSymbol.NOT_SET
+            ) for line in self.board if any(
+                field == TicTacToeSymbol.NOT_SET for field in line
+            )
+        )
+
+    def is_valid_reaction(self, user, msg_reaction):
+        """
+        A check for `ctx.wait_for` to ensure
+        that an entered reaction was valid.
+        """
+
+        message_valid = msg_reaction.message == self.ctx.message
+        user_valid = user == self.player
+        for coordinates, reaction in TICTACTOE_REACTIONS.items():
+            if msg_reaction == reaction and self.can_set(coordinates):
+                return message_valid and user_valid
+        return False
+
+    def mark_field(self, coordinates: Tuple[int, int]):
+        """Marks the given coordinates with the current user's symbol."""
+
+        if self.turn_user == TicTacToePlayer.BOT:
+            symbol = TicTacToeSymbol.BOT_FIELD
+        else:
+            symbol = TicTacToeSymbol.USER_FIELD
+
+        self.board[coordinates[0]][coordinates[1]] = symbol
+
+    async def send(self):
+        """Sends the board to the context passed to the constructor."""
+
+        self.msg = await self.ctx.send(str(self))
+        for reaction in TICTACTOE_REACTIONS.values():
+            await self.msg.add_reaction(reaction)
+
+    async def update_message(self):
+        """
+        Edits the original board sent through
+        `send` to display an updated board.
+        Blindly assumes that `send` was called previously.
+        """
+
+        await self.msg.edit(content=str(self))
 
 
 class Snakes:
@@ -161,6 +271,33 @@ class Snakes:
         that the website has on the right hand side.
         '''
         await ctx.send(embed=await self.get_snek_fact())
+
+    @command()
+    async def tictactoe(self, ctx: Context):
+        """
+        Starts a game of Tic Tac Toe with the author.
+        Only one instance of the game per player is allowed at a time.
+        """
+
+        game = TicTacToeBoard(ctx)
+        await game.send()
+        while game.winner is None:
+            if game.turn_user == TicTacToePlayer.BOT:
+                field = game.get_random_open_field()
+                game.mark_field(field)
+            else:
+                _, direction = await self.bot.wait_for(
+                    'reaction', check=game.is_valid_reaction
+                )
+                game.mark_field(
+                    next(
+                        coords for coords in TICTACTOE_REACTIONS
+                        if TICTACTOE_REACTIONS[coords] == direction
+                    )
+                )
+
+            game.advance_turn()
+            await game.update_message()
 
 
 def setup(bot):
