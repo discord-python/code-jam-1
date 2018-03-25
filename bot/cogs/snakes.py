@@ -12,6 +12,7 @@ from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
 
+
 class Snakes:
     """
     Snake-related commands
