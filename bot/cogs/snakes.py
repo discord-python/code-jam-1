@@ -212,11 +212,10 @@ class Snakes:
 
     async def get_video_json(self, search: str) -> str:
         """
-        Gets the json from Unsplash for a given snake query
-        :param search: optional param for a user to search a specific video type
-        :return: the full JSON from the search API
+        Gets the json from the YouTube search API (YouTube Data API v3), with an optional search query
+        :param search: optional param for a user to search a specific type/name of snake videos
+        :return: the full JSON from the search API, as a string
         """
-        # (YouTube Data API v3)
         youtube_key = os.getenv('YOUTUBE_DATA_KEY')  # generated: https://console.developers.google.com/apis/credentials
         if search:
             query = search + ' snake'
