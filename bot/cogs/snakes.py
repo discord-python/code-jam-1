@@ -129,6 +129,8 @@ class Snakes:
             print('debug: {0}'.format(e.debugdata))
             await ctx.send("I'm sorry, I don't know what you requested.")
 
+        custom = False
+
         if name == 'python':
             rating = '🐍'
             common = 'Python'
@@ -136,6 +138,7 @@ class Snakes:
             uimage = 'https://www.python.org/static/img/python-logo.png'
             spit = 'venomous'
             scient = 'cpython/master'
+            custom = True
 
         elif name == 'anaconda':
             rating = '---'
@@ -144,6 +147,7 @@ class Snakes:
             uimage = 'https://binstar-static-prod.s3.amazonaws.com/latest/img/AnacondaCloud_logo_green.png'
             spit = 'none'
             scient = 'anaconda-project/master'
+            custom = True
 
         elif name == 'electron':
             rating = '🐍🐍🐍🐍🐍'
@@ -152,21 +156,24 @@ class Snakes:
             uimage = 'https://vignette.wikia.nocookie.net/happytreefanon/images/9/95/Tumblr_m2g660GN9z1qcwgmzo1_1280.png/revision/latest?cb=20120611212456'
             scient = 'Chironex fleckeri'
             length = '9.8 ft'
+            custom = True
 
-        rating = snek.get('rating')
-        common = snek.get('common name')
-        uimage = snek.get('image')
-        scient = await fix_margins(snek.get('scientific'))
-        length = await fix_margins(snek.get('length'))
-        spit = await fix_margins(snek.get('spit'))
+        else:
+            rating = snek.get('rating')
+            common = snek.get('common name')
+            uimage = snek.get('image')
+            scient = await fix_margins(snek.get('scientific'))
+            length = await fix_margins(snek.get('length'))
+            spit = await fix_margins(snek.get('spit'))
 
         # embed = Embed(title=snek.get('common name'), description=snek.get('description'))
         embed = Embed(title=snek.get('common name'))
         # Commented out until I know what information I have to use.
+        length = str(length) + ' cm' if custom else ''
         embed.add_field(name="More Information", value='''```Scientific | {}
-Length     | {} cm
+Length     | {}
 Spitting   | {}
-```'''.format(family, scient, length, spit))
+```'''.format(scient, str(length) + ' cm', spit))
         got_danger = await self.get_danger(rating)
         embed.add_field(name='Threat', value='{}\n'.format(rating) + got_danger, inline=False)
         embed.set_image(url=uimage)
