@@ -1,4 +1,6 @@
 # coding=utf-8
+import logging, aiohttp, random, discord
+from time import sleep
 import logging, aiohttp, random
 from bs4 import BeautifulSoup
 from typing import Any, Dict
@@ -71,8 +73,11 @@ class Snakes:
                 text = await resp.text()
                 soup = BeautifulSoup(text, 'lxml')
                 title = soup.find('h1').text
-                description = soup.find('table').text
-
+                description = soup.find('p').text
+                table = soup.find('table').text
+                list(table)
+                table = ''.join(table[0:160].split())
+                description = description + '\n \n \n' + table
                 em = discord.Embed(title=title, description=description)
 
         if name.lower() == 'python':
