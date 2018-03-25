@@ -38,8 +38,8 @@ class Snakes:
         url = f'https://api.qwant.com/api/search/images?count=5&offset=1&q={urllib.parse.quote(snake_name)}+snake'
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=head) as response:
-                response = await response.read()
-                return json.loads(response.decode("utf-8"))
+                response = await response.json()
+                return response
 
     async def get_snek_image(self, name: str) -> str:
         """
