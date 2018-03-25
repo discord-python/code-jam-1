@@ -190,8 +190,13 @@ class Snakes:
             data = json.load(f)
         zen_quote = random.choice(data['zen'])
         a = zen_quote.split()
-        b = ["..."*random.randint(1,3)+"..*hi"+"s"*random.randint(3,7)+"*"+"..."*random.randint(1,3) for _ in range(len(a))]
-        message = ''.join(list(map(lambda x:x[0]+x[1],list(zip(a,b)))))
+        b = [
+            "..." * random.randint(1, 3) + "..*hi" + "s" * random.randint(3, 7) +
+            "*" + "..." * random.randint(1, 3) for _ in range(len(a))
+        ]
+        message = ''.join(list(map(
+            lambda x: x[0] + x[1], list(zip(a, b)))
+        ))
 
         em.add_field(
             name="The Zen of Python says...",
