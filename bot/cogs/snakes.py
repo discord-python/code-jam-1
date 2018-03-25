@@ -1,9 +1,15 @@
 # coding=utf-8
-import logging, aiohttp, random, discord
-from bs4 import BeautifulSoup
-from typing import Any, Dict
-from discord.ext.commands import AutoShardedBot, Context, command
 import asyncio
+import logging
+import random
+from typing import Any, Dict
+
+import aiohttp
+
+from bs4 import BeautifulSoup
+
+import discord
+from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
 
@@ -12,19 +18,16 @@ class Snakes:
     """
     Snake-related commands
     """
-    python_info = '''
-                    Python (Programming Language)
-                    \n
-                    Python is powerful... and fast;\n
-                    plays well with others;\n
-                    runs everywhere;\n
-                    is friendly & easy to learn;\n
-                    is Open.
-                    -------------------------------
-                    Created by: Guido Van Rossum \n
-                    Founded: 20th of February, 1991 \n
-                    Official website: https://python.org
-                '''
+    python_info = '''Python (Programming Language)
+                Python is powerful... and fast;
+                plays well with others;
+                runs everywhere;
+                is friendly & easy to learn;
+                is Open source.
+                -------------------------------
+                Created by: Guido Van Rossum
+                Founded: 20th of February, 1991
+                Official website: https://python.org'''
 
     def __init__(self, bot: AutoShardedBot):
         self.inputs = []
@@ -43,17 +46,14 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        name = str(name)
 
         if name.lower() == 'python':
             name = self.python_info
 
         return name
 
-
-
     @command()
-    async def get(self, ctx: Context, name: str = None,):
+    async def get(self, ctx: Context, name: str = None, ):
         """
         Go online and fetch information about a snake
 
@@ -64,7 +64,6 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
         # await ctx.send(BeautifulSoup(text, 'lxml').find("title"))
-        name = str(name)
         site = 'https://en.wikipedia.org/wiki/' + name
         async with aiohttp.ClientSession() as session:
             async with session.get(site) as resp:
@@ -83,16 +82,17 @@ class Snakes:
             await ctx.send(await self.get_snek(name))
         else:
             await ctx.send(embed=em)
-        # await ctx.send(name)
+            # await ctx.send(name)
 
-        # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+            # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+
     @command()
     async def snake(self, ctx: Context, x=10, y=7):
         board = """"""
         running = True
         snake = []
 
-        head = [x//2, y//2]
+        head = [x // 2, y // 2]
         snake.append(head)
         userID = ctx.author.id
 
@@ -107,7 +107,7 @@ class Snakes:
                 if head == [xAxis, yAxis]:
                     board += "X"
                 else:
-                        board += "0"
+                    board += "0"
 
             board += "#"
         board += "\n " + "#" * x + "##```"
