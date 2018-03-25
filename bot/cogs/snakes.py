@@ -110,7 +110,7 @@ class Snakes:
         snake_info['pass'] = True  # successful data retrieval
         return snake_info
 
-    @command(aliases=["g"])
+    @command(aliases=["g", "snake.get", "snake.g"])
     async def get(self, ctx: Context, name: str = None):
         """
         Gets information and an image about a snake
@@ -209,6 +209,7 @@ class Snakes:
     async def fact(self, ctx: Context, cat: str = None):
         """
         Gets a random fact about snakes
+        :param cat: the category for the given fact
         :param ctx: Context object passed from discord.py
         """
         message_suffix = {
@@ -229,11 +230,14 @@ class Snakes:
             embed=em
         )
 
-    def get_snek_fact(self) -> Dict[str, any]:
+    def get_snek_fact(self, cat: str) -> Dict[str, any]:
         with open('bot/cogs/resources/facts.json', 'r', encoding="utf8") as f:
             data = json.load(f)
         if cat:
-            facts_with_cat = list(filter(lambda x:data['facts'][x]==cat.lower(),list(data['facts'].keys())))
+            facts_with_cat = list(filter(
+                lambda x: data['facts'][x] == cat.lower(),
+                list(data['facts'].keys())
+            ))
             random_fact = random.choice(facts_with_cat)
         else:
             random_fact = random.choice(list(data['facts'].keys()))
