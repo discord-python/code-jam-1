@@ -142,7 +142,6 @@ class Snakes:
             for yAxis in range(y):
                 board += "\n #"
                 for xAxis in range(x):
-                    for
                     if head == [xAxis, yAxis]:
                         board += "X"
                     else:
