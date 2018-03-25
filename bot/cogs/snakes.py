@@ -1,6 +1,5 @@
 # coding=utf-8
-import logging, aiohttp, random, wikipedia
-from time import sleep
+import logging, aiohttp, random
 from bs4 import BeautifulSoup
 from typing import Any, Dict
 from discord.ext.commands import AutoShardedBot, Context, command
@@ -100,6 +99,8 @@ class Snakes:
         userID = ctx.author.id
 
         facing = 0
+        snake.append(head)
+        apple = [random.randint(0, x), random.randint(0, y)]
 
         board += "```\n " + "#" * x + "##"
         for yAxis in range(y):
@@ -134,7 +135,7 @@ class Snakes:
             else:
                 head[0] -= 1
 
-            snake.pop(-1)
+            snake.pop(0)
             snake.append(head)
 
             board = """"""
@@ -142,10 +143,15 @@ class Snakes:
             for yAxis in range(y):
                 board += "\n #"
                 for xAxis in range(x):
-                    if head == [xAxis, yAxis]:
-                        board += "X"
+                    for snakeTail in snake:
+                        if snakeTail == [xAxis, yAxis]:
+                            board += "X"
+                            break
                     else:
-                        board += "0"
+                        if apple == [xAxis, yAxis]:
+                            board += "@"
+                        else:
+                            board += "0"
 
                 board += "#"
             board += "\n " + "#" * x + "##```"
