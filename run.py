@@ -33,6 +33,7 @@ bot.load_extension("bot.cogs.security")
 
 
 # Commands, etc
+# Remove the '_juan' part to test @Someone's version, of course.
 bot.load_extension("bot.cogs.snakes_juan")
 
 bot.run(os.environ.get("BOT_TOKEN"))
