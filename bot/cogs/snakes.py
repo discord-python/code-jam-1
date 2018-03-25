@@ -174,7 +174,7 @@ class Snakes:
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
     @command(aliases=["f"])
-    async def fact(self, ctx: Context):
+    async def fact(self, ctx: Context, cat: str = None):
         """
         Gets a random fact about snakes
         :param ctx: Context object passed from discord.py
@@ -184,7 +184,7 @@ class Snakes:
             "interesting":["Pretty cool!","Whoah!!","Pretty sick!!"],
             "self-harm":["Ouch!!"]
         }
-        _fact = self.get_snek_fact()
+        _fact = self.get_snek_fact(cat)
         em = discord.Embed(color=0x399600)
         em.add_field(
             name=f"{_fact['cat']} snake fact",
@@ -197,10 +197,14 @@ class Snakes:
             embed=em
         )
 
-    def get_snek_fact(self) -> str:
+    def get_snek_fact(self, cat = None) -> str:
         with open('bot/cogs/resources/facts.json', 'r', encoding="utf8") as f:
             data = json.load(f)
-        random_fact = random.choice(list(data['facts'].keys()))
+        if cat:
+            facts_with_cat = list(filter(lambda x:data['facts'][x]==cat.lower(),list(data['facts'].keys())))
+            random_fact = random.choice(facts_with_cat)
+        else:
+            random_fact = random.choice(list(data['facts'].keys()))
         gif_cat = data['facts'][random_fact]
         gif_url = random.choice(data['gifs'][gif_cat])
         return {'message':random_fact, 'gif':gif_url, 'cat':gif_cat}
