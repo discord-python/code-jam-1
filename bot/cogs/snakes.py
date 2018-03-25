@@ -1,36 +1,34 @@
 # coding=utf-8
+import aiohttp
 import asyncio
 import logging
 import random
+from bs4 import BeautifulSoup
 from typing import Any, Dict
 
-import aiohttp
-
-from bs4 import BeautifulSoup
-
+# from discord import Embed, Reaction, Member
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
-
 
 class Snakes:
     """
     Snake-related commands
     """
     python_info = '''
-                    Python (Programming Language)
-                    \n
-                    Python is powerful... and fast;\n
-                    plays well with others;\n
-                    runs everywhere;\n
-                    is friendly & easy to learn;\n
-                    is Open-Source.
-                    -------------------------------
-                    Created by: Guido Van Rossum \n
-                    Founded: 20th of February, 1991 \n
-                    Official website: https://python.org
-                '''
+        Python (Programming Language)
+        \n
+        Python is powerful... and fast;\n
+        plays well with others;\n
+        runs everywhere;\n
+        is friendly & easy to learn;\n
+        is Open-Source.
+        -------------------------------
+        Created by: Guido Van Rossum \n
+        Founded: 20th of February, 1991 \n
+        Official website: https://python.org
+        '''
 
     def __init__(self, bot: AutoShardedBot):
         self.inputs = []
@@ -90,11 +88,11 @@ class Snakes:
             # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
     @command()
-    async def snake(self, ctx: Context, x=10, y=7):
+    async def snake(self, ctx: Context, x=8, y=8):
 
         snake = []  # define snake (where snake sections are stored)
-        head = [x // 2, y ]  # define head (where current snake head is stored)
-        apple = (random.randint(0, x), random.randint(0, y))  # define apple (where current apple position is stored)
+        head = [x // 2, y]  # define head (where current snake head is stored)
+        apple = (random.randrange(x), random.randrange(y))  # define apple (where current apple position is stored)
 
         userID = ctx.author.id
         facing = 0
@@ -171,7 +169,7 @@ class Snakes:
             # add title
             board = """"""
             # add top of board
-            board += "\n " + ":black_large_square:" * x + ":black_large_square::black_large_square:"
+            board += "\n " + ":black_large_square:" * (x + 2)
             for yAxis in range(y):
                 # add side of board
                 board += "\n:black_large_square:"
@@ -193,7 +191,7 @@ class Snakes:
                 # add side of board
                 board += ":black_large_square:"
             # add bottom of board
-            board += "\n" + ":black_large_square:" * x + ":black_large_square::black_large_square:"
+            board += "\n" + ":black_large_square:" * (x + 2)
 
             # edit message then wait for next frame
             Board = discord.Embed(title="Snake!", description=board)
