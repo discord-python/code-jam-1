@@ -12,9 +12,9 @@ import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
 from bot.selectors import (
-    SNEK_MAP_SELECTOR,
+    DID_YOU_KNOW_SELECTOR,
     SCIENTIFIC_NAME_SELECTOR,
-    DID_YOU_KNOW_SELECTOR
+    SNEK_MAP_SELECTOR
 )
 
 log = logging.getLogger(__name__)
