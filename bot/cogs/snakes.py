@@ -49,12 +49,10 @@ class Snakes:
         """
         json_response = await self.get_snek_qwant_json(name)
         result_count = len(json_response["data"]["result"]["items"])
-        if 3 > result_count > 1:
-            rand = random.randint(0, result_count - 1)
         if result_count == 1:
             rand = 0
         else:
-            rand = random.randint(0, 3)  # prevents returning the same image every time
+            rand = random.randint(0, 2)  # prevents returning the same image every time
         try:
             choice = str(json_response["data"]["result"]["items"][rand]["media"])
         except IndexError:
@@ -146,12 +144,19 @@ class Snakes:
                 )
                 await ctx.channel.send(embed=embed)
                 return  # break out of rest of method
+
             if snek_info['is_venomous']:
                 # if the snake is venomous -- use the fancy check icon
-                venom_info = f":white_check_mark: venomous\n\n"
+                venom_info = f":white_check_mark: venomous"
             else:
                 # if the snake is not venomous -- use the fancy not allowed icon
-                venom_info = f":no_entry_sign: NOT venomous\n\n"
+                venom_info = f":no_entry_sign: NOT venomous"
+
+            if not snek_info['locations']:
+                # if no location field
+                location_info = ''
+            else:
+                location_info = f"\n\n:globe_with_meridians: Found in {snek_info['locations']}"
             additional_info = ''  # required to prevent referencing before assignment
             if snek_info['matches_count'] and snek_info['matches_count'] > 1:
                 additional_info = f"\n\n" \
@@ -163,7 +168,7 @@ class Snakes:
                 value=(
                     f":microscope: *{titlecase(snek_info['scientific_name'])}*\n\n"
                     f"{venom_info}"
-                    f":globe_with_meridians: Found in {snek_info['locations']}"
+                    f"{location_info}"
                     f"{additional_info}"
                 ),
                 inline=False
@@ -187,8 +192,8 @@ class Snakes:
         _fact = self.get_snek_fact()
         em = discord.Embed(color=0x399600)
         em.add_field(
-            name=f"{_fact['cat']} snake fact",
-            value=f"{_fact['message']}. {random.choice(message_suffix[_fact['cat']])}",
+            name=titlecase(f"{_fact['cat']} snake fact"),
+            value=f"{_fact['message']} {random.choice(message_suffix[_fact['cat']])}",
             inline=False
         )
         em.set_image(url=_fact['gif'])
