@@ -4,7 +4,6 @@ from typing import Any, Dict
 import random
 import wikipedia
 import aiohttp
-import requests
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
@@ -35,31 +34,10 @@ class Snakes:
         """
 
     @command(name="get")
-    async def get(self, ctx: Context):#, name: str = None):
-
+    async def get(self, ctx: Context, name: str = None):
         async with aiohttp.ClientSession() as session:
             async with session.get('https://en.wikipedia.org/wiki/Cobra') as resp:
-                return await ctx.send(yield from resp.text)
-                #return await resp.()
-            #r = yield from aiohttp.request('get', 'http://python.org')
-            #raw = yield from r.text()
-
-            #print(raw)
-
-    """if name.lower() == "python":
-            name_rechange = "Python Programming Language"
-        else:
-            name_rechange = name
-        test = wikipedia.page(name_rechange)
-
-        embed = discord.Embed(
-            title=test.title,
-            description=wikipedia.summary(name_rechange, sentences=1),
-            color=0x00ff00,
-        )
-        embed.add_field(name="Image", value=test.images[0], inline=False)
-        return await ctx.send(embed=embed)
-        """
+                return await ctx.send(await resp.text)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
@@ -87,8 +65,8 @@ class Snakes:
 
     @command(name="randname")
     async def RandName(self, ctx: Context, name: str = None):
-
-        snk = random.choice(['Cobra', 'Python', 'Anaconda', 'Viper', 'Mamba'])
+        snakes=['cobra', 'python', 'anaconda', 'viper', 'mamba','taipan','rattle','garter','cylindrophis','colubridae']
+        snk = random.choice(snakes)
         snLen = len(snk)
         p = len(name)
         result = ""
@@ -99,6 +77,10 @@ class Snakes:
             result = name[:ran] + snk[ranSnk:]
 
         return await ctx.send(result)
+
+    @command(name="RandomName")
+    async def randomName(selfself,ctx:Context, name:str= None):
+
 
 
 def setup(bot):
