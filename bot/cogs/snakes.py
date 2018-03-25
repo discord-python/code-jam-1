@@ -178,7 +178,7 @@ class Snakes:
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
-    @command(aliases=["t"])
+    @command(aliases=["t","zen"])
     async def this(self, ctx: Context):
         """
         Gets a random fact about snakes
