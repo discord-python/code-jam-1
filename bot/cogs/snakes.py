@@ -5,10 +5,11 @@ import random
 import difflib
 import logging
 import urllib.parse
+import ast
 
 import aiohttp
 
-from typing import Dict
+from typing import Dict, List
 from discord import Embed
 from discord.ext.commands import AutoShardedBot, Context, command
 
@@ -43,6 +44,22 @@ class Snakes:
         self.bot = bot
 
     @staticmethod
+    def parse_kwarg(kwarg: str):
+        """Return the value of a kwarg (needs manual assignment)"""
+        try:
+            items = kwarg.split("=")
+            value = items[1]
+        except (IndexError, AttributeError):
+            value = kwarg
+
+        try:
+            parsed = ast.literal_eval(value)
+        except (NameError, ValueError):
+            parsed = value
+
+        return parsed
+
+    @staticmethod
     def snake_url(name: str):
         """Get the URL of a snake"""
 
@@ -64,11 +81,15 @@ class Snakes:
             async with session.get(url) as response:
                 return await response.json()
 
-    async def get_snek(self, name: str = None, autocorrect: bool = False) -> Dict[str, str]:
+    async def get_snek(self, name: str = None, autocorrect: str = None, details: List[str] = None) -> Dict[str, str]:
         """If a name is provided, this gets a specific snake. Otherwise, it gets a random snake."""
+
+        autocorrect = self.parse_kwarg(autocorrect) or False
+        details = self.parse_kwarg(details) or []
+
         if name is None:
             name = random.choice(SNAKES)
-            
+
         if name.upper() == "PYTHON":
             return PYTHON
 
@@ -101,26 +122,9 @@ class Snakes:
             }
 
     @command()
-    async def get(self, ctx: Context, name: str = None, kwarg: str = None):
+    async def get(self, ctx: Context, name: str = None, autocorrect: str = None, details: str = None):
 
-        # Really dirty autocomplete kwarg handling
-        # I'm sorry, lemon.
-        if kwarg is not None:
-            if kwarg.lower().startswith("autocorrect="):
-                items = kwarg.split("=")
-                autocorrect = (items[1] == "True")
-
-            elif kwarg in ["True", "False"]:
-                autocorrect = (kwarg == "True")
-
-            else:
-                await ctx.send("That's a bad argument! >:(")
-                return
-
-        else:
-            autocorrect = False
-
-        content = await self.get_snek(name, autocorrect)
+        content = await self.get_snek(name, autocorrect, details)
         # Just a temporary thing to make sure it's working
         embed = Embed(
             title=content["name"],
