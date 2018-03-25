@@ -145,7 +145,8 @@ class Snakes:
             rating = '---'
             common = 'Anaconda Cloud'
             length = '???'
-            uimage = 'https://binstar-static-prod.s3.amazonaws.com/latest/img/AnacondaCloud_logo_green.png'
+            uimage = 'https://upload.wikimedia.org/wikipedia/en/thumb/c/cd/Anaconda_Logo.png/'
+            '200px-Anaconda_Logo.png'
             spit = 'none'
             scient = 'anaconda-project/master'
             custom = True
@@ -166,6 +167,8 @@ class Snakes:
                 snek = await self.get_snek(name)
         except NoGuessError as e:
             dprint('debug: {0}'.format(e.debugdata))
+            await ctx.send("I'm sorry, I don't know what you requested.")
+        except IndexError:  # no snek found
             await ctx.send("I'm sorry, I don't know what you requested.")
 
         if not custom:
