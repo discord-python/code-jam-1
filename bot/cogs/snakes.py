@@ -74,8 +74,9 @@ class Snakes:
                 description = soup.find('p').text
                 table = soup.find('table').text
                 list(table)
-                table = ''.join(table[0:160].split())
-                description = description + '\n \n \n' + table
+                table = table[120:]
+                table = ''.join(table)
+                description = description + '\n' + table
                 em = discord.Embed(title=title, description=description)
 
         if name.lower() == 'python':
