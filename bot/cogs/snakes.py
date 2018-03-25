@@ -18,7 +18,7 @@ SNAKE_NAMES = db.keys()  # make a list of common names for snakes, used for rand
 DEBUG = (environ.get('SNAKES_DEBUG', None), True)
 print = print if DEBUG[-1] else lambda *a, **k: None  # -1 index is used for easy temp debug hardcode
 
-SNEK_FACTS = json.loads(open('facts.json', 'r').read())
+SNEK_FACTS = json.loads(open('bot/cogs/facts.json', 'r').read())
 
 
 class NoGuessError(Exception):
