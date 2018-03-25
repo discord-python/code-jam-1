@@ -1,6 +1,8 @@
 # coding=utf-8
 import logging
 from copy import copy
+from difflib import get_close_matches
+from os import environ
 from pickle import load
 from random import choice
 from typing import Any, Dict
@@ -8,20 +10,22 @@ from typing import Any, Dict
 from discord import Embed
 from discord.ext.commands import AutoShardedBot, Context, command
 
-from bot.tools import rattle
-
 
 log = logging.getLogger(__name__)
 db = load(open('bot/cogs/snek.pickledb', 'rb'))  # are we going to move this db elsewhere?
 SNAKE_NAMES = db.keys()  # make a list of common names for snakes, used for random snake and autocorrect
-DEBUG = True
-print = print if DEBUG else lambda *a, **k: None
+DEBUG = (environ.get('SNAKES_DEBUG', None), True)
+print = print if DEBUG[-1] else lambda *a, **k: None  # -1 index is used for easy temp debug hardcode
 
 
 class NoGuessError(Exception):
     def __init__(self, message='', debugdata=None):
         self.message = message
         self.debugdata = debugdata
+
+
+async def check_spelling(word):
+    return get_close_matches(word, SNAKE_NAMES)[0]
 
 
 class Snakes:
@@ -53,20 +57,11 @@ class Snakes:
                 name = name.lower()  # lowercase the name for hitting dict
                 src = db[name]  # source of info = db[common name]
             except KeyError:  # if name not found...
-                possible_misspellings = list(rattle.check_word(name, SNAKE_NAMES, threshold=0.19))  # get similars
-                possible_misspellings = sorted(possible_misspellings, key=lambda x: x[0])  # sort the list
-                possible_misspellings = list(reversed(possible_misspellings))  # reverse it
-                '''
-                just a thought, should we check if the next command request from the same person goes from a possibility
-                rate from, say, 0.5 to 1.0 (50% accuracy to 100%) so that we can cache known misspellings?
-                '''
-                try:
-                    src = await self.get_snek(possible_misspellings[0][1])  # recurse/refine
-                    name = src['common name']
-                except IndexError:  # no guesses on misspellings
-                    raise NoGuessError(debugdata='requested = {0}'.format(name))
-                except ValueError:
-                    raise ValueError('snek not found')
+                spellcheck = await check_spelling(name)
+                if spellcheck == '':
+                    raise NoGuessError(debugdata='requested = {}'.format(name))
+                else:
+                    src = await self.get_snek(spellcheck)
 
         info = copy(src)  # make a copy of the dictionary
         info['common name'] = name  # make common name key
@@ -78,7 +73,6 @@ class Snakes:
         :param level: The danger level of a snek
         :return: A string that is the human readable version of passed level.
         """
-
         return {
             '???': 'Danger unknown',
             '---': 'Nonvenomous',
@@ -111,32 +105,19 @@ class Snakes:
         try:
             snek = await self.get_snek(name)
         except NoGuessError as e:
-            print('debug: {0}'.format(e.debugdata))
+            print('debug: {}'.format(e.debugdata))
             await ctx.send("I'm sorry, I don't know what you requested.")
 
-        embed = Embed(title=snek.get('common name'), description=snek.get('description'))
+        # embed = Embed(title=snek.get('common name'), description=snek.get('description'))
+        embed = Embed(title=snek.get('common name'))
         # Commented out until I know what information I have to use.
         # embed.add_field(name="More Information", value="```Species | xxx\rGenus   | xxx\rFamily  | xxx```")
-        embed.add_field(name=snek.get('rating'), value=await self.get_danger(snek.get('rating')), inline=True)
+        embed.add_field(snek.get('rating'), value=await self.get_danger(snek.get('rating')), inline=True)
         embed.set_image(url=snek.get('image'))
-        embed.set_footer(text="Information from Wikipedia and snakedatabase.org. Information has been "
-                         "automatically fetched and may not be accurate.")
+        embed.set_footer(text="Information from snakedatabase.org")
         await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
-    @command()
-    async def speak(self, ctx: Context, text: str=None):
-        """
-        Takes any text passed in and snekifies it.
-
-        :param ctx: Context from discord.py
-        :param text: Optional, the text to snekify
-        """
-
-        if text is None:
-            await ctx.send("I can't ssssnekify nothing!")
-        else:
-            await ctx.send("Sssneks ssay " + text.replace('s', 'ss'))
 
 
 def setup(bot):
