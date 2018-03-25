@@ -382,9 +382,9 @@ class Snakes:
             antidote_embed = Embed(color=ctx.me.color, title="Antidote")
             antidote_embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
             antidote_embed.set_image(url="https://i.makeagif.com/media/7-12-2015/Cj1pts.gif")
-            antidote_embed.add_field(name=EMPTY,
-                                     value=f"You have created the snake antidote!\n"
-                                           f"You had {10 - antidote_tries} tries remaining")
+            antidote_embed.add_field(name=f"You have created the snake antidote!",
+                                     value=f"The solution was: {' '.join(antidote_answer)}\n"
+                                           f"You had {10 - antidote_tries} tries remaining.")
             await board_id.edit(embed=antidote_embed)
         else:
             antidote_embed = Embed(color=ctx.me.color, title="Antidote")
