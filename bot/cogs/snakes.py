@@ -36,7 +36,7 @@ async def check_spelling(word):
 async def fix_margins(text, maxlength=25):
     '''
     Fixes text to be a certain length.
-    
+
     :return: A length-fixed string
     '''
     textlen = len(text)
@@ -78,7 +78,7 @@ class Snakes:
             except KeyError:  # if name not found...
                 spellcheck = await check_spelling(name)
                 if spellcheck == '':
-                    raise NoGuessError(debugdata='requested = {}'.format(name))
+                    raise NoGuessError(debugdata='requested = {0}'.format(name))
                 else:
                     src = await self.get_snek(spellcheck)
 
@@ -167,15 +167,15 @@ class Snakes:
             spit = await fix_margins(snek.get('spit'))
 
         # embed = Embed(title=snek.get('common name'), description=snek.get('description'))
-        embed = Embed(title=snek.get('common name'))
+        embed = Embed(title=common)
         # Commented out until I know what information I have to use.
         length = str(length) + ' cm' if custom else ''
-        embed.add_field(name="More Information", value='''```Scientific | {}
-Length     | {}
-Spitting   | {}
+        embed.add_field(name="More Information", value='''```Scientific | {0}
+Length     | {1}
+Spitting   | {2}
 ```'''.format(scient, str(length) + ' cm', spit))
         got_danger = await self.get_danger(rating)
-        embed.add_field(name='Threat', value='{}\n'.format(rating) + got_danger, inline=False)
+        embed.add_field(name='Threat', value='{0}\n'.format(rating) + got_danger, inline=False)
         embed.set_image(url=uimage)
         embed.set_footer(text="Information from snakedatabase.org")
         await ctx.send(embed=embed)
