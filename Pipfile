@@ -8,6 +8,9 @@ name = "pypi"
 aiodns = "*"
 aiohttp = "<2.3.0,>=2.0.0"
 websockets = ">=4.0,<5.0"
+fuzzywuzzy = "*"
+python-levenshtein = "*"
+"discord.py" = {git = "https://github.com/Rapptz/discord.py", ref = "rewrite", extras = ["voice"]}
 
 [dev-packages]
 "flake8" = "*"

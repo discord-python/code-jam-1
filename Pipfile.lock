@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d797e580ddcddc99bf058109ab0306ad584c2902752a3d4076ba713fdc580fb7"
+            "sha256": "ac057fc426bc367b4b56fca1b642a5927dd80389f86005108821769a61fd8850"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -59,6 +59,21 @@
                 "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
             ],
             "version": "==3.0.4"
+        },
+        "discord.py": {
+            "extras": [
+                "voice"
+            ],
+            "git": "https://github.com/Rapptz/discord.py",
+            "ref": "rewrite"
+        },
+        "fuzzywuzzy": {
+            "hashes": [
+                "sha256:d40c22d2744dff84885b30bbfc07fab7875f641d070374331777a4d1808b8d4e",
+                "sha256:ecf490216fb4d76b558a03042ff8f45a8782f17326caca1384d834cbaa2c7e6f"
+            ],
+            "index": "pypi",
+            "version": "==0.16.0"
         },
         "idna": {
             "hashes": [
@@ -119,6 +134,13 @@
                 "sha256:f50be4dd53f009cfb4b98c3c6b240e18ff9b17e3f1c320bd594bb83eddabfcb2"
             ],
             "version": "==2.3.0"
+        },
+        "python-levenshtein": {
+            "hashes": [
+                "sha256:033a11de5e3d19ea25c9302d11224e1a1898fe5abd23c61c7c360c25195e3eb1"
+            ],
+            "index": "pypi",
+            "version": "==0.12.0"
         },
         "websockets": {
             "hashes": [
@@ -282,10 +304,10 @@
         },
         "gitpython": {
             "hashes": [
-                "sha256:ad61bc25deadb535b047684d06f3654c001d9415e1971e51c9c20f5b510076e9",
-                "sha256:b8367c432de995dc330b5b146c5bfdc0926b8496e100fda6692134e00c0dcdc5"
+                "sha256:05069e26177c650b3cb945dd543a7ef7ca449f8db5b73038b465105673c1ef61",
+                "sha256:c47cc31af6e88979c57a33962cbc30a7c25508d74a1b3a19ec5aa7ed64b03129"
             ],
-            "version": "==2.1.8"
+            "version": "==2.1.9"
         },
         "idna": {
             "hashes": [
