@@ -50,6 +50,7 @@ class Snakes:
         async with aiohttp.ClientSession() as session:
             async with session.get(site) as resp:
                 text = await resp.text()
+                print()
                 soup = BeautifulSoup(text, 'lxml')
 
 
