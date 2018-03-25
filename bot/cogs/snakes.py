@@ -1,31 +1,30 @@
 # coding=utf-8
 
 # This shit imports more than the USA D:
-import ast
+import async_timeout
+import random
 import difflib
 import logging
+import ast
 import os
-import random
 import urllib.parse
-from functools import partial
 from io import BytesIO
-from typing import Dict
-
-from PIL import Image
+from functools import partial
 
 import aiohttp
 
-import async_timeout
-
+from typing import Dict
 from discord import Embed, File
 from discord.ext.commands import AutoShardedBot, Context, command
+from PIL import Image, ImageOps
+
 
 log = logging.getLogger(__name__)
 
 # Probably should move these somewhere
 
 WIKI = "https://en.wikipedia.org/w/api.php?"
-BASEURL = WIKI + "format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles={title}&redirects=1"
+BASEURL = WIKI + "format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles={}&redirects=1"
 FAILIMAGE = "http://i.imgur.com/HtIPyLy.png/beep"
 <<<<<<< HEAD
 
@@ -115,7 +114,7 @@ class Snakes:
 
         def format_url(text: str):
             """Get the full URL with that snake :D"""
-            return BASEURL.format(title=urllib.parse.quote_plus(text))
+            return BASEURL.format(urllib.parse.quote_plus(text))
 
         # Check if the snake name is valid
         if name in SNAKES:
