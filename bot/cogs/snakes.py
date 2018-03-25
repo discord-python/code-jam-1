@@ -5,11 +5,13 @@ from enum import Enum
 from random import choice
 from typing import Any, Dict, Tuple
 
+from aiohttp import ClientSession
 from bs4 import BeautifulSoup
 
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
+from bot.constants import EMOJI_SERVER
 from bot.selectors import (
     DID_YOU_KNOW_SELECTOR,
     SCIENTIFIC_NAME_SELECTOR,
@@ -33,9 +35,16 @@ TICTACTOE_REACTIONS = {
 
 
 class TicTacToeSymbol(Enum):
-    NOT_SET = ' '
-    USER_FIELD = '🐍'
-    BOT_FIELD = '🤖'
+
+    def __init__(self, bot: AutoShardedBot):
+        self.bot = bot
+        self.game_emojis = {}
+        for e in bot.get_guild(EMOJI_SERVER):
+            self.game_emojis[e.name] = e.id
+
+        self.NOT_SET = '⬜'
+        self.USER_FIELD = '🐍'
+        self.BOT_FIELD = str(bot.get_emoji(self.game_emojis.get('Python')))
 
 
 class TicTacToePlayer(Enum):
@@ -44,11 +53,11 @@ class TicTacToePlayer(Enum):
 
 
 class TicTacToeBoard:
-    def __init__(self, ctx):
+    def __init__(self, ctx: Context):
         self.board = [
-            [' ', ' ', ' '],
-            [' ', ' ', ' '],
-            [' ', ' ', ' ']
+            '⬜⬜⬜',
+            '⬜⬜⬜',
+            '⬜⬜⬜'
         ]
         self.ctx = ctx
         self.msg = None
@@ -57,11 +66,7 @@ class TicTacToeBoard:
         self.winner = None
 
     def __str__(self):
-        return '\n---+---+---\n'.join(
-            '|'.join(
-                f' {field} ' for field in line
-            ) for line in self.board
-        )
+        return '\n'.join(self.board)
 
     def advance_turn(self):
         """Switches the active player."""
@@ -80,13 +85,13 @@ class TicTacToeBoard:
     def get_random_open_field(self) -> Tuple[int, int]:
         """Returns a random open field for the bot to mark."""
 
-        return choice(
-            choice(
+        return choice([
+            choice([
                 field for field in line if field == TicTacToeSymbol.NOT_SET
-            ) for line in self.board if any(
+            ]) for line in self.board if any(
                 field == TicTacToeSymbol.NOT_SET for field in line
             )
-        )
+        ])
 
     def is_valid_reaction(self, user, msg_reaction):
         """
@@ -136,6 +141,17 @@ class Snakes:
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
 
+    async def on_ready(self):
+        self.session = ClientSession(loop=self.bot.loop)
+        self.info_url = 'https://snake-facts.weebly.com/'
+        log.info('Session created.')
+
+        with open('./snakes.txt', encoding='utf-8') as f:
+            self.sneks = f.read().split('\n')
+            for i, snek in enumerate(self.sneks):
+                self.sneks[i] = snek.replace('\u200b', '').replace('\ufeff', '')
+        log.info('Snakes loaded.')
+
     def no_sneks_found(self, name):
         '''Helper function if the snake was not found in the directory.'''
         em = discord.Embed(
@@ -143,7 +159,7 @@ class Snakes:
             color=discord.Color.green()
         )
 
-        snakes = get_close_matches(name, self.bot.sneks)
+        snakes = get_close_matches(name, self.sneks)
 
         if snakes:
             em.description = 'Did you mean...\n'
@@ -182,15 +198,15 @@ class Snakes:
         :return: A dict containing information on a snake
         """
         if name:
-            if name not in self.bot.sneks:
+            if name not in self.sneks:
                 return self.no_sneks_found(name)
         else:
-            name = choice(self.bot.sneks)
+            name = choice(self.sneks)
 
         snake = name.lower().replace(' ', '-').replace("'", '')
-        url = f'{self.bot.info_url}{snake}.html'
+        url = f'{self.info_url}{snake}.html'
 
-        async with self.bot.session.get(url) as resp:
+        async with self.session.get(url) as resp:
             info = await resp.read()
             soup = BeautifulSoup(info, 'lxml')
 
@@ -204,7 +220,7 @@ class Snakes:
             'name': names.h1.string,
             'scientific-name': sci_name,
             'image-url': img,
-            'map-url': f'{self.bot.info_url}{location_map[1:]}',
+            'map-url': f'{self.info_url}{location_map[1:]}',
             'description': description_tag['content'],
             'url': url
         }
@@ -213,10 +229,10 @@ class Snakes:
 
     async def get_snek_fact(self):
         '''Helper function to get a snake fact.'''
-        page = choice(self.bot.sneks).replace(' ', '-').replace("'", '')
-        url = f'{self.bot.info_url}{page}.html'
+        page = choice(self.sneks).replace(' ', '-').replace("'", '')
+        url = f'{self.info_url}{page}.html'
 
-        async with self.bot.session.get(url) as resp:
+        async with self.session.get(url) as resp:
             response = await resp.read()
             soup = BeautifulSoup(response, 'lxml')
             fact = soup.select(DID_YOU_KNOW_SELECTOR)[0].text
