@@ -40,7 +40,7 @@ class Snakes:
           'parse'
           '&page={}'
           '&prop=text|sections'
-        )
+          )
         self.info_query = API + (
           'query'
           '&titles={}'
@@ -49,7 +49,7 @@ class Snakes:
           f"&cllimit=max&clcategories={'|'.join(hardcoded.categories)}"
           )
 
-    async def get_rand_snek(self, category: str = None):
+    async def get_rand_name(self, category: str = None) -> str:
         """
         Follow wikipedia's Special:RandomInCategory to grab the name of a random snake.
         """
@@ -77,10 +77,10 @@ class Snakes:
         :return: A dict containing information on a snake
         """
         if name is None:
-            name = await self.get_rand_snek()
+            name = await self.get_rand_name()
 
         async with self.session.get(self.base_query.format(name)) as pg_resp, \
-                   self.session.get(self.info_query.format(name)) as if_resp:  # noqa
+                   self.session.get(self.info_query.format(name)) as if_resp:  # noqa: E127
             data = await pg_resp.json()
             info = await if_resp.json()
 
