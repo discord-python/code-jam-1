@@ -89,7 +89,7 @@ class Snakes:
 
         if name is None:
             name = random.choice(SNAKES)
-            
+
         if name.upper() == "PYTHON":
             return PYTHON
 
