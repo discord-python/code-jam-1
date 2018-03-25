@@ -36,8 +36,6 @@ class Snakes:
         elif name.lower() == "python":
             name = "Python(Programming Language)"
 
-
-
         try:
             text = wikipedia.summary(name,sentences=2)
         except Exception as e:
