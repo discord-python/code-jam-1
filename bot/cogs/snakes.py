@@ -21,6 +21,19 @@ from bot.selectors import (
 
 log = logging.getLogger(__name__)
 
+PYTHON_INFO = {
+    'name': 'Python',
+    'scientific-name': 'Pseudo anguis',
+    'image-url': 'https://www.python.org/static/community_lopython-logo-master-v3-TM.png',
+    'url': 'https://en.wikipedia.org/wiki/Python_(programming_language)',
+    'map-url': 'https://ih0.redbubble.net/image.80621508.8flat,800x800,075,t.u1.jpg',
+    'description': 'Python is an interpreted high-level programmlanguage '
+                   'for general-purpose programming. '
+                   'Created by Guido van Rossum and first released1991, '
+                   'Python has a design philosophy that emphasizes creadability, '
+                   'notably using significant whitespace.'
+}
+
 
 class Snakes:
     """
@@ -29,19 +42,6 @@ class Snakes:
 
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
-
-    PYTHON_INFO = {
-        'name': 'Python',
-        'scientific-name': 'Pseudo anguis',
-        'image-url': 'https://www.python.org/static/community_logos/python-logo-master-v3-TM.png',
-        'url': 'https://en.wikipedia.org/wiki/Python_(programming_language)',
-        'map-url': 'https://ih0.redbubble.net/image.80621508.8934/flat,800x800,075,t.u1.jpg',
-        'description': 'Python is an interpreted high-level programming language '
-                       'for general-purpose programming. '
-                       'Created by Guido van Rossum and first released in 1991, '
-                       'Python has a design philosophy that emphasizes code readability, '
-                       'notably using significant whitespace.'
-    }
 
     async def on_ready(self):
         self.session = ClientSession(loop=self.bot.loop)
@@ -54,8 +54,8 @@ class Snakes:
                 self.sneks[i] = snek.replace('\u200b', '').replace('\ufeff', '')
         log.info('Snakes loaded.')
 
-    def no_sneks_found(self, name):
-        '''Helper function if the snake was not found in the directory.'''
+    def no_sneks_found(self, name: str) -> discord.Embed:
+        """Helper function if the snake was not found in the directory."""
         em = discord.Embed(
             title='No snake found.',
             color=discord.Color.green()
@@ -72,8 +72,8 @@ class Snakes:
 
         return em
 
-    def format_info(self, data, color=discord.Color.green()):
-        '''Formats the info with the given data.'''
+    def format_info(self, data: dict, color=discord.Color.green()) -> discord.Embed:
+        """Formats the info with the given data."""
         em = discord.Embed(
             title=f"{data['name']} ({data['scientific-name']})",
             description=data['description'],
@@ -145,8 +145,8 @@ class Snakes:
 
         return info
 
-    async def get_snek_fact(self):
-        '''Helper function to get a snake fact.'''
+    async def get_snek_fact(self) -> discord.Embed:
+        """Helper function to get a snake fact."""
         page = choice(self.sneks).replace(' ', '-').replace("'", '')
         url = f'{self.info_url}{page}.html'
 
@@ -177,7 +177,7 @@ class Snakes:
         # Sends info about the programming language
         if name:
             if name.lower() == 'python':
-                em = self.format_info(self.PYTHON_INFO, discord.Color.blurple())
+                em = self.format_info(PYTHON_INFO, discord.Color.blurple())
                 return await ctx.send(embed=em)
         data = await self.get_snek(name)
         # if the snake is not found
@@ -189,10 +189,10 @@ class Snakes:
 
     @command(aliases=['getsnekfact', 'snekfact()', 'get_snek_fact()'])
     async def snekfact(self, ctx: Context):
-        '''
+        """
         Gets a randomsnek fact from the "Did you know?" cards
         that the website has on the right hand side.
-        '''
+        """
         await ctx.send(embed=await self.get_snek_fact())
 
 
