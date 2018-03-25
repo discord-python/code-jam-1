@@ -60,7 +60,7 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
-        base_url = "https://protected-reef-75100.herokuapp.com/{}"
+        base_url = "https://protected-reef-75100.herokuapp.com/{0}"
         all_snakes_url = base_url.format('get_all_snakes?format=json')
         search_url = base_url.format('search')
         token = os.getenv('ACCESS_TOKEN')
