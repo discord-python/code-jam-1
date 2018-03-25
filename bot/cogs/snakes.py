@@ -78,7 +78,7 @@ class Snakes:
         :param level: The danger level of a snek
         :return: A string that is the human readable version of passed level.
         """
-        
+
         return {
             '???': 'Danger unknown',
             '---': 'Nonvenomous',
