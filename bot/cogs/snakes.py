@@ -27,6 +27,7 @@ log = logging.getLogger(__name__)
 WIKI = "https://en.wikipedia.org/w/api.php?"
 BASEURL = WIKI + "format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles={title}&redirects=1"
 FAILIMAGE = "http://i.imgur.com/HtIPyLy.png/beep"
+<<<<<<< HEAD
 
 # Yes, we're naming snakes. Shush.
 SPECIALS = {
@@ -73,7 +74,6 @@ class Snakes:
         self.bot = bot
         self.session = aiohttp.ClientSession(loop=bot.loop)
 
-
     @staticmethod
     def kwargs(args, positional_args=list()):
         """for given command parameters *args **kwargs turns them into a dictionary with given positional_args list"""
@@ -95,12 +95,14 @@ class Snakes:
         elif all('=' not in str(arg) for arg in args):
             for index, arg in enumerate(args):
 
+        elif all('=' not in str(arg) for arg in args):
+            for index, arg in enumerate(args):
+                
                 try:
                     arg = arg.strip('()[]')
                     final[[k for k, v in positional_args][index]] = ast.literal_eval("[\"" + '","'.join(arg) + "\"]")
                 except(ValueError, SyntaxError):
                     final[[k for k, v in positional_args][index]] = arg
-
         else:
             return {k: v for k, v in positional_args}
 
@@ -174,11 +176,13 @@ class Snakes:
             "image": image
         }
 
-
-
     @command()
     async def get(self, ctx: Context, *args):
-        content = await self.get_snek(args[0] if args else None, self.kwargs(args[1:], positional_args=["autocorrect", "details"]))
+        
+        content = await self.get_snek(
+            args[0] if args else None,
+            self.kwargs(args[1:], positional_args=["autocorrect", "details"])
+        )
 
         embed = Embed(
             title=content["name"],
