@@ -2,10 +2,9 @@
 import logging
 import random
 from typing import Any, Dict
+
 from discord import Embed
-
 import wikipedia
-
 from discord.ext.commands import AutoShardedBot, Context, command
 
 
