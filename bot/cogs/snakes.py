@@ -14,8 +14,8 @@ from discord.ext.commands import AutoShardedBot, Context, command
 from bot.selectors import (
     ALT_IMG_SELECTOR,
     DID_YOU_KNOW_SELECTOR,
-    SNAKE_IMG_SELECTOR,
     SCIENTIFIC_NAME_SELECTOR,
+    SNAKE_IMG_SELECTOR,
     SNEK_MAP_SELECTOR
 )
 
@@ -121,7 +121,6 @@ class Snakes:
         try:
             img = img[1:]
         except UnboundLocalError:
-            print(name)
             img = soup.select(ALT_IMG_SELECTOR)[0]['src'][1:]
 
         names = soup.find('td', class_='wsite-multicol-col')
