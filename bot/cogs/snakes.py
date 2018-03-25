@@ -178,6 +178,33 @@ class Snakes:
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
+    @command(aliases=["t","zen"])
+    async def this(self, ctx: Context):
+        """
+        Gets a random qoute from the Zen of Python. Inspired by the Python this module
+        :param ctx: Context object passed from discord.py
+        """
+
+        em = discord.Embed(color=0x399600)
+        with open('bot/cogs/resources/zen.json', 'r', encoding="utf8") as f:
+            data = json.load(f)
+        zen_quote = random.choice(data['zen'])
+        a = zen_quote.split()
+        b = ["..."*random.randint(1,3)+"..*hi"+"s"*random.randint(3,7)+"*"+"..."*random.randint(1,3) for _ in range(len(a))]
+        message = ''.join(list(map(lambda x:x[0]+x[1],list(zip(a,b)))))
+
+        em.add_field(
+            name="The Zen of Python says...",
+            value=message,
+            inline=False
+        )
+
+        em.set_image(url=random.choice(data['gif']))
+        await ctx.channel.send(
+            content=ctx.message.author.mention,
+            embed=em
+        )
+
     @command(aliases=["f"])
     async def fact(self, ctx: Context):
         """
