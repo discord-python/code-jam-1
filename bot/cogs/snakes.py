@@ -209,10 +209,26 @@ Spitting   | {2}
 
     @command()
     async def snek_fact(self, ctx: Context):
-        '''Sends a random snake fact.
+        '''
+        Sends a random snake fact.
 
-        :param ctx: Context from discord.py'''
+        :param ctx: Context from discord.py
+        '''
         await ctx.send(choice(SNEK_FACTS))
+
+    @command()
+    async def snek_pic(self, ctx: Context):
+        """
+        Sends a random snake pic.
+
+        :param ctx: Context from discord.py
+        """
+        image = ''
+        name = ''
+        while not image:
+            name = choice(SNAKE_NAMES)
+            image = db[name]['image']
+        await ctx.send('Snake: {0}\n'.format(name) + image)
 
 
 def setup(bot):
