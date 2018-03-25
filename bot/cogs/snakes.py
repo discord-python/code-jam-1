@@ -1,8 +1,12 @@
 # coding=utf-8
 import logging
 from typing import Any, Dict
-
+from bot.cogs import WikiListener
 from discord.ext.commands import AutoShardedBot, Context, command
+import discord
+import aiohttp
+import random
+import json
 
 log = logging.getLogger(__name__)
 
@@ -15,35 +19,73 @@ class Snakes:
     def __init__(self, bot: AutoShardedBot):
         self.bot = bot
 
-    async def get_snek(self, name: str = None) -> Dict[str, Any]:
-        """
-        Go online and fetch information about a snake
-
-        The information includes the name of the snake, a picture of the snake, and various other pieces of info.
-        What information you get for the snake is up to you. Be creative!
-
-        If "python" is given as the snake name, you should return information about the programming language, but with
-        all the information you'd provide for a real snake. Try to have some fun with this!
-
-        :param name: Optional, the name of the snake to get information for - omit for a random snake
-        :return: A dict containing information on a snake
-        """
+    async def is_snek(self, name: str = None) -> Dict[str, Any]:
+        if name in WikiListener.get_all_snek():
+            return True
+        else:
+            return False
 
     @command()
     async def get(self, ctx: Context, name: str = None):
-        """
-        Go online and fetch information about a snake
 
-        This should make use of your `get_snek` method, using it to get information about a snake. This information
-        should be sent back to Discord in an embed.
+        if name is None:
+            ctx.send("Ensure your command specifies the correct arguments.")
+        state = await self.is_snek(name)
+        if state:
+            if WikiListener.get_snek_scientific(name) is None:
+                title = await WikiListener.get_snek_scientific(name)
+                description = await WikiListener.get_snek_description(name)
+                embed = discord.Embed(title=f"{name}", description=f"{description}", color=0x00ff80)
+                try:
+                    thumbnail = await WikiListener.get_snek_thumbnail(name)
+                    embed.set_thumbnail(url=f'{thumbnail}')
+                except aiohttp.web.HTTPExceptionError:
+                    pass
+                await ctx.send(embed=embed)
+            else:
+                title = await WikiListener.get_snek_scientific(name)
+                description = await WikiListener.get_snek_description(name)
+                embed = discord.Embed(title=f"{name}", description=f"{description}", color=0x00ff80)
+                embed.set_author(name=f"{title}")
+                try:
+                    thumbnail = await WikiListener.get_snek_thumbnail(name)
+                    embed.set_thumbnail(url=f'{thumbnail}')
+                except aiohttp.web.HTTPClientError:
+                    pass
+                await ctx.send(embed=embed)
+        else:
+            await ctx.channel.send(f"Did not find {name} in the database.")
 
-        :param ctx: Context object passed from discord.py
-        :param name: Optional, the name of the snake to get information for - omit for a random snake
-        """
+    @command()
+    async def quiz(self, ctx: Context, name: str = None):
+        async def addmoji(msg, emojilist):
+            for emoji in emojilist:
+                await msg.add_reaction(emoji)
+        with open("bot/snakedata/questions.json") as quizson:
+            questions = json.load(quizson)
 
-    # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+        quemoji = ['🇦', '🇧', '🇨', '🇩']
+        random_quiz = questions["questions"][random.randint(0,10)]
+        em = discord.Embed(title=random_quiz['question'], description='🇦 {0}\n\n🇧 {1}\n\n🇨 {2}\n\n🇩 {3}'.format(random_quiz['a'],random_quiz['b'],random_quiz['c'],random_quiz['d']))
+        channel = ctx.channel
+        quiz = await channel.send('', embed=em)
+        await addmoji(quiz, quemoji)
+
+        def check(reaction, user):
+            return user == ctx.author and str(reaction.emoji)   
+
+        try:
+            reaction, user = await ctx.bot.wait_for('reaction_add', timeout=20.0, check=check)
+        except asyncio.TimeoutError as err:
+            await channel.send('Bah! You took too long.')            
+        else:
+            if str(reaction.emoji) == random_quiz["answerkey"]:
+                await channel.send('That was correct! Well done!')
+            else:
+                await channel.send('That was incorrect! The correct answer was {0}, unfortunately.'.format(random_quiz["answerkey"]))
 
 
+# Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 def setup(bot):
     bot.add_cog(Snakes(bot))
     log.info("Cog loaded: Snakes")
