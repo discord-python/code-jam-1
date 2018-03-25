@@ -144,7 +144,7 @@ class Snakes:
             else:
                 head[0] -= 1
 
-            if head[0] < 0 or head[1] < 0 or head[0] > x or head[1] > y:
+            if head[0] < 0 or head[1] < 0 or head[0] > x - 1 or head[1] > y - 1:
                 await ctx.send(str(ctx.author.mention) + " become a wall :cry:")
                 break
 
@@ -193,7 +193,7 @@ class Snakes:
                 # add side of board
                 board += ":black_large_square:"
             # add bottom of board
-            board += "\n " + ":black_large_square:" * x + ":black_large_square::black_large_square:"
+            board += "\n" + ":black_large_square:" * x + ":black_large_square::black_large_square:"
 
             # edit message then wait for next frame
             Board = discord.Embed(title="Snake!", description=board)
