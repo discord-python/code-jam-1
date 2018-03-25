@@ -144,7 +144,7 @@ class Snakes:
 
             if head[0] < 0 or head[1] < 0 or head[0] > x - 1 or head[1] > y - 1:
                 await ctx.send(str(ctx.author.mention) + " become a wall :cry:")
-                break
+                running = False
 
             # check if
             for snakeTail in snake:
