@@ -77,9 +77,8 @@ class Snakes:
             if str(reaction.emoji) == question[2]:
                 await channel.send('👍')
             else:
-                em = Embed(
-                await channel.send(
-                    'Wrong answer! The correct answer was {0}'.format(question[2]))
+                pass
+
 
 # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 def setup(bot):
