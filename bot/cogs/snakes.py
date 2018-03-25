@@ -25,7 +25,24 @@ class NoGuessError(Exception):
 
 
 async def check_spelling(word):
+    '''
+    Check the spelling of a word using difflib's get_close_matches.
+
+    :return: Closest-matching string.
+    '''
     return get_close_matches(word, SNAKE_NAMES)[0]
+
+
+async def fix_margins(text, maxlength=10):
+    '''
+    Fixes text to be a certain length.
+    '''
+    textlen = len(text)
+    if textlen > maxlength:
+        text = text[:textlen - 3] + '...'
+    else:
+        text = text.ljust(maxlength)
+    return text
 
 
 class Snakes:
@@ -105,19 +122,44 @@ class Snakes:
         try:
             snek = await self.get_snek(name)
         except NoGuessError as e:
-            print('debug: {}'.format(e.debugdata))
+            print('debug: {0}'.format(e.debugdata))
             await ctx.send("I'm sorry, I don't know what you requested.")
+
+        rating = snek.get('rating')
+        family = fix_margins(snek.get('family'))
+        common = snek.get('common name')
+        uimage = snek.get('image')
+        scient = fix_margins(snek.get('scientific'))
+        length = fix_margins(snek.get('length'))
+        spit = fix_margins(snek.get('spit'))
 
         # embed = Embed(title=snek.get('common name'), description=snek.get('description'))
         embed = Embed(title=snek.get('common name'))
         # Commented out until I know what information I have to use.
-        # embed.add_field(name="More Information", value="```Species | xxx\rGenus   | xxx\rFamily  | xxx```")
-        embed.add_field(name=snek.get('rating'), value=await self.get_danger(snek.get('rating')), inline=True)
-        embed.set_image(url=snek.get('image'))
+        embed.add_field(name="More Information", value='''```Family    | {}
+Scientific | {}
+Length     | {}
+Spitting   | {}
+```'''.format(family, scient, length, spit))
+        embed.add_field(name='Threat', value=await self.get_danger(rating), inline=True)
+        embed.set_image(url=uimage)
         embed.set_footer(text="Information from snakedatabase.org")
         await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+    @command()
+    async def speak(self, ctx: Context, text: str=None):
+        """
+        Takes any text passed in and snekifies it.
+
+        :param ctx: Context from discord.py
+        :param text: Optional, the text to snekify
+        """
+
+        if text is None:
+            await ctx.send("I can't ssssnekify nothing!")
+        else:
+            await ctx.send("Sssneks ssay " + text.replace('s', 'ss'))
 
 
 def setup(bot):
