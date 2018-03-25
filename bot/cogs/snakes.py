@@ -98,7 +98,13 @@ class Snakes:
             ranSnk = random.randint(1, snLen - 1)
             result = name[:ran] + snk[ranSnk:]
 
-        return await ctx.send(result)
+        embed = discord.Embed(
+            title="Random Name",
+            description="You're that is generated is " + result,
+            color=0x00ff00
+        )
+        embed.add_field(name="Snake", value="Your name was merged with the snake " + snk)
+        return await ctx.send(embed=embed)
 
     @command(name="namegen")  # this name generator looks at vowels
     async def name_generator(self, ctx: Context, name: str = None):
@@ -115,7 +121,7 @@ class Snakes:
             if char in 'aeiou':
                 index1 = index
                 break
-            
+
         name_index = len(s) - index1
 
         name_sub_string = s[:name_index - 1]
@@ -131,8 +137,15 @@ class Snakes:
 
         sub_string_index = len(snake) - index2
         snake_sub_string = snake[1:sub_string_index]
+        result = name_sub_string + snake_sub_string
+        embed = discord.Embed(
+            title="NAME GENERATOR",
+            description="You're that is generated is " + result,
+            color=0x00ff00
+        )
+        embed.add_field(name="Snake", value="Your name was merged with the snake " + snake)
 
-        return await ctx.send(name_sub_string + snake_sub_string)
+        return await ctx.send(embed=embed)
 
 
 def setup(bot):
