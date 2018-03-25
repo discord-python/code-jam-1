@@ -89,7 +89,7 @@ class Snakes:
         else:
             name = choice(self.bot.sneks)
 
-        snake = name.lower().replace(' ', '-')
+        snake = name.lower().replace(' ', '-').replace("'", '')
         url = f'{self.bot.info_url}{snake}.html'
 
         async with self.bot.session.get(url) as resp:
@@ -115,7 +115,7 @@ class Snakes:
 
     async def get_snek_fact(self):
         '''Helper function to get a snake fact.'''
-        page = choice(self.bot.sneks).replace(' ', '-')
+        page = choice(self.bot.sneks).replace(' ', '-').replace("'", '')
         url = f'{self.bot.info_url}{page}.html'
 
         async with self.bot.session.get(url) as resp:
@@ -142,6 +142,21 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
+        # Sends info about the programming language
+        if name.lower() == 'python':
+            # Python language info.
+            em = discord.Embed(
+                title='Python',
+                description='Python is an interpreted high-level programming language for general-purpose programming. '
+                            'Created by Guido van Rossum and first released in 1991, '
+                            'Python has a design philosophy that emphasizes code readability, '
+                            'notably using significant whitespace.',
+                color=discord.Color.blurple()
+            )
+
+            em.set_thumbnail(url='https://ih0.redbubble.net/image.80621508.8934/flat,800x800,075,t.u1.jpg')
+            em.set_image(url='https://www.python.org/static/community_logos/python-logo-master-v3-TM.png')
+            return await ctx.send(embed=em)
         data = await self.get_snek(name)
         # if the snake is not found
         if isinstance(data, discord.Embed):

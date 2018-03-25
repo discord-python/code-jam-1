@@ -1,4 +1,5 @@
 # coding=utf-8
+from discord import Embed
 
 # Channels, servers and roles
 PYTHON_GUILD = 267624335836053506
