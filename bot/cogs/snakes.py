@@ -62,18 +62,16 @@ class Snakes:
         """
         base_url = "https://protected-reef-75100.herokuapp.com/"
         all_snakes_url = base_url + 'get_all_snakes?format=json'
+        random_url = 'https://protected-reef-75100.herokuapp.com/random_snake'
         search_url = base_url + 'search'
         token = os.getenv('ACCESS_TOKEN')
         headers = {'Authorization': f'Token {token}'}
         if not name:
             # get a random snake...
             async with aiohttp.ClientSession() as session:
-                async with session.get(all_snakes_url, headers=headers) as response:
+                async with session.get(random_url, headers=headers) as response:
                     response = await response.read()
-                    print(response)
-                    data = json.loads(response.decode("utf-8"))
-                    rand = random.randint(0, len(data) - 1)
-                    snake_info = data[rand]
+                    snake_info = json.loads(response.decode("utf-8"))
         else:
             params = {'snake': name}
             async with aiohttp.ClientSession() as session:
