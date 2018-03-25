@@ -66,12 +66,14 @@ class Snakes:
         search_url = base_url + 'search'
         token = os.getenv('ACCESS_TOKEN')
         headers = {'Authorization': f'Token {token}'}
+        snake_info = {}
         if not name:
             # get a random snake...
             async with aiohttp.ClientSession() as session:
                 async with session.get(random_url, headers=headers) as response:
                     response = await response.read()
                     snake_info = json.loads(response.decode("utf-8"))
+                    snake_info['matches_count'] = 1
         else:
             params = {'snake': name}
             async with aiohttp.ClientSession() as session:
@@ -79,10 +81,21 @@ class Snakes:
                     # search snake endpoint something...
                     response = await response.read()
                     data = json.loads(response.decode("utf-8"))
-                    rand = random.randint(0, len(data) - 1)
-                    snake_info = data[rand]
+                    try:
+                        rand = random.randint(0, len(data) - 1)
+                    except ValueError:
+                        # handle the scenario with an empty range of (0,0)
+                        rand = 0
+                    try:
+                        snake_info = data[rand]
+                    except IndexError:
+                        # handles if there is no match in the database
+                        snake_info['pass'] = False
+                        return snake_info
+                    snake_info['matches_count'] = len(data)
 
         snake_info['image_url'] = await self.get_snek_image(snake_info['common_name'])
+        snake_info['pass'] = True   # successful data retrieval
         return snake_info
 
     @command(aliases=["g"])
@@ -110,26 +123,39 @@ class Snakes:
             embed.set_image(url=await self.get_snek_image("python programming language"))
         else:
             snek_info = await self.get_snek(name)
+            if not snek_info['pass']:
+                embed = discord.Embed(color=0xDD3D5A)
+                embed.add_field(
+                    name="We Couldn't Find That :snake:",
+                    value=f':x: "{name}" didn\'t match anything in our database :frowning:',
+                    inline=False
+                )
+                await ctx.channel.send(embed=embed)
+                return   # break out of rest of method
             if snek_info['is_venomous']:
                 # if the snake is venomous -- use the fancy check icon
                 venom_info = f":white_check_mark: venomous\n\n"
             else:
                 # if the snake is not venomous -- use the fancy not allowed icon
                 venom_info = f":no_entry_sign: NOT venomous\n\n"
+            additional_info = ''    # required to prevent referencing before assignment
+            if snek_info['matches_count'] and snek_info['matches_count'] > 1:
+                additional_info = f"\n\n" \
+                                  f"This search matched {snek_info['matches_count']} snakes. " \
+                                  f"Try creating a more specific query for information about a particular snake. " \
+                                  f"(This is a random selection from the {snek_info['matches_count']}.)"
             embed.add_field(
                 name=titlecase(snek_info['common_name']),
                 value=(
                     f":microscope: *{titlecase(snek_info['scientific_name'])}*\n\n"
                     f"{venom_info}"
                     f":globe_with_meridians: Found in {snek_info['locations']}"
+                    f"{additional_info}"
                 ),
                 inline=False
             )
             embed.set_image(url=snek_info['image_url'])
-        await ctx.channel.send(
-            # content=ctx.message.author.mention + " :snake: !",
-            embed=embed
-        )
+        await ctx.channel.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
