@@ -46,7 +46,11 @@ async def get_snek_description(name: str = None):
 async def get_snek_scientific(name: str = None):
     json_file = await get_raw_json(name)
     clean_json = json.loads(json_file)
-    return list(clean_json['query']['pages'].values())[0]['title']
+    scientific = list(clean_json['query']['pages'].values())[0]['title']
+    if scientific == name:
+        return None
+    else:
+        return scientific
 
 
 async def get_snek_thumbnail(name: str = None):

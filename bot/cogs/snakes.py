@@ -36,7 +36,7 @@ class Snakes:
                 try:
                     thumbnail = await WikiListener.get_snek_thumbnail(name)
                     embed.set_thumbnail(url=f'{thumbnail}')
-                except aiohttp.HTTPException:
+                except aiohttp.web.HTTPExceptionError:
                     pass
                 await ctx.send(embed=embed)
             else:
@@ -47,7 +47,7 @@ class Snakes:
                 try:
                     thumbnail = await WikiListener.get_snek_thumbnail(name)
                     embed.set_thumbnail(url=f'{thumbnail}')
-                except aiohttp.HTTPException:
+                except aiohttp.web.HTTPClientError:
                     pass
                 await ctx.send(embed=embed)
         else:
@@ -61,7 +61,7 @@ class Snakes:
 
         quemoji = ['🇦', '🇧', '🇨', '🇩']
         question = ['Which snek is the sneakiest snek?', '🇦Cobra\n\n🇧Regular Snek\n\n🇨Python\n\n🇩<Cobra></Cobra>', '🇨']
-        em = Embed(title=question[0], description=question[1])
+        em = discord.Embed(title=question[0], description=question[1])
         channel = ctx.channel
         quiz = await channel.send('', embed=em)
         await addmoji(quiz, quemoji)
