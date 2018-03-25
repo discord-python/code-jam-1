@@ -319,7 +319,7 @@ class Snakes:
             )
 
         #  Begin main game loop
-        while True:
+        while not win and antidote_tries < 10:
             try:
                 reaction, user = await ctx.bot.wait_for("reaction_add", timeout=300, check=event_check)
             except asyncio.TimeoutError:
@@ -374,11 +374,6 @@ class Snakes:
                                                  value="\n".join(board))
                         # Redisplay the board
                         await board_id.edit(embed=antidote_embed)
-
-                        if win is True:
-                            break
-                        if antidote_tries == 10:
-                            break
 
         # Winning / Ending Screen
         if win is True:
