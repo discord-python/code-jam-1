@@ -10,13 +10,23 @@ import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
 log = logging.getLogger(__name__)
+
+# sometimes it's the 2nd div after 2nd td, sometimes it's the 3rd div.
+# either way, it's returning `None`, so then info url + None = info url
+# which is what the thumbnail url is currently.
 SNEK_MAP_SELECTOR = (
     "#wsite-content > div:nth-of-type(2) > div > div > table > "
     "tbody > tr > td:nth-of-type(2) > div:nth-of-type(3) > div > a > img"
 )
+
 SCIENTIFIC_NAME_SELECTOR = (
     "#wsite-content > div:nth-of-type(1) > div > div > "
     "table > tbody > tr > td:nth-of-type(1) > div:nth-of-type(2)"
+)
+
+DID_YOU_KNOW_SELECTOR = (
+    '#wsite-content > div:nth-of-type(2) > div > div > table > '
+    'tbody > tr > td:nth-of-type(2) > div:nth-of-type(1)'
 )
 
 
@@ -34,23 +44,27 @@ class Snakes:
             title='No snake found.',
             color=discord.Color.green()
         )
+
         snakes = get_close_matches(name, self.bot.sneks)
+
         if snakes:
             em.description = 'Did you mean...\n'
             em.description += '\n'.join(f'`{x}`' for x in snakes)
         else:
             snakes = 'https://github.com/SharpBit/code-jam-1/blob/master/snakes.txt'
-            em.description = f'Click [here]({snakes}) for the list of available snakes.'
+            em.description = f'No close matches found. Click [here]({snakes}) for the list of available snakes.'
+
         return em
 
     def format_info(self, data):
-        '''Formats the info with the given data'''
+        '''Formats the info with the given data.'''
         em = discord.Embed(
             title=f"{data['name']} ({data['scientific-name']})",
             description=data['description'],
             color=discord.Color.green(),
             url=data['url']
         )
+
         em.set_image(url=data['image-url'])
         em.set_thumbnail(url=data['map-url'])
 
@@ -74,16 +88,20 @@ class Snakes:
                 return self.no_sneks_found(name)
         else:
             name = choice(self.bot.sneks)
+
         snake = name.lower().replace(' ', '-')
         url = f'{self.bot.info_url}{snake}.html'
+
         async with self.bot.session.get(url) as resp:
             info = await resp.read()
             soup = BeautifulSoup(info, 'lxml')
+
         img = soup.find(attrs={'property': {'og:image'}})['content']
         names = soup.find('td', class_='wsite-multicol-col')
-        sci_name = soup.select(SNEK_MAP_SELECTOR)[0].text.strip()
-        location_map = soup.select(SCIENTIFIC_NAME_SELECTOR)[0]['src']
+        sci_name = soup.select(SCIENTIFIC_NAME_SELECTOR)[0].text.strip()
+        location_map = soup.select(SNEK_MAP_SELECTOR)[0]['src']
         description_tag = soup.find(attrs={'property': {'og:description'}})
+
         info = {
             'name': names.h1.string,
             'scientific-name': sci_name,
@@ -95,7 +113,25 @@ class Snakes:
 
         return info
 
-    @command()
+    async def get_snek_fact(self):
+        '''Helper function to get a snake fact.'''
+        page = choice(self.bot.sneks).replace(' ', '-')
+        url = f'{self.bot.info_url}{page}.html'
+
+        async with self.bot.session.get(url) as resp:
+            response = await resp.read()
+            soup = BeautifulSoup(response, 'lxml')
+            fact = soup.select(DID_YOU_KNOW_SELECTOR)[0].text
+
+        em = discord.Embed(
+            title='Did you know?',
+            description=fact[13:],
+            color=discord.Color.green()
+        )
+
+        return em
+
+    @command(aliases=['snakes.get', 'snakes.get()', 'get()'])
     async def get(self, ctx: Context, *, name: str = None):
         """
         Go online and fetch information about a snake
@@ -114,7 +150,13 @@ class Snakes:
         em = self.format_info(data)
         await ctx.send(embed=em)
 
-    # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+    @command(aliases=['getsnekfact', 'snekfact()', 'get_snek_fact()'])
+    async def snekfact(self, ctx: Context):
+        '''
+        Gets a randomsnek fact from the "Did you know?" cards
+        that the website has on the right hand side.
+        '''
+        await ctx.send(embed=await self.get_snek_fact())
 
 
 def setup(bot):
