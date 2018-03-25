@@ -100,7 +100,7 @@ class Snakes:
 
         facing = 0
         snake.append(head)
-        apple = [random.randint(0, x), random.randint(0, y)]
+        apple = (random.randint(0, x), random.randint(0, y))
 
         board += "```\n " + "#" * x + "##"
         for yAxis in range(y):
@@ -135,8 +135,13 @@ class Snakes:
             else:
                 head[0] -= 1
 
-            snake.pop(0)
-            snake.append(head)
+            for snakeTail in snake:
+                if snakeTail == apple:
+                    apple = (random.randint(0, x), random.randint(0, y))
+                    break
+            else:
+                snake.pop(0)
+            snake.append(tuple(head))
 
             board = """"""
             board += "```\n " + "#" * x + "##"
@@ -144,11 +149,11 @@ class Snakes:
                 board += "\n #"
                 for xAxis in range(x):
                     for snakeTail in snake:
-                        if snakeTail == [xAxis, yAxis]:
+                        if snakeTail == (xAxis, yAxis):
                             board += "X"
                             break
                     else:
-                        if apple == [xAxis, yAxis]:
+                        if apple == (xAxis, yAxis):
                             board += "@"
                         else:
                             board += "0"
@@ -157,7 +162,7 @@ class Snakes:
             board += "\n " + "#" * x + "##```"
 
             await snakeBoard.edit(content=board)
-            await asyncio.sleep(0.8)
+            await asyncio.sleep(0.9)
 
     async def on_message(self, message):
         if message.content in ("w", "a", "s", "d"):
