@@ -119,7 +119,6 @@ class Snakes:
             directionChange = True
             for mess in self.inputs:
                 if mess.author.id == userID:
-                    self.inputs = []
 
                     if mess.content == "a":
                         if directionChange:
@@ -132,6 +131,10 @@ class Snakes:
                             facing = (facing + 1) % 4
                             directionChange = False
                         await mess.delete()
+                    break
+
+            self.inputs = []
+
 
             if facing == 0:
                 head[1] -= 1
