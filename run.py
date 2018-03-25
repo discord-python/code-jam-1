@@ -33,7 +33,7 @@ bot.load_extension("bot.cogs.security")
 
 
 # Commands, etc
-bot.load_extension("bot.cogs.snakes")
+bot.load_extension("bot.cogs.snakes_juan")
 
 bot.run(os.environ.get("BOT_TOKEN"))
 
