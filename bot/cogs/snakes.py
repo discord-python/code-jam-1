@@ -9,25 +9,13 @@ from bs4 import BeautifulSoup
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
+from bot.selectors import (
+    SNEK_MAP_SELECTOR,
+    SCIENTIFIC_NAME_SELECTOR,
+    DID_YOU_KNOW_SELECTOR
+)
+
 log = logging.getLogger(__name__)
-
-# sometimes it's the 2nd div after 2nd td, sometimes it's the 3rd div.
-# either way, it's returning `None`, so then info url + None = info url
-# which is what the thumbnail url is currently.
-SNEK_MAP_SELECTOR = (
-    "#wsite-content > div:nth-of-type(2) > div > div > table > "
-    "tbody > tr > td:nth-of-type(2) > div:nth-of-type(3) > div > a > img"
-)
-
-SCIENTIFIC_NAME_SELECTOR = (
-    "#wsite-content > div:nth-of-type(1) > div > div > "
-    "table > tbody > tr > td:nth-of-type(1) > div:nth-of-type(2)"
-)
-
-DID_YOU_KNOW_SELECTOR = (
-    '#wsite-content > div:nth-of-type(2) > div > div > table > '
-    'tbody > tr > td:nth-of-type(2) > div:nth-of-type(1)'
-)
 
 
 class Snakes:
@@ -143,20 +131,21 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
         # Sends info about the programming language
-        if name.lower() == 'python':
-            # Python language info.
-            em = discord.Embed(
-                title='Python',
-                description='Python is an interpreted high-level programming language for general-purpose programming. '
-                            'Created by Guido van Rossum and first released in 1991, '
-                            'Python has a design philosophy that emphasizes code readability, '
-                            'notably using significant whitespace.',
-                color=discord.Color.blurple()
-            )
+        if name:
+            if name.lower() == 'python':
+                # Python language info.
+                em = discord.Embed(
+                    title='Python (Pseudo anguis)',
+                    description='Python is an interpreted high-level programming language for general-purpose programming. '
+                                'Created by Guido van Rossum and first released in 1991, '
+                                'Python has a design philosophy that emphasizes code readability, '
+                                'notably using significant whitespace.',
+                    color=discord.Color.blurple()
+                )
 
-            em.set_thumbnail(url='https://ih0.redbubble.net/image.80621508.8934/flat,800x800,075,t.u1.jpg')
-            em.set_image(url='https://www.python.org/static/community_logos/python-logo-master-v3-TM.png')
-            return await ctx.send(embed=em)
+                em.set_thumbnail(url='https://ih0.redbubble.net/image.80621508.8934/flat,800x800,075,t.u1.jpg')
+                em.set_image(url='https://www.python.org/static/community_logos/python-logo-master-v3-TM.png')
+                return await ctx.send(embed=em)
         data = await self.get_snek(name)
         # if the snake is not found
         if isinstance(data, discord.Embed):
