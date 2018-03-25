@@ -181,7 +181,7 @@ class Snakes:
     @command(aliases=["t","zen"])
     async def this(self, ctx: Context):
         """
-        Gets a random fact about snakes
+        Gets a random qoute from the Zen of Python. Inspired by the Python this module
         :param ctx: Context object passed from discord.py
         """
 
