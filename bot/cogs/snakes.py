@@ -113,7 +113,7 @@ class Snakes:
     @command(aliases=["g"])
     async def get(self, ctx: Context, name: str = None):
         """
-        Go online and fetch information about a snake
+        Gets information and an image about a snake
 
         This should make use of your `get_snek` method, using it to get information about a snake. This information
         should be sent back to Discord in an embed.
