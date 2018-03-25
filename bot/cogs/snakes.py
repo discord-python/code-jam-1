@@ -4,8 +4,10 @@ import asyncio
 import aiohttp
 import logging
 import random
-from bs4 import BeautifulSoup
+
 from typing import Any, Dict
+from bs4 import BeautifulSoup
+
 
 # from discord import Embed, Reaction, Member
 import discord
