@@ -42,6 +42,7 @@ ANTIDOTE_EMOJI = [FIRST_EMOJI, SECOND_EMOJI, THIRD_EMOJI, FOURTH_EMOJI, FIFTH_EM
 def to_lower(argument):
     return argument.lower()
 
+
 class Snakes:
     """
     Snake-related commands
