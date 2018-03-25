@@ -25,11 +25,12 @@ class Snakes:
 
     @command()
     async def get(self, ctx: Context, name: str = None):
+        if name is None:
+            ctx.send("Ensure your command specifies the correct arguments.")
         state = await self.is_snek(name)
         if state:
-            if WikiListener.get_snek_scientific is None:
+            if WikiListener.get_snek_scientific(name) is None:
                 title = await WikiListener.get_snek_scientific(name)
-                url = await WikiListener.get_snek_url(name)
                 thumbnail = await WikiListener.get_snek_thumbnail(name)
                 description = await WikiListener.get_snek_description(name)
                 embed = discord.Embed(title=f"{name}", description=f"{description}", color=0x00ff80)
@@ -37,7 +38,6 @@ class Snakes:
                 await ctx.send(embed=embed)
             else:
                 title = await WikiListener.get_snek_scientific(name)
-                url = await WikiListener.get_snek_url(name)
                 thumbnail = await WikiListener.get_snek_thumbnail(name)
                 description = await WikiListener.get_snek_description(name)
                 embed = discord.Embed(title=f"{name}", description=f"{description}", color=0x00ff80)
