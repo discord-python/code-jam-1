@@ -44,12 +44,6 @@ class Snakes:
         :return: A dict containing information on a snake
         """
         name = str(name)
-        site = 'https://en.wikipedia.org/wiki/' + name
-        async with aiohttp.ClientSession() as session:
-            async with session.get(site) as resp:
-                text = await resp.text()
-                soup = BeautifulSoup(text, 'lxml')
-
 
         if name.lower() == 'python':
             name = self.python_info
