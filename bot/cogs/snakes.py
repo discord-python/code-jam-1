@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import random
+import urllib
 from typing import Any, Dict
 
 import aiohttp
@@ -28,13 +29,14 @@ class Snakes:
         :param snake_name: name of the snake
         :return: the full JSON from the search API
         """
-        client_id = os.environ.get("UNSPLASH_CLIENT_ID")
-        url = (
-            "https://api.unsplash.com/search/photos?client_id"
-            f"={client_id}&query={snake_name}+snake"
-        )
+        head = {
+            'user-agent': ('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) '
+                           'AppleWebKit/537.36 (KHTML, like Gecko) '
+                           'Chrome/45.0.2454.101 Safari/537.36'),
+        }
+        url = f'https://api.qwant.com/api/search/images?count=5&offset=1&q={urllib.parse.quote(snake_name)}+snake'
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
+            async with session.get(url, headers=head) as response:
                 response = await response.read()
                 return json.loads(response.decode("utf-8"))
 
@@ -45,8 +47,19 @@ class Snakes:
         :return: image url
         """
         json_response = await self.get_snek_qwant_json(name)
-        rand = random.randint(0, 9)  # prevents returning the same image every time
-        return str(json_response['results'][rand]['urls']['small'])
+        result_count = len(json_response["data"]["result"]["items"])
+        if 3 > result_count > 1:
+            rand = random.randint(0, result_count - 1)
+        if result_count == 1:
+            rand = 0
+        else:
+            rand = random.randint(0, 3)  # prevents returning the same image every time
+        try:
+            choice = str(json_response["data"]["result"]["items"][rand]["media"])
+        except IndexError:
+            # if no(t enough) images are returned...
+            return 'https://dksignmt.com/wp-content/uploads/2015/01/404-Im%C3%A1gen-14.png'   # 404 image
+        return choice
 
     async def get_snek(self, name: str = None) -> Dict[str, Any]:
         """
@@ -95,7 +108,7 @@ class Snakes:
                     snake_info['matches_count'] = len(data)
 
         snake_info['image_url'] = await self.get_snek_image(snake_info['common_name'])
-        snake_info['pass'] = True   # successful data retrieval
+        snake_info['pass'] = True  # successful data retrieval
         return snake_info
 
     @command(aliases=["g"])
@@ -131,14 +144,14 @@ class Snakes:
                     inline=False
                 )
                 await ctx.channel.send(embed=embed)
-                return   # break out of rest of method
+                return  # break out of rest of method
             if snek_info['is_venomous']:
                 # if the snake is venomous -- use the fancy check icon
                 venom_info = f":white_check_mark: venomous\n\n"
             else:
                 # if the snake is not venomous -- use the fancy not allowed icon
                 venom_info = f":no_entry_sign: NOT venomous\n\n"
-            additional_info = ''    # required to prevent referencing before assignment
+            additional_info = ''  # required to prevent referencing before assignment
             if snek_info['matches_count'] and snek_info['matches_count'] > 1:
                 additional_info = f"\n\n" \
                                   f"This search matched {snek_info['matches_count']} snakes. " \
