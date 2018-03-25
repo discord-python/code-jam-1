@@ -8,7 +8,9 @@ import wikipedia
 
 log = logging.getLogger(__name__)
 
-SNAKE_LIST = ['cobra', 'python', 'anaconda', 'viper', 'mamba', 'taipan', 'rattle', 'garter', 'cylindrophis','colubridae']
+SNAKE_LIST = ['cobra', 'python', 'anaconda', 'viper', 'mamba', 'taipan', 'rattle', 'garter', 'cylindrophis',
+              'colubridae']
+
 
 class Snakes:
     """
@@ -37,41 +39,34 @@ class Snakes:
             name = "Python(Programming Language)"
 
         try:
-            text = wikipedia.summary(name,sentences=2)
+            text = wikipedia.summary(name, sentences=2)
         except Exception as e:
-            text = wikipedia.summary(e.options[0],sentences=2)
+            text = wikipedia.summary(e.options[0], sentences=2)
         return (name, text)
 
     @command(name="get")
-    async def get(self, ctx: Context, name: str=None):
-        """if name.lower() == "python":
-            name_rechange = "Python Programming Language"
-        else:
-            name_rechange = name
-        test = wikipedia.page(name_rechange)
-        embed.add_field(name="Image", value=test.images[0], inline=False)
-        return await ctx.send(embed=embed)
-        """
-        name, text  = await self.get_snek(name)
-        for_image=''
-        if name=="Python(Programming Language)":
-            for_image ='https://raw.githubusercontent.com/discord-python/branding/master/logos/logo_full.png'
+    async def get(self, ctx: Context, name: str = None):
+
+        name, text = await self.get_snek(name)
+        for_image = ''
+        if name == "Python(Programming Language)":
+            for_image = 'https://raw.githubusercontent.com/discord-python/branding/master/logos/logo_full.png'
             embed = discord.Embed(title="Programming !!", color=0x00ff00)
             embed.add_field(name=name, value=text)
             embed.set_image(url=for_image)
             await ctx.send(embed=embed)
         else:
-            webpage=wikipedia.WikipediaPage(name)
-            for_image=webpage.images[0]
-            embed=discord.Embed(title="Snake !!",color=0x00ff00)
-            embed.add_field(name=name,value=text)
+            webpage = wikipedia.WikipediaPage(name)
+            for_image = webpage.images[0]
+            embed = discord.Embed(title="Snake !!", color=0x00ff00)
+            embed.add_field(name=name, value=text)
             embed.set_image(url=for_image)
             await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
     @command(name="snakerandom")
-    async def SnakeRandom(self, ctx: Context, name: str = None):
+    async def snake_random(self, ctx: Context, name: str = None):
 
         randsnake = random.choice(SNAKE_LIST)
         print(randsnake)
@@ -83,17 +78,15 @@ class Snakes:
 
         embed.add_field(name="Result", value="You got yourself a " + randsnake, inline=False)
         embed.add_field(name="Expectation", value=f"@{ctx.author} expected {name}", inline=False)
-
         if randsnake == "python":
-
-            return await ctx.send("Your a lucky dude !", embed=embed)
+            return await ctx.send("You're a lucky dude ! ", embed=embed)
         elif randsnake == "cobra":
             return await ctx.send("Good old cobra !", embed=embed)
         elif randsnake.startswith("blac"):
             return await ctx.send("Shiny liitle fella !", embed=embed)
 
-    @command(name="randname")
-    async def RandName(self, ctx: Context, name: str = None):
+    @command(name="randname")#this name generator randomply slics strings and joins them
+    async def Random_name(self, ctx: Context, name: str = None):
 
         snk = random.choice(SNAKE_LIST)
         snLen = len(snk)
@@ -107,6 +100,42 @@ class Snakes:
 
         return await ctx.send(result)
 
+    @command(name="namegen")#this name generator looks at vowels
+    async def name_generator(self, ctx: Context, name: str = None):
+        snk = random.choice(SNAKE_LIST)
+        s = name
+        str1 = ""
+        str2 = ""
+        for i in s:
+            str1 = i + str1
+
+        index2 = 0
+        index1 = 0
+        for index, char in enumerate(str1):
+            if char in 'aeiou':
+
+                index1 = index
+                break
+            
+        name_index = len(s) - index1
+
+        name_sub_string = s[:name_index-1]
+
+        snake = snk
+        for i in snake:
+            str2 = i + str2
+
+
+        for index, char in enumerate(str2):
+            if char in 'aeiou':
+
+                index2 = index
+                break
+
+        sub_string_index = len(snake) - index2
+        snake_sub_string = snake[1:sub_string_index]
+
+        return await ctx.send(name_sub_string+snake_sub_string)
 
 def setup(bot):
     bot.add_cog(Snakes(bot))
