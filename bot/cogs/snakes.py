@@ -3,8 +3,8 @@ import logging
 import random
 from typing import Any, Dict
 import wikipedia
-import discord
 
+from discord import Embed
 from discord.ext.commands import AutoShardedBot, Context, command
 
 
@@ -54,14 +54,14 @@ class Snakes:
         for_image = ''
         if name == "Python(Programming Language)":
             for_image = 'https://raw.githubusercontent.com/discord-python/branding/master/logos/logo_full.png'
-            embed = discord.Embed(title="Programming !!", color=0x00ff00)
+            embed = Embed(title="Programming !!", color=0x00ff00)
             embed.add_field(name=name, value=text)
             embed.set_image(url=for_image)
             await ctx.send(embed=embed)
         else:
             webpage = wikipedia.WikipediaPage(name)
             for_image = webpage.images[0]
-            embed = discord.Embed(title="Snake !!", color=0x00ff00)
+            embed = Embed(title="Snake !!", color=0x00ff00)
             embed.add_field(name=name, value=text)
             embed.set_image(url=for_image)
             await ctx.send(embed=embed)
@@ -73,7 +73,7 @@ class Snakes:
 
         randsnake = random.choice(SNAKE_LIST)
         print(randsnake)
-        embed = discord.Embed(
+        embed = Embed(
             title="Snake Random !",
             description="lets see what snake you got !",
             color=0x00ff00,
@@ -100,7 +100,7 @@ class Snakes:
             ran = random.randint(1, p - 2)
             ranSnk = random.randint(1, snLen - 1)
             result = name[:ran] + snk[ranSnk:]
-        embed = discord.Embed(
+        embed = Embed(
             title="Random Name",
             description="You're that is generated is " + result,
             color=0x00ff00
@@ -140,7 +140,7 @@ class Snakes:
         sub_string_index = len(snake) - index2
         snake_sub_string = snake[1:sub_string_index]
         result = name_sub_string + snake_sub_string
-        embed = discord.Embed(
+        embed = Embed(
             title="NAME GENERATOR",
             description="You're that is generated is " + result,
             color=0x00ff00
