@@ -2,7 +2,6 @@
 import logging
 from typing import Any, Dict
 import random
-import aiohttp
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 import wikipedia
@@ -62,7 +61,7 @@ class Snakes:
 
     @command(name="snakerandom")
     async def SnakeRandom(self, ctx: Context, name: str = None):
-        
+
         randsnake = random.choice(SNAKE_LIST)
         print(randsnake)
         embed = discord.Embed(
