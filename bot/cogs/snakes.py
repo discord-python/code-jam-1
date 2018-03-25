@@ -5,12 +5,12 @@ from random import choice
 from typing import Any, Dict
 
 from aiohttp import ClientSession
+
 from bs4 import BeautifulSoup
 
 import discord
 from discord.ext.commands import AutoShardedBot, Context, command
 
-from bot.constants import EMOJI_SERVER
 from bot.selectors import (
     SNEK_MAP_SELECTOR,
     SCIENTIFIC_NAME_SELECTOR,
