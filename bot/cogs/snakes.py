@@ -305,7 +305,6 @@ class Snakes:
             """
 
             no_restrictions = (
-                # Pagination is not restricted
                 user_.id == ctx.author.id
             )
 
@@ -385,11 +384,21 @@ class Snakes:
 
         # Winning / Ending Screen
         if win is True:
-            await ctx.send(f"You have created the snake antidote! with {10 - antidote_tries} tries remaining")
-            await board_id.clear_reactions()
+            antidote_embed = Embed(color=ctx.me.color, title="Antidote")
+            antidote_embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            antidote_embed.set_image(url="https://i.makeagif.com/media/7-12-2015/Cj1pts.gif")
+            antidote_embed.add_field(name=EMPTY,
+                                     value=f"You have created the snake antidote!\n"
+                                           f"You had {10 - antidote_tries} tries remaining")
+            await board_id.edit(embed=antidote_embed)
         else:
-            await ctx.send(f"Sorry you didnt make the antidote in time, the formula was {' '.join(antidote_answer)}")
-            await board_id.clear_reactions()
+            antidote_embed = Embed(color=ctx.me.color, title="Antidote")
+            antidote_embed.set_author(name=ctx.author.name, icon_url=ctx.author.avatar_url)
+            antidote_embed.set_image(url="https://media.giphy.com/media/ceeN6U57leAhi/giphy.gif")
+            antidote_embed.add_field(name=EMPTY,
+                                     value=f"Sorry you didnt make the antidote in time.\n"
+                                           f"The formula was {' '.join(antidote_answer)}")
+            await board_id.edit(embed=antidote_embed)
 
         log.debug("Ending pagination and removing all reactions...")
         await board_id.clear_reactions()
