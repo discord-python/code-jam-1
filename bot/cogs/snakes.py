@@ -29,14 +29,19 @@ class Snakes:
            :param name: Optional, the name of the snake to get information for - omit for a random snake
            :return: A dict containing information on a snake
         """
+
         if name is None:
             name = random.choice(SNAKE_LIST)
+
         elif name.lower() == "python":
-            name = "Python (Programming Language)"
+            name = "Python(Programming Language)"
+
+
+
         try:
-            text = wikipedia.summary(name)
+            text = wikipedia.summary(name,sentences=2)
         except Exception as e:
-            text = wikipedia.summary(e.options[0])
+            text = wikipedia.summary(e.options[0],sentences=2)
         return (name, text)
 
     @command(name="get")
@@ -49,13 +54,21 @@ class Snakes:
         embed.add_field(name="Image", value=test.images[0], inline=False)
         return await ctx.send(embed=embed)
         """
-        name, text = await self.get_snek(name)
-        embed = discord.Embed(
-            title=name,
-            description=text,
-            color=0x00ff00
-            )
-        await ctx.send(embed=embed)
+        name, text  = await self.get_snek(name)
+        for_image=''
+        if name=="Python(Programming Language)":
+            for_image ='https://raw.githubusercontent.com/discord-python/branding/master/logos/logo_full.png'
+            embed = discord.Embed(title="Programming !!", color=0x00ff00)
+            embed.add_field(name=name, value=text)
+            embed.set_image(url=for_image)
+            await ctx.send(embed=embed)
+        else:
+            webpage=wikipedia.WikipediaPage(name)
+            for_image=webpage.images[0]
+            embed=discord.Embed(title="Snake !!",color=0x00ff00)
+            embed.add_field(name=name,value=text)
+            embed.set_image(url=for_image)
+            await ctx.send(embed=embed)
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
