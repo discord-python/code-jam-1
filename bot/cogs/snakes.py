@@ -178,10 +178,10 @@ class Snakes:
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
 
-    @command(aliases=["t","zen"])
+    @command(aliases=["t", "zen"])
     async def this(self, ctx: Context):
         """
-        Gets a random qoute from the Zen of Python. Inspired by the Python this module
+        Gets a random quote from the Zen of Python. Inspired by the Python this module
         :param ctx: Context object passed from discord.py
         """
 
