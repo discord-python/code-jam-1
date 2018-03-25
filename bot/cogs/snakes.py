@@ -135,7 +135,6 @@ class Snakes:
 
             self.inputs = []
 
-
             if facing == 0:
                 head[1] -= 1
             elif facing == 1:
