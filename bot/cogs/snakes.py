@@ -1,7 +1,5 @@
 # coding=utf-8
 import logging, aiohttp, random, discord
-from time import sleep
-import logging, aiohttp, random
 from bs4 import BeautifulSoup
 from typing import Any, Dict
 from discord.ext.commands import AutoShardedBot, Context, command
@@ -88,7 +86,7 @@ class Snakes:
 
         # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
     @command()
-    async def snake(self, ctx: Context, x=50, y=30):
+    async def snake(self, ctx: Context, x=10, y=7):
         board = """"""
         running = True
         snake = []
@@ -142,7 +140,7 @@ class Snakes:
                 snake.pop(0)
             snake.append(tuple(head))
 
-            board = """"""
+            board = """Snake!\n"""
             board += "```\n " + "#" * x + "##"
             for yAxis in range(y):
                 board += "\n #"
