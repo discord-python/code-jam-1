@@ -17,6 +17,8 @@ SNAKE_NAMES = db.keys()  # make a list of common names for snakes, used for rand
 DEBUG = (environ.get('SNAKES_DEBUG', None), True)
 print = print if DEBUG[-1] else lambda *a, **k: None  # -1 index is used for easy temp debug hardcode
 
+SNEK_FACTS = json.loads(open('facts.json', 'r').read())
+
 
 class NoGuessError(Exception):
     def __init__(self, message='', debugdata=None):
@@ -28,6 +30,7 @@ async def check_spelling(word):
     '''
     Check the spelling of a word using difflib's get_close_matches.
 
+    :param word: Word to be checked.
     :return: Closest-matching string.
     '''
     return get_close_matches(str(word), SNAKE_NAMES)[0]
@@ -37,6 +40,8 @@ async def fix_margins(text, maxlength=25):
     '''
     Fixes text to be a certain length.
 
+    :param text: Text to be length-fixed
+    :param maxlength: Default = 25, max length fix
     :return: A length-fixed string
     '''
     textlen = len(text)
@@ -122,12 +127,7 @@ class Snakes:
         """
 
         name = name.lower()
-
-        try:
-            snek = await self.get_snek(name)
-        except NoGuessError as e:
-            print('debug: {0}'.format(e.debugdata))
-            await ctx.send("I'm sorry, I don't know what you requested.")
+        print(name)
 
         custom = False
 
@@ -150,6 +150,7 @@ class Snakes:
             custom = True
 
         elif name == 'electron':
+            print(name,'==electron')
             rating = '🐍🐍🐍🐍🐍'
             spit = 'extremely venomous'
             common = 'Pure Evil'
@@ -159,7 +160,14 @@ class Snakes:
             length = '9.8 ft'
             custom = True
 
-        else:
+        try:
+            if not custom:
+                snek = await self.get_snek(name)
+        except NoGuessError as e:
+            print('debug: {0}'.format(e.debugdata))
+            await ctx.send("I'm sorry, I don't know what you requested.")
+
+        if not custom:
             rating = snek.get('rating')
             common = snek.get('common name')
             uimage = snek.get('image')
@@ -170,8 +178,9 @@ class Snakes:
         # embed = Embed(title=snek.get('common name'), description=snek.get('description'))
         embed = Embed(title=common)
         # Commented out until I know what information I have to use.
-        length = str(length) + ' cm' if custom else ''
         length = length.replace(' ', '')
+        if not custom:
+            length += 'cm'
         embed.add_field(name="More Information", value='''```Scientific | {0}
 Length     | {1}
 Spitting   | {2}
@@ -196,6 +205,13 @@ Spitting   | {2}
             await ctx.send("I can't ssssnekify nothing!")
         else:
             await ctx.send("Sssneks ssay " + text.replace('s', 's' * randint(2, 4)))
+
+    @command()
+    async def snek_fact(self, ctx: Context):
+        '''Sends a random snake fact.
+
+        :param ctx: Context from discord.py'''
+        await ctx.send(choice(SNEK_FACTS))
 
 
 def setup(bot):
