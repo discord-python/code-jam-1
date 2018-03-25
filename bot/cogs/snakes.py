@@ -158,12 +158,12 @@ class Snakes:
         page_id = list(text_json['query']['pages'].keys())[0]
 
         # Check that page exists or that snake is in cache
-        if page_id == "-1" or snake_name.lower() not in self.snake_cache:
+        if page_id == "-1" or snake_name not in self.snake_cache:
             # Build a list of matching snakes
             matched_snakes = []
 
             for snake in self.snake_cache:
-                if any(s in snake for s in snake_name.lower().split()):
+                if any(s in snake for s in snake_name.split()):
                     matched_snakes.append(snake)
 
             # On cache hit start building a sorted, trimmed, random list from hits
@@ -179,7 +179,7 @@ class Snakes:
 
                 # If page doesn't exist and snake DOES exist in cache return error and suggestions
                 # E.g. "corn" wont hit any snakes directly, but exists inside more than 1 result
-                if page_id == "-1" and snake_name.lower() in self.snake_cache:
+                if page_id == "-1" and snake_name in self.snake_cache:
                     snake_dict = {"name": f"Found {capwords(snake_name)} but no page! Suggestions:",
                                   "snake_text": ''.join(trimmed_snakes),
                                   "snake_image": snake_image}
