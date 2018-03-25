@@ -153,7 +153,8 @@ class Snakes:
             rating = '🐍🐍🐍🐍🐍'
             spit = 'extremely venomous'
             common = 'Pure Evil'
-            uimage = 'https://vignette.wikia.nocookie.net/happytreefanon/images/9/95/Tumblr_m2g660GN9z1qcwgmzo1_1280.png/revision/latest?cb=20120611212456'
+            uimage = "https://vignette.wikia.nocookie.net/happytreefanon/images/9/95/"
+            "Tumblr_m2g660GN9z1qcwgmzo1_1280.png/revision/latest?cb=20120611212456"
             scient = 'Chironex fleckeri'
             length = '9.8 ft'
             custom = True
