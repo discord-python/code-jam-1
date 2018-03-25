@@ -4,6 +4,11 @@ This is the repository for all code relating to our first code jam, in March 201
 
 **This code jam runs from the 23rd of March to the 25th of March, measured using the UTC timezone.** Make sure you open your pull request by then. Once the deadline is up, stop pushing commits - we will not accept any submissions made after this date.
 
+## APIs used
+* [Qwant](https://www.qwant.com/) (for snake pics)
+* [Our custom Snake API](https://github.com/prithajnath/snake) (scraped a page with bs4 and saved it in a db)
+
+
 ## How To Participate
 
 First things first - set up your repository. Read [this guide on our site](https://pythondiscord.com/info/jams) for information on how to set yourself up for a code jam.
