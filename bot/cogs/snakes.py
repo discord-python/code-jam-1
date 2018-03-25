@@ -1,32 +1,32 @@
 # coding=utf-8
 
 # This shit imports more than the USA D:
-import async_timeout
-import random
+import ast
 import difflib
 import logging
-import ast
 import os
+import random
 import urllib.parse
-from io import BytesIO
 from functools import partial
+from io import BytesIO
+from typing import Dict
+
+from PIL import Image
 
 import aiohttp
 
-from typing import Dict
+import async_timeout
+
 from discord import Embed, File
 from discord.ext.commands import AutoShardedBot, Context, command
-from PIL import Image, ImageOps
-
 
 log = logging.getLogger(__name__)
 
 # Probably should move these somewhere
 
 WIKI = "https://en.wikipedia.org/w/api.php?"
-BASEURL = WIKI + "format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles={}&redirects=1"
+BASEURL = WIKI + "format=json&action=query&prop=extracts|pageimages&exintro=&explaintext=&titles={title}&redirects=1"
 FAILIMAGE = "http://i.imgur.com/HtIPyLy.png/beep"
-<<<<<<< HEAD
 
 # Yes, we're naming snakes. Shush.
 SPECIALS = {
@@ -79,7 +79,7 @@ class Snakes:
         final = {}
         if all('=' in str(arg) for arg in args):
             for arg in args:
-                
+
                 try:
                     k, v = arg.split('=')
                 except ValueError:
@@ -94,9 +94,6 @@ class Snakes:
         elif all('=' not in str(arg) for arg in args):
             for index, arg in enumerate(args):
 
-        elif all('=' not in str(arg) for arg in args):
-            for index, arg in enumerate(args):
-                
                 try:
                     arg = arg.strip('()[]')
                     final[[k for k, v in positional_args][index]] = ast.literal_eval("[\"" + '","'.join(arg) + "\"]")
@@ -114,7 +111,7 @@ class Snakes:
 
         def format_url(text: str):
             """Get the full URL with that snake :D"""
-            return BASEURL.format(urllib.parse.quote_plus(text))
+            return BASEURL.format(title=urllib.parse.quote_plus(text))
 
         # Check if the snake name is valid
         if name in SNAKES:
@@ -177,7 +174,7 @@ class Snakes:
 
     @command()
     async def get(self, ctx: Context, *args):
-        
+
         content = await self.get_snek(
             args[0] if args else None,
             self.kwargs(args[1:], positional_args=["autocorrect", "details"])
@@ -201,7 +198,6 @@ class Snakes:
     @staticmethod
     def generate_card(buffer: BytesIO) -> BytesIO:
         """Generate a card from snake information"""
-
         snake = Image.open(buffer)
 
         # Get the size of the snake icon, configure the height of the image box (yes, it changes)
@@ -214,7 +210,7 @@ class Snakes:
         main_height = icon_height + CARD['top'].height + CARD['bottom'].height
         main_width = CARD['frame'].width
 
-        # Start creating the final image
+        # Start creating the foreground
         foreground = Image.new("RGBA", (main_width, main_height), (0, 0, 0, 0))
         foreground.paste(CARD['top'], (0, 0))
 
@@ -249,14 +245,15 @@ class Snakes:
     async def snake_card(self, ctx: Context, *args):
         content = await self.get_snek(args[0] if args else None, self.kwargs(args[1:], positional_args=["autocorrect", "details"]))
 
-        stream = BytesIO()
-        async with async_timeout.timeout(10):
-            async with self.session.get(content['image']) as response:
-                stream.write(await response.read())
-
-        stream.seek(0)
-
         async with ctx.typing():
+
+            stream = BytesIO()
+            async with async_timeout.timeout(10):
+                async with self.session.get(content['image']) as response:
+                    stream.write(await response.read())
+
+            stream.seek(0)
+
             func = partial(self.generate_card, stream)
             final_buffer = await self.bot.loop.run_in_executor(None, func)
 
