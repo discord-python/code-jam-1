@@ -179,12 +179,19 @@ class Snakes:
         Gets a random fact about snakes
         :param ctx: Context object passed from discord.py
         """
+        message_suffix = {
+            "dangerous":["Yikes!!","Oh my!"],
+            "interesting":["Pretty cool!","Whoah!!","Pretty sick!!"],
+            "self-harm":["Ouch!!"]
+        }
+        _fact = self.get_snek_fact()
         em = discord.Embed(color=0x399600)
         em.add_field(
-            name="Snake Fact",
-            value=self.get_snek_fact(),
+            name=f"{_fact['cat']} snake fact",
+            value=f"{_fact['message']}. {random.choice(message_suffix[_fact['cat']])}",
             inline=False
         )
+        em.set_image(url=_fact['gif'])
         await ctx.channel.send(
             content=ctx.message.author.mention,
             embed=em
@@ -193,8 +200,10 @@ class Snakes:
     def get_snek_fact(self) -> str:
         with open('bot/cogs/resources/facts.json', 'r', encoding="utf8") as f:
             data = json.load(f)
-        choice = random.randint(0, len(data['facts']) - 1)
-        return data['facts'][choice]
+        random_fact = random.choice(list(data['facts'].keys()))
+        gif_cat = data['facts'][random_fact]
+        gif_url = random.choice(data['gifs'][gif_cat])
+        return {'message':random_fact, 'gif':gif_url, 'cat':gif_cat}
 
 
 def setup(bot):
