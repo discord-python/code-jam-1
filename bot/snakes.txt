@@ -1,0 +1,506 @@
+viperidae
+common adder
+acanthophis
+desert death adder
+long-nosed adder
+many-horned adder
+mud adder
+namaqua dwarf adder
+peringuey's adder
+african puff adder
+rhombic night adder
+dwarf sand adder
+namib dwarf sand adder
+water adder
+aesculapian snake
+anaconda
+eunectes
+de schauensee's anaconda
+green anaconda
+yellow anaconda
+arafura file snake
+asp (reptile)
+european asp
+egyptian asp
+ball python
+bird snake
+black-headed snake
+mexican black kingsnake
+black rat snake
+red-bellied black snake
+blind snake
+brahminy blind snake
+texas blind snake
+western blind snake
+boidae
+abaco island boa
+amazon tree boa
+boa constrictor
+cuban boa
+dumeril's boa
+dwarf boa
+emerald tree boa
+hogg island boa
+jamaican boa
+madagascar ground boa
+madagascar tree boa
+puerto rican boa
+rainbow boa
+red-tailed boa
+rosy boa
+rubber boa
+sand boa
+tree boa
+boiga
+boomslang
+eastern brown snake
+bull snake
+lachesis (genus)
+dwarf beaked snake
+rufous beaked snake
+crotalus horridus
+agkistrodon bilineatus
+crotalus durissus
+cat-eyed snake
+banded cat-eyed snake
+cat snake
+andaman cat snake
+beddome's cat snake
+dog-toothed cat snake
+forsten's cat snake
+gold-ringed cat snake
+gray cat snake
+many-spotted cat snake
+nicobar cat snake
+sri lanka cat snake
+tawny cat snake
+coachwhip snake
+cobra
+andaman cobra
+arabian cobra
+banded water cobra
+black-necked spitting cobra
+cape cobra
+caspian cobra
+chinese cobra
+congo water cobra
+common cobra
+egyptian cobra
+equatorial spitting cobra
+false cobra
+false water cobra
+forest cobra
+indian cobra
+indochinese spitting cobra
+javan spitting cobra
+king cobra
+monocled cobra
+mozambique spitting cobra
+nubian spitting cobra
+philippine cobra
+red spitting cobra
+rinkhals cobra
+shield-nosed cobra
+southern philippine cobra
+snouted cobra
+spectacled cobra
+spitting cobra
+yellow cobra
+zebra spitting cobra
+collett's snake
+congo snake
+american copperhead
+australian copperhead
+coral snake
+arizona coral snake
+beddome's coral snake
+brazilian coral snake
+cape coral snake
+eastern coral snake
+false coral snake
+harlequin coral snake
+malayan long-glanded coral snake
+texas coral snake
+corn snake
+agkistrodon piscivorus
+crowned snake
+cuban wood snake
+eastern hognose snake
+dasypeltis
+indian egg-eater
+eyelash viper
+eastern coral snake
+fierce snake
+flying snake
+golden tree snake
+ornate flying snake
+paradise flying snake
+banded flying snake
+fox snake
+garter snake
+checkered garter snake
+common garter snake
+san francisco garter snake
+texas garter snake
+glossy snake
+gopher snake
+cape gopher snake
+grass snake
+opheodrys
+rough green snake
+smooth green snake
+common ground snake
+three-lined ground snake
+western ground snake
+himehabu
+okinawan habu
+sakishima habu
+tokara habu
+elaps harlequin snake
+hognose snake
+eastern hognose snake
+plains hognose snake
+southern hognose snake
+western hognose snake
+hoop snake
+hundred pacer
+micropechis ikaheka
+indigo snake
+bothrops jararacussu
+keelback
+andrea's keelback
+asian keelback
+assam keelback
+buff striped keelback
+checkered keelback
+hill keelback
+himalayan keelback
+khasi hills keelback
+modest keelback
+nicobar island keelback
+nilgiri keelback
+orange-collared keelback
+red-necked keelback
+sikkim keelback
+wall's keelback
+white-lipped keelback
+wynaad keelback
+yunnan keelback
+king brown
+king cobra
+king snake
+california kingsnake
+desert kingsnake
+grey-banded kingsnake
+prairie kingsnake
+scarlet kingsnake
+speckled kingsnake
+krait
+banded krait
+blue krait
+black krait
+burmese krait
+indian krait
+lesser black krait
+malayan krait
+many-banded krait
+northeastern hill krait
+red-headed krait
+sind krait
+south andaman krait
+large shield snake
+lancehead
+common lancehead
+leptophis ahaetulla
+grey lora
+lyre snake
+texas lyre snake
+mamba
+black mamba
+eastern green mamba
+western green mamba
+mamushi
+milk snake
+moccasin snake
+montpellier snake
+mud snake
+mussurana
+night snake
+cat-eyed night snake
+texas night snake
+nose-horned viper
+parrot snake
+mexican parrot snake
+patchnose snake
+perrotet's shieldtail snake
+pine snake
+asian pipe snake
+dwarf pipe snake
+red-tailed pipe snake
+pythonidae
+african rock python
+amethystine python
+angolan python
+australian scrub python
+ball python
+bismarck ringed python
+black headed python
+blood python
+boelen python
+borneo short-tailed python
+bredl's python
+brown water python
+burmese python
+calabar python
+centralian carpet python
+coastal carpet python
+inland carpet python
+jungle carpet python
+new guinea carpet python
+northwestern carpet python
+southwestern carpet python
+children's python
+dauan island water python
+desert woma python
+diamond python
+green tree python
+halmahera python
+indian python
+indonesian water python
+macklot's python
+oenpelli python
+olive python
+papuan python
+pygmy python
+red blood python
+reticulated python
+selayer reticulated python
+rough-scaled python
+royal python
+savu python
+spotted python
+stimson's python
+sumatran short-tailed python
+timor python
+wetar island python
+brown white-lipped python
+northern white-lipped python
+southern white-lipped python
+woma python
+western woma python
+queen snake
+buttermilk racer
+eastern racer
+mexican racer
+southern black racer
+tan racer
+southwestern blackhead snake
+rat snake
+baird's rat snake
+beauty rat snake
+great plains rat snake
+green rat snake
+japanese forest rat snake
+japanese rat snake
+king rat snake
+mandarin rat snake
+persian rat snake
+twin-spotted rat snake
+yellow-striped rat snake
+manchurian black water snake
+rattlesnake
+arizona black rattlesnake
+aruba rattlesnake
+coronado island rattlesnake
+dusky pigmy rattlesnake
+eastern diamondback rattlesnake
+grand canyon rattlesnake
+hopi rattlesnake
+lance-headed rattlesnake
+long-tailed rattlesnake
+massasauga rattlesnake
+mexican green rattlesnake
+mexican west coast rattlesnake
+midget faded rattlesnake
+mojave rattlesnake
+northern black-tailed rattlesnake
+oaxacan small-headed rattlesnake
+rattler
+red diamond rattlesnake
+southern pacific rattlesnake
+southwestern speckled rattlesnake
+tancitaran dusky rattlesnake
+tiger rattlesnake
+timber rattlesnake
+tropical rattlesnake
+twin-spotted rattlesnake
+uracoan rattlesnake
+western diamondback rattlesnake
+ribbon snake
+rinkhals
+river jack
+sea snake
+annulated sea snake
+beaked sea snake
+hook nosed sea snake
+olive sea snake
+pelagic sea snake
+yellow-bellied sea snake
+shield-tailed snake
+crotalus cerastes
+colorado desert sidewinder
+mojave desert sidewinder
+sonoran sidewinder
+micropechis ikaheka
+brazilian smooth snake
+european smooth snake
+sonoran
+stiletto snake
+japanese striped snake
+sunbeam snake
+taipan
+central ranges taipan
+coastal taipan
+inland taipan
+tentacled snake
+tic polonga
+tiger snake
+chappell island tiger snake
+common tiger snake
+down's tiger snake
+eastern tiger snake
+king island tiger snake
+krefft's tiger snake
+tasmanian tiger snake
+western tiger snake
+tigre snake
+tree snake
+blunt-headed tree snake
+brown tree snake
+many-banded tree snake
+northern tree snake
+trinket snake
+black-banded trinket snake
+twig snake
+african twig snake
+titanboa
+urutu
+ahaetulla
+oxybelis
+mexican vine snake
+viperidae
+asp viper
+bluntnose viper
+burrowing viper
+bush viper
+great lakes bush viper
+hairy bush viper
+nitsche's bush viper
+rough-scaled bush viper
+spiny bush viper
+carpet viper
+crossed viper
+cyclades blunt-nosed viper
+eyelash viper
+false horned viper
+fea's viper
+fifty pacer
+gaboon viper
+hognosed viper
+horned desert viper
+jumping viper
+kaznakov's viper
+leaf-nosed viper
+leaf viper
+levant viper
+long-nosed viper
+mcmahon's viper
+mole viper
+nose-horned viper
+palestine viper
+pallas' viper
+palm viper
+amazonian palm viper
+black-speckled palm-pitviper
+eyelash palm-pitviper
+green palm viper
+mexican palm-pitviper
+guatemalan palm viper
+honduran palm viper
+siamese palm viper
+side-striped palm-pitviper
+yellow-lined palm viper
+pit viper
+banded pitviper
+bamboo pitviper
+barbour's pit viper
+black-tailed horned pit viper
+bornean pitviper
+brongersma's pitviper
+brown spotted pitviper
+cantor's pitviper
+elegant pitviper
+eyelash pit viper
+fan-si-pan horned pitviper
+flat-nosed pitviper
+godman's pit viper
+green tree pit viper
+hagen's pitviper
+horseshoe pitviper
+jerdon's pitviper
+kanburian pit viper
+kaulback's lance-headed pitviper
+kham plateau pitviper
+large-eyed pitviper
+malabar rock pitviper
+malayan pit viper
+mangrove pit viper
+mangshan pitviper
+motuo bamboo pitviper
+nicobar bamboo pitviper
+philippine pitviper
+red-tailed bamboo pitviper
+schultze's pitviper
+stejneger's bamboo pitviper
+sri lankan pit viper
+temple pit viper
+tibetan bamboo pitviper
+tiger pit viper
+undulated pit viper
+wagler's pit viper
+wirot's pit viper
+portuguese viper
+rhinoceros viper
+river jack
+russell's viper
+sand viper
+saw-scaled viper
+schlegel's viper
+sedge viper
+sharp-nosed viper
+snorkel viper
+temple viper
+tree viper
+chinese tree viper
+guatemalan tree viper
+hutton's tree viper
+indian tree viper
+large-scaled tree viper
+malcolm's tree viper
+nitsche's tree viper
+pope's tree viper
+rough-scaled tree viper
+rungwe tree viper
+sumatran tree viper
+white-lipped tree viper
+ursini's viper
+wart snake
+water moccasin
+bocourt's water snake
+northern water snake
+long-nosed whip snake
+wolf snake
+common worm snake
+longnosed worm snake
+wutu
+yarara
