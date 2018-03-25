@@ -66,7 +66,7 @@ class Snakes:
         )
 
         em.set_image(url=data['image-url'])
-        # em.set_thumbnail(url=data['map-url'])
+        em.set_thumbnail(url=data['map-url'])
 
         return em
 
@@ -99,14 +99,14 @@ class Snakes:
         img = soup.find(attrs={'property': {'og:image'}})['content']
         names = soup.find('td', class_='wsite-multicol-col')
         sci_name = soup.select(SCIENTIFIC_NAME_SELECTOR)[0].text.strip()
-        # location_map = soup.select(SNEK_MAP_SELECTOR)[0]['src']
+        location_map = soup.select(SNEK_MAP_SELECTOR)[0]['src']
         description_tag = soup.find(attrs={'property': {'og:description'}})
 
         info = {
             'name': names.h1.string,
             'scientific-name': sci_name,
             'image-url': img,
-            # 'map-url': f'{self.bot.info_url}{location_map}',
+            'map-url': f'{self.bot.info_url}{location_map[1:]}',
             'description': description_tag['content'],
             'url': url
         }
