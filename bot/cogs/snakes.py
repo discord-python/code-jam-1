@@ -18,6 +18,7 @@ class Snakes:
         self.bot = bot
 
     async def is_snek(self, name: str = None) -> Dict[str, Any]:
+        """ Verifies if whatever the user has inputted is actually a snake against a textfile. """
         if name in WikiListener.get_all_snek():
             return True
         else:
@@ -25,6 +26,8 @@ class Snakes:
 
     @command()
     async def get(self, ctx: Context, name: str = None):
+        """ Get some informaton on snakes using wikipedia. """
+        name = name.lower()
         if name is None:
             ctx.send("Ensure your command specifies the correct arguments.")
         state = await self.is_snek(name)
