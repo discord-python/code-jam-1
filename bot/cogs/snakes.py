@@ -27,7 +27,7 @@ class Snakes:
 
         If "python" is given as the snake name, you should return information about the programming language, but with
         all the information you'd provide for a real snake. Try to have some fun with this!
-
+        
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         :return: A dict containing information on a snake
         """
@@ -60,7 +60,7 @@ class Snakes:
 
         This should make use of your `get_snek` method, using it to get information about a snake. This information
         should be sent back to Discord in an embed.
-        
+
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
