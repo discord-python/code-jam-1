@@ -18,9 +18,9 @@ log = logging.getLogger(__name__)
 
 WKPD = 'https://en.wikipedia.org'
 API = WKPD + '/w/api.php?format=json&redirects=1&action='
-rSENTENCE = re.compile(r'^.+?\.')
+rSENTENCE = re.compile(r'^.+?\. ')
 rBRACK = re.compile(r'[[(].+?[\])]')
-rMDLINK = re.compile(r'(\[.*?\])\((\S+?)\s".*?"\)')
+rMDLINK = re.compile(r'(\[.*?\])\((.+?)\s".*?"\)')
 
 
 class BadSnake(ValueError):
@@ -86,7 +86,7 @@ class Snakes:
 
         pg_id = str(data['parse']['pageid'])
         pg_info = info['query']['pages'][pg_id]
-        if 'categories' not in pg_info:
+        if 'categories' not in pg_info and pg_id != '23862':  # page ID of /wiki/Python_(programming_language)
             raise BadSnake("This doesn't appear to be a snake!")
         soup = bs4.BeautifulSoup(data['parse']['text']['*'])
         tidbits = []
@@ -99,7 +99,7 @@ class Snakes:
             except AttributeError:
                 pass
             else:
-                tidbits.append(rMDLINK.sub(lambda m: f'{m[1]}({WKPD}{m[2]})', tidbit))
+                tidbits.append(rMDLINK.sub(lambda m: f'{m[1]}({WKPD}{m[2].replace(" ", "")})', tidbit))
         try:
             img_url = pg_info['thumbnail']['source']
         except KeyError:
@@ -109,7 +109,7 @@ class Snakes:
         return {'🐍': (img_url, pg_url, title), 'tidbits': tidbits}
 
     @commands.command()
-    async def get(self, ctx: Context, name: str = None):
+    async def get(self, ctx: Context, name: str.lower = None):
         """
         Go online and fetch information about a snake
 
@@ -119,6 +119,8 @@ class Snakes:
         :param ctx: Context object passed from discord.py
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
+        if name == 'python':
+            name = 'Python_(programming_language)'
         try:
             snek = await self.get_snek(name)
         except BadSnake as e:
