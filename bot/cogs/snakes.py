@@ -45,10 +45,10 @@ class Snakes:
                 return ("python", self.python_info, self.python_image)
             else:
                 for key in self.db.keys():
-                    if key.lower() == name.lower():
+                    if key.lower() == name:
                         return (key, self.db[key][0], self.db[key][1])
         else:
-            key = random.choice(list(self.db.keys()))
+            key = random.choice(list(self.db))
             return (key, self.db[key][0], self.db[key][1])
 
     @command()
