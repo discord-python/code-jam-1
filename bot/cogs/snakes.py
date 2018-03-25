@@ -93,7 +93,7 @@ class Snakes:
     async def snake(self, ctx: Context, x=10, y=7):
 
         snake = []  # define snake (where snake sections are stored)
-        head = [x // 2, y // 2]  # define head (where current snake head is stored)
+        head = [x // 2, y ]  # define head (where current snake head is stored)
         apple = (random.randint(0, x), random.randint(0, y))  # define apple (where current apple position is stored)
 
         userID = ctx.author.id
@@ -102,19 +102,20 @@ class Snakes:
         snake.append(head)
         running = True
 
-        board = "```\n " + "#" * x + "##"
+        board = "\n " + ":black_large_square:" * x + ":black_large_square::black_large_square:"
         for yAxis in range(y):
-            board += "\n #"
+            board += "\n:black_large_square:"
             for xAxis in range(x):
                 if head == [xAxis, yAxis]:
-                    board += "X"
+                    board += ":snake:"
                 else:
-                    board += "0"
+                    board += ":white_large_square:"
 
-            board += "#"
-        board += "\n " + "#" * x + "##```"
+            board += ":black_large_square:"
+        board += "\n" + ":black_large_square:" * x + ":black_large_square::black_large_square:"
 
-        snakeBoard = await ctx.send(board)
+        Board = discord.Embed(title="Snake!", description=board)
+        snakeBoard = await ctx.send(embed=Board)
 
         while running:
             directionChange = True
@@ -168,34 +169,35 @@ class Snakes:
             snake.append(tuple(head))
 
             # add title
-            board = """Snake! \n"""
+            board = """"""
             # add top of board
-            board += "```\n " + "#" * x + "##"
+            board += "\n " + ":black_large_square:" * x + ":black_large_square::black_large_square:"
             for yAxis in range(y):
                 # add side of board
-                board += "\n #"
+                board += "\n:black_large_square:"
                 for xAxis in range(x):
                     # add snake sections
                     for snakeTail in snake:
                         if snakeTail == (xAxis, yAxis):
-                            board += "X"
+                            board += ":snake:"
                             break
 
                     else:
                         # add apple
                         if apple == (xAxis, yAxis):
-                            board += "@"
+                            board += ":apple:"
                         # add background
                         else:
-                            board += "0"
+                            board += ":white_large_square:"
 
                 # add side of board
-                board += "#"
+                board += ":black_large_square:"
             # add bottom of board
-            board += "\n " + "#" * x + "##```"
+            board += "\n " + ":black_large_square:" * x + ":black_large_square::black_large_square:"
 
             # edit message then wait for next frame
-            await snakeBoard.edit(content=board)
+            Board = discord.Embed(title="Snake!", description=board)
+            await snakeBoard.edit(embed=Board)
             await asyncio.sleep(0.9)
 
     # get user snake inputs
