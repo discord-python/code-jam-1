@@ -1,0 +1,17 @@
+{
+    "python": {
+        "name": "Python",
+        "info": "Python is a species of programming language, commonly used by coding beginners and experts alike. It was first discovered in 1989 by Guido van Rossum in the Netherlands, and was released to the wild two years later. Its use of dynamic typing is one of many distinct features, alongside significant whitespace, heavy emphasis on readability, and, above all, absolutely pain-free software distribution... *sigh*",
+        "image": "https://www.python.org/static/community_logos/python-logo-master-v3-TM-flattened.png"
+    },
+    "hunny bunny": {
+        "name": "Western ground snake",
+        "info": "The western ground snake (Sonora semiannulata) is a species of small, harmless colubrid snake. The species is endemic to North America. It is sometimes referred to as the common ground snake or variable ground snake as its patterning and coloration can vary widely, even within the same geographic region.",
+        "image": "http://i.imgur.com/zZPGzz0.png"
+    },
+    "bob ross": {
+        "name": "Bob Ross",
+        "info": "Robert Norman Ross (October 29, 1942 – July 4, 1995) was an Americanpainter, art instructor, and television host. He was the creator and host of The Joy ofPainting, an instructional television program that aired from 1983 to 1994 on PBS in the United States, and also aired in Canada, Latin America, and Europe. Ross went from being apublic-television personality in the 1980s and 1990s to being an Internet celebrity in the21st century, popular with fans on YouTube and many other websites.",
+        "image": "https://images05.military.com/sites/default/files/styles/full/public/media/people/2013/05/bobrosspainting.jpg?itok=A3G_e8MM"
+    }
+}

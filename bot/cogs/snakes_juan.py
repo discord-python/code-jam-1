@@ -42,9 +42,7 @@ CARD = {
     "top": Image.open("bot/cards/card_top.png"),
     "frame": Image.open("bot/cards/card_frame.png"),
     "bottom": Image.open("bot/cards/card_bottom.png"),
-    "backs": [
-        Image.open(f"bot/cards/backs/{file}") for file in os.listdir("bot/cards/backs")
-    ],
+    "backs": [Image.open(f"bot/cards/backs/{file}") for file in os.listdir("bot/cards/backs")],
     "font": ImageFont.truetype("bot/cards/expressway.ttf", 20)
 }
 
@@ -59,36 +57,20 @@ class Snakes:
         self.session = aiohttp.ClientSession(loop=bot.loop)
 
     @staticmethod
-    def kwargs(args, positional_args=list()):
-        """for given command parameters *args **kwargs turns them into a dictionary with given positional_args list"""
-        # This is Someone's fancy kwarg stuff - juan
-        final = {}
-        if all('=' in str(arg) for arg in args):
-            for arg in args:
+    def parse_arg(arg: str):
+        """Return the value of a arg (needs manual assignment)"""
+        try:
+            items = arg.split("=")
+            value = items[1]
+        except (IndexError, AttributeError):
+            value = arg
 
-                try:
-                    k, v = arg.split('=')
-                except ValueError:
-                    return {k: v for k, v in positional_args}
+        try:
+            parsed = ast.literal_eval(value)
+        except (NameError, ValueError):
+            parsed = value
 
-                try:
-                    v = v.strip('()[]')
-                    final[k] = ast.literal_eval("[" + '","'.join(v) + "\"]")
-                except(ValueError, SyntaxError):
-                    final[k] = v
-
-        elif all('=' not in str(arg) for arg in args):
-            for index, arg in enumerate(args):
-
-                try:
-                    arg = arg.strip('()[]')
-                    final[[k for k, v in positional_args][index]] = ast.literal_eval("[\"" + '","'.join(arg) + "\"]")
-                except(ValueError, SyntaxError):
-                    final[[k for k, v in positional_args][index]] = arg
-        else:
-            return {k: v for k, v in positional_args}
-
-        return final
+        return parsed
 
     @staticmethod
     def snake_url(name: str):
@@ -117,7 +99,7 @@ class Snakes:
         stream.seek(0)
         return stream
 
-    async def get_snek(self, name: str = None, kwargs: dict = None) -> Dict[str, str]:
+    async def get_snek(self, name: str = None, autocorrect: bool = True) -> Dict[str, str]:
         """If a name is provided, this gets a specific snake. Otherwise, it gets a random snake."""
 
         if name is None:
@@ -132,7 +114,7 @@ class Snakes:
 
         # Does some magic if the url is actually a list ^^
         if isinstance(url, list):
-            if kwargs.get("autocorrect", False):
+            if autocorrect:
                 return await self.get_snek(url[0])
 
             return {
@@ -159,12 +141,10 @@ class Snakes:
         }
 
     @command()
-    async def get(self, ctx: Context, *args):
+    async def get(self, ctx: Context, name: str, autocorrect: str = "False"):
         """Get information about a snake :D"""
-        content = await self.get_snek(
-            args[0] if args else None,
-            self.kwargs(args[1:], positional_args=["autocorrect"])
-        )
+        autocorrect = self.parse_arg(autocorrect)
+        content = await self.get_snek(name, autocorrect)
 
         embed = Embed(
             title=content["name"],
@@ -263,16 +243,9 @@ class Snakes:
         return buffer
 
     @command()
-    async def snake_card(self, ctx: Context, *args):
+    async def snake_card(self, ctx: Context, name: str):
         """Create an interesting little card from a snake!"""
-        # Someone's funky kwarg stuff
-        content = await self.get_snek(
-            args[0] if args else None,
-            self.kwargs(
-                args[1:],
-                positional_args=["autocorrect"]
-            )
-        )
+        content = await self.get_snek(name, True)
 
         async with ctx.typing():
 
