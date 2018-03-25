@@ -3,6 +3,7 @@
 # This shit imports more than the USA D:
 import ast
 import difflib
+import json
 import logging
 import os
 import random
@@ -30,26 +31,8 @@ BASEURL = WIKI + "format=json&action=query&prop=extracts|pageimages&exintro=&exp
 FAILIMAGE = "http://i.imgur.com/HtIPyLy.png/beep"
 
 # Yes, we're naming snakes. Shush.
-SPECIALS = {
-    "python": {
-        "name": "Python",
-        "info": """Python is a species of programming language, \
-commonly used by coding beginners and experts alike. It was first discovered \
-in 1989 by Guido van Rossum in the Netherlands, and was released to the wild \
-two years later. Its use of dynamic typing is one of many distinct features, \
-alongside significant whitespace, heavy emphasis on readability, and, above all, \
-absolutely pain-free software distribution... *sigh*""",
-        "image": "https://www.python.org/static/community_logos/python-logo-master-v3-TM-flattened.png"
-    },
-    "hunny bunny": {
-        "name": "Western ground snake",
-        "info": """The western ground snake (Sonora semiannulata) is a species of small, \
-harmless colubrid snake. The species is endemic to North America. It is sometimes \
-referred to as the common ground snake or variable ground snake as its patterning \
-and coloration can vary widely, even within the same geographic region.""",
-        "image": "http://i.imgur.com/zZPGzz0.png"
-    }
-}
+with open("bot/specials.json") as specials:
+    SPECIALS = json.load(specials)
 
 with open("bot/snakes.txt") as f:
     SNAKES = [line.strip() for line in f.readlines()]
