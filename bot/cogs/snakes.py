@@ -113,8 +113,14 @@ class Snakes:
         img = soup.find(attrs={'property': {'og:image'}})['content']
         names = soup.find('td', class_='wsite-multicol-col')
         sci_name = soup.select(SCIENTIFIC_NAME_SELECTOR)[0].text.strip()
-        location_map = soup.select(SNEK_MAP_SELECTOR)[0]['src']
         description_tag = soup.find(attrs={'property': {'og:description'}})
+
+        for x in range(1, 7):
+            try:
+                location_map = soup.select(SNEK_MAP_SELECTOR.format(x))[0]['src']
+                break
+            except IndexError:
+                continue
 
         info = {
             'name': names.h1.string,
