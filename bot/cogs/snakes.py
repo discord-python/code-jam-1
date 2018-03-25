@@ -232,8 +232,8 @@ class Snakes:
     @command(aliases=["v"])
     async def video(self, ctx: Context, name: str = None):
         """
-        Gets a video about snakes
-        :param name:
+        Gets a YouTube video about snakes
+        :param name: Optional, a name of a snake. Used to search for videos with that name
         :param ctx: Context object passed from discord.py
         :return:
         """
