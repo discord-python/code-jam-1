@@ -4,7 +4,7 @@ from copy import copy
 from difflib import get_close_matches
 from os import environ
 from pickle import load
-from random import choice
+from random import choice, randint
 from typing import Any, Dict
 
 from discord import Embed
@@ -30,14 +30,14 @@ async def check_spelling(word):
 
     :return: Closest-matching string.
     '''
-    return get_close_matches(word, SNAKE_NAMES)[0]
+    return get_close_matches(str(word), SNAKE_NAMES)[0]
 
 
-async def fix_margins(text, maxlength=10):
+async def fix_margins(text, maxlength=25):
     '''
     Fixes text to be a certain length.
     
-    :return: A length-fixed string.
+    :return: A length-fixed string
     '''
     textlen = len(text)
     if textlen > maxlength:
@@ -121,29 +121,54 @@ class Snakes:
         :param name: Optional, the name of the snake to get information for - omit for a random snake
         """
 
+        name = name.lower()
+
         try:
             snek = await self.get_snek(name)
         except NoGuessError as e:
             print('debug: {0}'.format(e.debugdata))
             await ctx.send("I'm sorry, I don't know what you requested.")
 
+        if name == 'python':
+            rating = '🐍'
+            common = 'Python'
+            length = '88.1 MB'
+            uimage = 'https://www.python.org/static/img/python-logo.png'
+            spit = 'venomous'
+            scient = 'cpython/master'
+
+        elif name == 'anaconda':
+            rating = '---'
+            common = 'Anaconda Cloud'
+            length = '???'
+            uimage = 'https://binstar-static-prod.s3.amazonaws.com/latest/img/AnacondaCloud_logo_green.png'
+            spit = 'none'
+            scient = 'anaconda-project/master'
+
+        elif name == 'electron':
+            rating = '🐍🐍🐍🐍🐍'
+            spit = 'extremely venomous'
+            common = 'Pure Evil'
+            uimage = 'https://vignette.wikia.nocookie.net/happytreefanon/images/9/95/Tumblr_m2g660GN9z1qcwgmzo1_1280.png/revision/latest?cb=20120611212456'
+            scient = 'Chironex fleckeri'
+            length = '9.8 ft'
+
         rating = snek.get('rating')
-        family = fix_margins(snek.get('family'))
         common = snek.get('common name')
         uimage = snek.get('image')
-        scient = fix_margins(snek.get('scientific'))
-        length = fix_margins(snek.get('length'))
-        spit = fix_margins(snek.get('spit'))
+        scient = await fix_margins(snek.get('scientific'))
+        length = await fix_margins(snek.get('length'))
+        spit = await fix_margins(snek.get('spit'))
 
         # embed = Embed(title=snek.get('common name'), description=snek.get('description'))
         embed = Embed(title=snek.get('common name'))
         # Commented out until I know what information I have to use.
-        embed.add_field(name="More Information", value='''```Family    | {}
-Scientific | {}
-Length     | {}
+        embed.add_field(name="More Information", value='''```Scientific | {}
+Length     | {} cm
 Spitting   | {}
 ```'''.format(family, scient, length, spit))
-        embed.add_field(name='Threat', value=await self.get_danger(rating), inline=True)
+        got_danger = await self.get_danger(rating)
+        embed.add_field(name='Threat', value='{}\n'.format(rating) + got_danger, inline=False)
         embed.set_image(url=uimage)
         embed.set_footer(text="Information from snakedatabase.org")
         await ctx.send(embed=embed)
@@ -161,7 +186,7 @@ Spitting   | {}
         if text is None:
             await ctx.send("I can't ssssnekify nothing!")
         else:
-            await ctx.send("Sssneks ssay " + text.replace('s', 'ss'))
+            await ctx.send("Sssneks ssay " + text.replace('s', 's' * randint(2, 4)))
 
 
 def setup(bot):
