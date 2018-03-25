@@ -6,6 +6,7 @@ import logging
 import random
 
 from typing import Any, Dict
+
 from bs4 import BeautifulSoup
 
 
