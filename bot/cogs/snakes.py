@@ -1,11 +1,13 @@
 # coding=utf-8
+import asyncio
 import json
 import logging
 import random
 from typing import Tuple
 
-from discord import Embed
+from discord import Embed, FFmpegPCMAudio
 from discord.ext.commands import AutoShardedBot, Context, command
+from discord.opus import is_loaded, load_opus
 
 log = logging.getLogger(__name__)
 
@@ -46,7 +48,8 @@ class Snakes:
                     if key.lower() == name.lower():
                         return (key, self.db[key][0], self.db[key][1])
         else:
-            return self.db[random.choice(list(self.db.keys()))]
+            key = random.choice(list(self.db.keys()))
+            return (key, self.db[key][0], self.db[key][1])
 
     @command()
     async def get(self, ctx: Context, name: str = None):
@@ -68,8 +71,24 @@ class Snakes:
             await ctx.send("I was not able to find your snake, I am sorry.")
 
     # Any additional commands can be placed here. Be creative, but keep it to a reasonable amount!
+    @command()
+    async def hiss(self, ctx: Context):
+        """
+        Hisssses in a voice channel
+        """
+        voice_channel = ctx.message.author.voice.channel
+        if voice_channel:
+            voice_client = await voice_channel.connect()
+            hiss = FFmpegPCMAudio("bot/db/sound1.mp3")
+
+            def disconnect(errors):
+                disconnect_coro = voice_client.disconnect()
+                asyncio.run_coroutine_threadsafe(disconnect_coro, self.bot.loop)
+            voice_client.play(hiss, after=disconnect)
 
 
 def setup(bot):
+    if not is_loaded():
+        load_opus()
     bot.add_cog(Snakes(bot))
     log.info("Cog loaded: Snakes")
