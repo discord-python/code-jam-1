@@ -1,0 +1,53 @@
+{
+  "facts": {
+    "Snakes are carnivores (meat eaters).":"dangerous",
+    "Snakes don’t have eyelids.":"interesting",
+    "Snakes can’t bite food so have to swallow it whole.":"dangerous",
+    "Snakes have flexible jaws which allow them to eat prey bigger than their head!":"dangerous",
+    "Snakes are found on every continent of the world except Antarctica.":"interesting",
+    "Snakes have internal ears but not external ones.":"interesting",
+    "Snakes used in snake charming performances respond to movement, not sound.":"interesting",
+    "There are around 3000 different species of snake.":"interesting",
+    "Snakes have a unique anatomy which allows them to swallow and digest large prey.":"dangerous",
+    "Snakes are covered in scales.":"interesting",
+    "Snakeskin is smooth and dry.":"interesting",
+    "Snakes shed their skin a number of times a year in a process that usually lasts a few days.":"interesting",
+    "Snakes smell with their tongue.":"interesting",
+    "Pythons kill their prey by tightly wrapping around it and suffocating it in a process called constriction.":"dangerous",
+    "Some sea snakes can breathe partially through their skin, allowing for longer dives underwater.":"interesting",
+    "Some animals, such as the Mongoose, are immune to snake venom.":"interesting",
+    "While snakes do not have external ears or eardrums, their skin, muscles, and bones carry sound vibrations to their inner ears.":"interesting",
+    "Rattlesnake rattles are made of rings of keratin, which is the same material as human hair and fingernails. A rattler will add a new ring each time it sheds its skin.":"interesting",
+    "Some snakes have over 200 teeth. The teeth aren’t used for chewing but they point backward to prevent prey from escaping the snake’s throat.":"interesting",
+    "There are five recognized species of flying snakes. Growing up to 4 feet, some types can glide up to 330 feet through the air.":"interesting",
+    "Snakes do not lap up water like mammals do. Instead, they dunk their snouts underwater and use their throats to pump water into their stomachs.":"interesting",
+    "A snake’s fangs usually last about 6–10 weeks. When a fang wears out, a new one grows in its place.":"interesting",
+    "Snakes typically need to eat only 6–30 meals each year to be healthy.":"interesting",
+    "If the temperature reaches below 50° Fahrenheit, a snake’s body does not work properly.":"interesting",
+    "The Gaboon viper has the longest fangs of any snake, reaching about 2 inches (5 cm) long.":"dangerous",
+    "The longest snake ever recorded is the reticulated python. It can reach over 33 feet long, which is big enough to swallow a pig, a deer, or even a person.":"dangerous",
+    "Some venomous snakes have died after biting and poisoning themselves by mistake.":"self-harm",
+    "While a snake cannot hear the music of a snake charmer, the snake responds to the vibrations of the charmer’s tapping foot or to the movement of the flute.":"interesting",
+    "Most snakes are not harmful to humans and they help balance the ecosystem by keeping the population of rats, mice, and birds under control.":"interesting",
+    "Most snakes have an elongated right lung, many have a smaller left lung, and a few even have a third lung. They do not have a sense of taste, and most of their organs are organized linearly.":"interesting",
+    "Snakes kill over 40,000 people a year—though, with unreported incidents, the total may be over 100,000. About half of these deaths are in India.":"dangerous",
+    "Some members of the U.S. Army Special Forces are taught to kill and eat snakes during their survival training, which has earned them the nickname “Snake Eaters.”":"dangerous"
+  },
+  "gifs":{
+    "dangerous":[
+            "https://media.giphy.com/media/2yP1jNgjNAkvu/giphy.gif",
+            "https://media.giphy.com/media/OGufyodtN4NUs/giphy.gif",
+            "https://media.giphy.com/media/tP2fZCu4K9Yac/giphy.gif",
+            "https://media.giphy.com/media/ldC6st7Bz3lZK/giphy.gif"
+          ],
+    "self-harm":[
+        "https://media.giphy.com/media/A6r0BbR2ob1GE/giphy.gif",
+        "https://media.giphy.com/media/dFEd78w0sJNwA/giphy.gif"
+    ],
+    "interesting":[
+      "https://media.giphy.com/media/10lKFp5Y03YITK/giphy.gif",
+      "https://media.giphy.com/media/ZPtGZIbpA1Z0Q/giphy.gif",
+      "https://media.giphy.com/media/hfV9dWY07x960/giphy.gif"
+    ]
+  }
+}
