@@ -4,6 +4,20 @@ This is the repository for all code relating to our first code jam, in March 201
 
 **This code jam runs from the 23rd of March to the 25th of March, measured using the UTC timezone.** Make sure you open your pull request by then. Once the deadline is up, stop pushing commits - we will not accept any submissions made after this date.
 
+## Credentials
+In order to run this bot on your own, you will need a couple credentials, stored as environment variables. Since we are using `pipenv`, we are storing these in the `.env` file in the root directory.
+Your .env should look like this:
+```
+BOT_TOKEN=bottoken
+ACCESS_TOKEN=accesstoken
+YOUTUBE_DATA_KEY=youtubekey
+```
+The `BOT_TOKEN` is the Discord token. Find how to obtain this [here](https://github.com/discord-python/code-jam-1/blob/master/doc/bot-setup.md).
+
+The `ACCESS_TOKEN` is a token to access our data API. Get in touch with @prithajnath to receive a token.
+
+The `YOUTUBE_DATA_KEY` is an API key from Google. Specifically, this uses the [YouTube Data API v3](https://console.developers.google.com/apis/credentials). Generate a key here, which will be associated with your Google account.
+
 ## APIs used
 * [Qwant](https://www.qwant.com/) (for snake pics)
 * [Our custom Snake API](https://github.com/prithajnath/snake) (scraped a page with bs4 and saved it in a db)
