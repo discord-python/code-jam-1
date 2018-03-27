@@ -1,69 +1,72 @@
-# Code Jam 1
+# snek it up
 
-This is the repository for all code relating to our first code jam, in March 2018. Participants should fork this repository, and submit their code in a pull request.
+**[Python-Discord code jam 1](https://github.com/discord-python/code-jam-1) entry by Momo and kel/qrie** (Team 23)
 
-**This code jam runs from the 23rd of March to the 25th of March, measured using the UTC timezone.** Make sure you open your pull request by then. Once the deadline is up, stop pushing commits - we will not accept any submissions made after this date.
 
-## How To Participate
+## what is it
 
-First things first - set up your repository. Read [this guide on our site](https://pythondiscord.com/info/jams) for information on how to set yourself up for a code jam.
-Remember, only one teammate needs to fork the repository - everyone else should be granted access to that fork as a contributor, so that they can work on it directly.
+A Discord bot that:
 
-Make sure you have the following things installed:
+- Finds snek species on the [ITIS database](https://itis.gov/) 🐍
+- Hosts Snakes and Ladders games in concurrent channels 🎲
+- Imitates your chat history, but with 105% more snekin 💬
+- Lets you hatch snek eggs for your very own snek collection ≧◡≦
+- Draws random sneks using Perlin noise 🖌️
+- Plays snek rattles in your voice channel, on demand 🔊
 
-* Python 3.6 or later (installed with the PATH option enabled if you're on Windows)
-* Pip - make sure you can run `pip` in a terminal or command prompt
-* Pipenv - you can install this by running `pip install pipenv` in a terminal or command prompt
-    * Like before, make sure you can run `pipenv` in a terminal or command prompt
+## how u do that
 
-Next up, set up your project with `pipenv`. We've [compiled some documentation](./doc) for you to read over if you get stuck - you can find it in the `doc/` folder,
-and you absolutely should read all of it, and it will likely answer some of the questions that you have.
+- Snek lookup: `bot.snakes.get('snek name here')`, use `bot.snakes.get` for a random snek type
+- Snakes and Ladders:
+  - Create a game using `bot.sal create` (the author can cancel the game using `bot.sal cancel`)
+  - Others join the game using `bot.sal join` (players can leave using `bot.sal leave`)
+  - The author starts the match using `bot.sal start`
+  - When a round begins, players use `bot.roll` to roll the dice
+  - glhf
 
-Use `pipenv run run.py` to start your project. You can press `CTRL+C` with the bot window selected to stop it.
+- Snake imitation: `bot.snakes.snakeme`
+- Egg hatching: `bot.snakes.hatch`
+- Snek drawing: `bot.snakes.draw`
+- Rattle-up your voice channel: `bot.snakes.rattle`
 
-Remember, if you need help, you can always ask on the server!
+## environment variables
 
-## The Task
+You will need these environment variables to setup mr bot:
 
-This month's theme is: **Snakes**.
+- `BOT_TOKEN`: The Discord API token for the bot.
+- `FFMPEG`: A direct path to a `ffmpeg` executable. If not provided, it will assume the `ffmpeg` command is in your path.
+- `LIBOPUS` The name of the `libopus` library file, located in the project folder. If not provided, defaults to `libopus`.
+  - ffmpeg and libopus are only used for snek rattling (voice comms)
 
-For this code jam, your task will be to create a Snake cog for a [Discord.py rewrite bot](https://github.com/Rapptz/discord.py/tree/rewrite). 
-You can find the [documentation for Discord.py rewrite here](https://discordpy.readthedocs.io/en/rewrite/). The best cog commands will be 
-added to the official Python Discord bot and made available to everyone on the server. The overall best cog will be awarded custom Code Jam 
-Champion roles, but the best commands from the teams who did not win will also be added to our bot, and any users who write something that 
-ends up in the bot will be awarded Contributor roles on the server.
+## random snek database
 
-We have prepared some Discord.py rewrite boilerplate for you in this repo. Fork the repo and work in the file called **snakes.py**, in **bot/cogs**.
+In order to be able to find random snakes, you need to use the provided tool to fetch a list of snake names. That list is stored inside a pickle-file that has to be in the project directory when starting the bot.
 
-This means you won't have to write the basic bot itself, you'll just have to write the stuff that goes in the cog. For those of you with no 
-discord.py experience, cogs are like little modules that the bot can load, and contain a class with methods that are hooked up to bot commands 
-(like **bot.tags.get**). That way, when you type `bot.snakes.get('python')`, it will run the method inside the cog that corresponds to this command.
+To generate the pickle-file, you use the `tools/snekfetcher.py` file inside the Pipenv shell:
 
-Your initial task will be to write **get_snek**. This is the minimum requirement for this contest, and everyone must do it. **get_snek** will be a 
-method that goes online and fetches information about a snake. If you run it without providing an argument, it should fetch information about a 
-random snake, including the name of the snake, a picture of the snake, and various information about it. Is it venomous? Where can it be found? 
-What information you choose to get is up to you.
+```
+pipenv run tools\snekfetcher.py
+```
 
-`get_snek()` should also take an optional argument `name`, which should be a string that contains the name of a snake. For example, if you do 
-`get_snek('cobra')`, it should get information about a cobra. `name` should be case insensitive.
+The output file will be `sneks.pickle`.
 
-If `get_snek('Python')` is called, the method should instead return information about the programming language, but making sure to return the 
-same type of information as for all the other snakes. Fill in this information in any way you want, try to have some fun with it.
+## note about libopus
 
-The information should be returned as a dictionary, so that other methods in the Snake class can call it and make use of it.
+The `libopus.dll` is compiled for 64-bit Windows only. If you're using a different OS/architecture, you will need to find/compile the library for your system. If the name of the file changes, you will need to provide the `LIBOPUS` env variable, as described above.
 
-Once you have finished `get_snek()`, you should make at least two bot commands. The first command, `get()`, should simply call `get_snek()` 
-with whatever arguments the user provided, and then make a nice embed that it returns to Discord. For example, if the user in the Discord 
-channel says `bot.snakes.get('anaconda')`, the bot should post an embed that shows a picture of an anaconda and some information about the 
-snake.
+## extra configuration
 
-The second command is entirely up to you. You can choose to use `get_snek` for this command as well, or you can come up with something entirely 
-different. The only requirement is that it is snake related in some way or other. Here is your chance to be creative. It is these commands that 
-will win or lose you this code jam. The best original ideas for these commands will probably walk away with the victory.
+#### snakes and ladders
 
-You are allowed to make as many additional commands as you want, but try to keep it a reasonable amount. The team that writes the most commands is 
-not automatically going to win. One really excellent command is much better than 10 mediocre ones.
+It is possible to configure Snakes and Ladders to use your own board. Simply overwrite the `res/ladders/board.jpg` file and adjust the `res/ladders/board.py` file accordingly:
 
----
+ - `BOARD_TILE_SIZE`: The size (width/height) of each tile on the board, in pixels
+ - `BOARD_PLAYER_SIZE`: The size of each player icon on the board, in pixels
+ - `BOARD_MARGIN`: Tuple (x, y) for extra margins on the board, relative to top-left corner
+ - `PLAYER_ICON_IMAGE_SIZE`: The size of the user avatars to request from Discord. This should be a power of 2 (e.g. `32`, `64`, `128`...) and should be higher or equal to `BOARD_PLAYER_SIZE`.
+ - `MAX_PLAYERS`: The maximum amount of players this board can support (i.e. how many players can you fit in each tile, at maximum capacity)
+ - `BOARD`: Dictionary[int, int] that defines the "shortcuts" in the board (the snakes and the ladders), in the form `from: to`.
 
-Have fun, and don't be afraid to ask for help in the usual places if you need it!
+#### rattles
+
+To change the rattle sounds, put audio files in the `res/rattle` directory and modify the `RATTLES` list inside `res/rattle/rattleconfig.py`.
